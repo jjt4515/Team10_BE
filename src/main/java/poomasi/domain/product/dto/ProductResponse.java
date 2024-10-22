@@ -1,5 +1,6 @@
 package poomasi.domain.product.dto;
 
+import java.util.List;
 import lombok.Builder;
 import poomasi.domain.product.entity.Product;
 
@@ -11,10 +12,15 @@ public record ProductResponse(
         Integer stock,
         String description,
         String imageUrl,
-        Long categoryId
+        Long categoryId,
+        List<String> tags
 ) {
 
     public static ProductResponse fromEntity(Product product) {
+        List<String> tags = product.getTags().stream()
+                .map(a -> a.getProductTagEnum().getKoreanName())
+                .toList();
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -23,6 +29,7 @@ public record ProductResponse(
                 .description(product.getDescription())
                 .imageUrl(product.getImageUrl())
                 .categoryId(product.getCategoryId())
+                .tags(tags)
                 .build();
     }
 }

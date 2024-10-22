@@ -1,5 +1,6 @@
 package poomasi.global.error;
 
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
@@ -47,6 +48,10 @@ public enum BusinessError {
     RESERVATION_NOT_ACCESSIBLE(HttpStatus.FORBIDDEN, "접근할 수 없는 예약입니다."),
     RESERVATION_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예약입니다."),
     RESERVATION_CANCELLATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "예약 취소 기간이 지났습니다."),
+
+    //ProductTag
+    INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
 
     // ETC
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다.");

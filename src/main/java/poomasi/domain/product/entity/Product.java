@@ -17,6 +17,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.product._tag.entity.ProductTag;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -63,6 +64,10 @@ public class Product {
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JoinColumn(name = "productId")
+    List<ProductTag> tags = new ArrayList<>();
 
     @Comment("평균 평점")
     private double averageRating = 0.0;
