@@ -70,7 +70,7 @@ public class Farm {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
-    public Farm(String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice) {
+    public Farm(String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
         this.name = name;
         this.ownerId = ownerId;
         this.address = address;
@@ -79,6 +79,8 @@ public class Farm {
         this.longitude = longitude;
         this.description = description;
         this.experiencePrice = experiencePrice;
+        this.maxCapacity = maxCapacity;
+        this.maxReservation = maxReservation;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
