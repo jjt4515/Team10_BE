@@ -23,11 +23,11 @@ public class FarmScheduleService {
     private final FarmScheduleRepository farmScheduleRepository;
 
     public void addFarmSchedule(FarmScheduleUpdateRequest request) {
-        List<FarmSchedule> existingSchedules = farmScheduleRepository.findByFarmIdAndDateRange(request.farmId(), request.startDate(), request.endDate());
-
         if (request.startDate().isAfter(request.endDate())) {
             throw new BusinessException(START_DATE_SHOULD_BE_BEFORE_END_DATE);
         }
+
+        List<FarmSchedule> existingSchedules = farmScheduleRepository.findByFarmIdAndDateRange(request.farmId(), request.startDate(), request.endDate());
 
         Set<LocalDate> existingDates = existingSchedules.stream()
                 .map(FarmSchedule::getDate)
@@ -67,13 +67,5 @@ public class FarmScheduleService {
         }
 
         return farmSchedule;
-    }
-
-    public void updateFarmScheduleStatus(Long farmScheduleId, ScheduleStatus status) {
-        FarmSchedule farmSchedule = farmScheduleRepository.findById(farmScheduleId)
-                .orElseThrow(() -> new BusinessException(FARM_SCHEDULE_NOT_FOUND));
-
-        farmSchedule.setStatus(status);
-        farmScheduleRepository.save(farmSchedule);
     }
 }
