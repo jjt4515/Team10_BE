@@ -6,7 +6,6 @@ import poomasi.domain.farm._schedule.dto.FarmScheduleRequest;
 import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
 import poomasi.domain.farm._schedule.dto.FarmScheduleUpdateRequest;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 import poomasi.domain.farm._schedule.repository.FarmScheduleRepository;
 import poomasi.global.error.BusinessException;
 
@@ -57,15 +56,5 @@ public class FarmScheduleService {
     public FarmSchedule getFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
         return farmScheduleRepository.findByFarmIdAndDate(farmId, date)
                 .orElseThrow(() -> new BusinessException(FARM_SCHEDULE_NOT_FOUND));
-    }
-
-    public FarmSchedule getValidFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
-        FarmSchedule farmSchedule = getFarmScheduleByFarmIdAndDate(farmId, date);
-
-        if (farmSchedule.getStatus() == ScheduleStatus.RESERVED) {
-            throw new BusinessException(FARM_SCHEDULE_ALREADY_RESERVED);
-        }
-
-        return farmSchedule;
     }
 }

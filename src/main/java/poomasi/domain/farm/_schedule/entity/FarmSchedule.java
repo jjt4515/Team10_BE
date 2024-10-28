@@ -28,10 +28,6 @@ public class FarmSchedule {
     @Comment("종료 시간")
     private LocalTime endTime;
 
-    @Comment("예약 상태")
-    @Enumerated(EnumType.STRING)
-    private ScheduleStatus status;
-
     @Comment("예약 가능 상태")
     private Boolean available;
 

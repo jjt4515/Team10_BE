@@ -101,4 +101,8 @@ public class Reservation {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
     }
+
+    public boolean isNotCancelled() {
+        return !isCanceled();
+    }
 }

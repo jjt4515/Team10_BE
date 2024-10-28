@@ -47,6 +47,8 @@ public enum BusinessError {
     RESERVATION_NOT_ACCESSIBLE(HttpStatus.FORBIDDEN, "접근할 수 없는 예약입니다."),
     RESERVATION_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예약입니다."),
     RESERVATION_CANCELLATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "예약 취소 기간이 지났습니다."),
+    RESERVATION_FULL(HttpStatus.BAD_REQUEST, "예약이 꽉 찼습니다."),
+    RESERVATION_MEMBER_EXCEED(HttpStatus.BAD_REQUEST, "최대 수용 가능 인원을 초과했습니다."),
 
     // ETC
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다.");

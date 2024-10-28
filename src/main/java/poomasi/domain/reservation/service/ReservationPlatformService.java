@@ -2,8 +2,8 @@ package poomasi.domain.reservation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.service.FarmService;
@@ -17,6 +17,7 @@ import poomasi.global.error.BusinessException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReservationPlatformService {
     private final ReservationService reservationService;
     private final MemberService memberService;
@@ -25,15 +26,25 @@ public class ReservationPlatformService {
 
     private final int RESERVATION_CANCELLATION_PERIOD = 3;
 
+    @Transactional
     public ReservationResponse createReservation(ReservationRequest request) {
         Member member = memberService.findMemberById(request.memberId());
         Farm farm = farmService.getValidFarmByFarmId(request.farmId());
-        FarmSchedule farmSchedule = farmScheduleService.getValidFarmScheduleByFarmIdAndDate(request.farmId(), request.reservationDate());
+        FarmSchedule farmSchedule = farmScheduleService.getFarmScheduleByFarmIdAndDate(farm.getId(), request.reservationDate());
 
-        // TODO: 예약 가능한지 확인하는 로직 추가
+        // 1. 농장에 최대 수용 가능 팀 확인
+        int reservationCount = reservationService.getValidReservationsByFarmIdAndScheduleId(farm.getId(), farmSchedule).size();
+        if (reservationCount >= farm.getMaxReservation()) {
+            throw new BusinessException(BusinessError.RESERVATION_FULL);
+        }
+
+
+        // 2. 농장에서 최대 수용 가능 인원 확인
+        if (request.memberCount() > farm.getMaxCapacity()) {
+            throw new BusinessException(BusinessError.RESERVATION_MEMBER_EXCEED);
+        }
 
         Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule));
-
 
         return reservation.toResponse();
     }
@@ -47,6 +58,7 @@ public class ReservationPlatformService {
         return reservation.toResponse();
     }
 
+    @Transactional
     public void cancelReservation(Long memberId, Long reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
 
@@ -64,6 +76,5 @@ public class ReservationPlatformService {
         }
 
         reservationService.cancelReservation(reservation);
-        farmScheduleService.updateFarmScheduleStatus(reservation.getScheduleId().getId(), ScheduleStatus.PENDING);
     }
 }
