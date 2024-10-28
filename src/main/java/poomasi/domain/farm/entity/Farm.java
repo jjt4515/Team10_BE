@@ -53,6 +53,12 @@ public class Farm {
     @Comment("체험 비용")
     private Long experiencePrice;
 
+    @Comment("팀 최대 인원")
+    private Integer maxCapacity;
+
+    @Comment("동일 시간대 최대 예약 가능 팀 수")
+    private Integer maxReservation;
+
     @Comment("삭제 일시")
     private LocalDateTime deletedAt;
 
