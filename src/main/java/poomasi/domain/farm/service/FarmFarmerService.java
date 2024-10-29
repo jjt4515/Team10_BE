@@ -6,6 +6,7 @@ import poomasi.domain.farm.dto.FarmRegisterRequest;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
+import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessException;
 
 import static poomasi.global.error.BusinessError.*;
@@ -15,14 +16,13 @@ import static poomasi.global.error.BusinessError.*;
 public class FarmFarmerService {
     private final FarmRepository farmRepository;
 
-    public Long registerFarm(FarmRegisterRequest request) {
-        // TODO: 판매자 인가?
+    public Long registerFarm(Member member, FarmRegisterRequest request) {
 
-        farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(request.memberId()).ifPresent(farm -> {
+        farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(member.getId()).ifPresent(farm -> {
             throw new BusinessException(FARM_ALREADY_EXISTS);
         });
 
-        return farmRepository.save(request.toEntity()).getId();
+        return farmRepository.save(request.toEntity(member.getId())).getId();
 
     }
 
@@ -36,7 +36,7 @@ public class FarmFarmerService {
         return farmRepository.save(request.toEntity(farm)).getId();
     }
 
-    public Farm getFarmByFarmId(Long farmId) {
+    private Farm getFarmByFarmId(Long farmId) {
         return farmRepository.findByIdAndDeletedAtIsNull(farmId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
     }
 
