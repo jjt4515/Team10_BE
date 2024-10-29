@@ -31,7 +31,7 @@ public class FarmScheduleService {
         if (farmSchedules.stream().anyMatch(farmSchedule -> {
             return (request.startTime().isBefore(farmSchedule.getEndTime()) && request.endTime().isAfter(farmSchedule.getStartTime()));
         })) {
-            throw new BusinessException(RESERVATION_ALREADY_EXISTS);
+            throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
         }
 
         // 등록
