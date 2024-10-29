@@ -4,7 +4,7 @@ import poomasi.domain.review.entity.Review;
 
 public record ReviewResponse
         (Long id,
-         Long productId,
+         Long entityId,
          //Long reviewerId,
          Float rating,
          String content

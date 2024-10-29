@@ -1,7 +1,13 @@
 package poomasi.domain.product.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,7 +23,6 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.product._tag.entity.ProductTag;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -65,9 +70,11 @@ public class Product {
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "productId")
-    List<ProductTag> tags = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "enum_value")
+    @Enumerated(EnumType.STRING)
+    List<ProductTagEnum> tags = new ArrayList<>();
 
     @Comment("평균 평점")
     private double averageRating = 0.0;

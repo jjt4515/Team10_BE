@@ -3,6 +3,7 @@ package poomasi.domain.product.dto;
 import java.util.List;
 import lombok.Builder;
 import poomasi.domain.product.entity.Product;
+import poomasi.domain.product.entity.ProductTagEnum;
 
 @Builder
 public record ProductResponse(
@@ -17,9 +18,7 @@ public record ProductResponse(
 ) {
 
     public static ProductResponse fromEntity(Product product) {
-        List<String> tags = product.getTags().stream()
-                .map(a -> a.getProductTagEnum().getKoreanName())
-                .toList();
+       List<String> tags = product.getTags().stream().map(ProductTagEnum::getKoreanName).toList();
 
         return ProductResponse.builder()
                 .id(product.getId())

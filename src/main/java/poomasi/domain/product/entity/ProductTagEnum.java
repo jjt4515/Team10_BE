@@ -1,4 +1,4 @@
-package poomasi.domain.product._tag.entity;
+package poomasi.domain.product.entity;
 
 public enum ProductTagEnum {
     ORGANIC("유기농"),
