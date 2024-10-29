@@ -39,6 +39,7 @@ public enum BusinessError {
     FARM_SCHEDULE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 스케줄이 존재합니다."),
     FARM_SCHEDULE_ALREADY_RESERVED(HttpStatus.CONFLICT, "해당 날짜에 이미 예약이 존재합니다."),
     FARM_SCHEDULE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "예약이 불가능한 날짜입니다."),
+    START_TIME_SHOULD_BE_BEFORE_END_TIME(HttpStatus.BAD_REQUEST, "시작 시간은 종료 시간보다 이전이어야 합니다."),
 
 
     // Reservation

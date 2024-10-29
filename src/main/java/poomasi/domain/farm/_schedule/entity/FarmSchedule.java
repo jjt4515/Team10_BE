@@ -6,6 +6,7 @@ import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -28,13 +29,11 @@ public class FarmSchedule {
     @Comment("종료 시간")
     private LocalTime endTime;
 
-    @Comment("예약 가능 상태")
-    private Boolean available;
-
-
     @Builder
-    public FarmSchedule(Long farmId, LocalDate date, ScheduleStatus status) {
+    public FarmSchedule(Long farmId, LocalDate date, LocalTime startTime, LocalTime endTime, ScheduleStatus status) {
         this.farmId = farmId;
         this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }
