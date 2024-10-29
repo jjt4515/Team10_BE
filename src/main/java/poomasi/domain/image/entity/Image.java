@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.image.dto.ImageRequest;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -37,6 +38,9 @@ public class Image {
     @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public Image(String objectKey, String imageUrl, ImageType type, Long referenceId) {
         this.objectKey = objectKey;

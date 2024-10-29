@@ -22,11 +22,11 @@ public class ImageService {
 
     @Transactional
     public Image saveImage(ImageRequest imageRequest) {
-        if (imageRepository.countByTypeAndReferenceId(imageRequest.type(), imageRequest.referenceId()) >= 5) {
+        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= 5) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }
 
-        if (imageRepository.existsByObjectKeyAndReferenceId(imageRequest.objectKey(), imageRequest.referenceId())) {
+        if (imageRepository.existsByObjectKeyAndReferenceIdAndDeletedAtIsNull(imageRequest.objectKey(), imageRequest.referenceId())) {
             throw new BusinessException(IMAGE_ALREADY_EXISTS);
         }
 
@@ -48,21 +48,21 @@ public class ImageService {
     }
 
     public Image getImageById(Long id) {
-        return imageRepository.findById(id)
+        return imageRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new BusinessException(IMAGE_NOT_FOUND));
     }
 
     public List<Image> getImagesByTypeAndReferenceId(ImageType type, Long referenceId) {
-        return imageRepository.findByTypeAndReferenceId(type, referenceId);
+        return imageRepository.findByTypeAndReferenceIdAndDeletedAtIsNull(type, referenceId);
     }
 
     // 이미지 수정
     @Transactional
     public Image updateImage(Long id, ImageRequest imageRequest) {
-        Image image = imageRepository.findById(id)
+        Image image = imageRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new BusinessException(IMAGE_NOT_FOUND));
 
-        if (imageRepository.countByTypeAndReferenceId(imageRequest.type(), imageRequest.referenceId()) >= 5 &&
+        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= 5 &&
                 !image.getType().equals(imageRequest.type())) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }

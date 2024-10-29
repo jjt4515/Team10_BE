@@ -5,9 +5,11 @@ import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
-    long countByTypeAndReferenceId(ImageType type, Long referenceId);
-    boolean existsByObjectKeyAndReferenceId(String objectKey, Long referenceId);
-    List<Image> findByTypeAndReferenceId(ImageType type, Long referenceId);
+    long countByTypeAndReferenceIdAndDeletedAtIsNull(ImageType type, Long referenceId);
+    boolean existsByObjectKeyAndReferenceIdAndDeletedAtIsNull(String objectKey, Long referenceId);
+    List<Image> findByTypeAndReferenceIdAndDeletedAtIsNull(ImageType type, Long referenceId);
+    Optional<Image> findByIdAndDeletedAtIsNull(Long id);
 }

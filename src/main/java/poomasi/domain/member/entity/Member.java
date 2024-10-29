@@ -47,6 +47,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
+    @Column(name="deleted_at")
     private LocalDateTime deletedAt;
 
     public Member(String email, String password, LoginType loginType, Role role) {
