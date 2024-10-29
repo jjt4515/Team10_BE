@@ -8,13 +8,13 @@ import poomasi.domain.image.dto.ImageRequest;
 import java.util.Date;
 
 @Entity
-@Table(name = "images", uniqueConstraints = {
+@Table(name = "image", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"type", "reference_id", "object_key"})
 })
 @Getter
 @Setter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE Image SET deleted_at = current_timestamp WHERE id = ?")
+@SQLDelete(sql = "UPDATE image SET deleted_at = current_timestamp WHERE id = ?")
 public class Image {
 
     @Id
