@@ -18,7 +18,7 @@ public record ProductResponse(
 ) {
 
     public static ProductResponse fromEntity(Product product) {
-       List<String> tags = product.getTags().stream().map(ProductTagEnum::getKoreanName).toList();
+        List<String> tags = product.getTags().stream().map(ProductTagEnum::getKoreanName).toList();
 
         return ProductResponse.builder()
                 .id(product.getId())

@@ -4,4 +4,5 @@ public record ProductTagRequest(
         Long productId,
         String tagEnum
 ) {
+
 }
