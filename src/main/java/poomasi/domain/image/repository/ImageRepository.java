@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     long countByTypeAndReferenceIdAndDeletedAtIsNull(ImageType type, Long referenceId);
-    boolean existsByObjectKeyAndReferenceIdAndDeletedAtIsNull(String objectKey, Long referenceId);
+    boolean existsByObjectKeyAndTypeAndReferenceIdAndDeletedAtIsNull(String objectKey, ImageType type, Long referenceId);
     List<Image> findByTypeAndReferenceIdAndDeletedAtIsNull(ImageType type, Long referenceId);
     Optional<Image> findByIdAndDeletedAtIsNull(Long id);
 }

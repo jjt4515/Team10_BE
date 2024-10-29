@@ -22,16 +22,24 @@ public class ImageService {
 
     @Transactional
     public Image saveImage(ImageRequest imageRequest) {
-        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= 5) {
-            throw new BusinessException(IMAGE_LIMIT_EXCEED);
-        }
-
-        if (imageRepository.existsByObjectKeyAndReferenceIdAndDeletedAtIsNull(imageRequest.objectKey(), imageRequest.referenceId())) {
-            throw new BusinessException(IMAGE_ALREADY_EXISTS);
-        }
+        validateImageConstraints(imageRequest);
 
         Image imageEntity = imageRequest.toEntity(imageRequest);
         return imageRepository.save(imageEntity);
+    }
+
+    private void validateImageConstraints(ImageRequest imageRequest) {
+        String objectKey = imageRequest.objectKey();
+        ImageType imageType = imageRequest.type();
+        Long referenceId = imageRequest.referenceId();
+
+        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageType, referenceId) >= 5) {
+            throw new BusinessException(IMAGE_LIMIT_EXCEED);
+        }
+
+        if (imageRepository.existsByObjectKeyAndTypeAndReferenceIdAndDeletedAtIsNull(objectKey, imageType, referenceId)) {
+            throw new BusinessException(IMAGE_ALREADY_EXISTS);
+        }
     }
 
     // 여러 이미지 저장
@@ -59,11 +67,13 @@ public class ImageService {
     // 이미지 수정
     @Transactional
     public Image updateImage(Long id, ImageRequest imageRequest) {
-        Image image = imageRepository.findByIdAndDeletedAtIsNull(id)
-                .orElseThrow(() -> new BusinessException(IMAGE_NOT_FOUND));
+        Image image = getImageById(id);
 
-        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= 5 &&
-                !image.getType().equals(imageRequest.type())) {
+        ImageType imageType = imageRequest.type();
+        Long referenceId = imageRequest.referenceId();
+
+        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageType, referenceId) >= 5 &&
+                !image.getType().equals(imageType)) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }
 
