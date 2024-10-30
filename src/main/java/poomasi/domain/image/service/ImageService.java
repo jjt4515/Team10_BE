@@ -25,20 +25,21 @@ public class ImageService {
     @Transactional
     public Image saveImage(ImageRequest imageRequest) {
         // 기존 이미지가 있는 경우 복구 또는 예외 처리 (실제 복구 로직과는 차이가 있음)
+        validateImageLimit(imageRequest);
+
         Image image = findExistingOrRecoverableImage(imageRequest)
-                .map(existingImage -> recoverOrThrow(existingImage, imageRequest))
+                .map(existingImage -> recoverImageOrThrow(existingImage, imageRequest))
                 .orElseGet(() -> imageRequest.toEntity(imageRequest));
 
         return imageRepository.save(image);
     }
 
     private Optional<Image> findExistingOrRecoverableImage(ImageRequest imageRequest) {
-        validateImageLimit(imageRequest);
         return imageRepository.findByObjectKeyAndTypeAndReferenceId(
                 imageRequest.objectKey(), imageRequest.type(), imageRequest.referenceId());
     }
 
-    private Image recoverOrThrow(Image existingImage, ImageRequest imageRequest) {
+    private Image recoverImageOrThrow(Image existingImage, ImageRequest imageRequest) {
         if (existingImage.getDeletedAt() == null) {
             throw new BusinessException(IMAGE_ALREADY_EXISTS);
         }
@@ -89,5 +90,19 @@ public class ImageService {
         image.update(imageRequest);
 
         return imageRepository.save(image);
+    }
+
+    @Transactional
+    public void recoverImage(Long id) {
+        Image image = getImageById(id);
+
+        if (image.getDeletedAt() == null) {
+            throw new BusinessException(IMAGE_ALREADY_EXISTS);
+        }
+
+        validateImageLimit(image.toRequest(image));
+
+        image.setDeletedAt(null);
+        imageRepository.save(image);
     }
 }

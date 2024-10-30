@@ -57,5 +57,11 @@ public class ImageController {
         return ResponseEntity.ok(updatedImage);
     }
 
+    @PutMapping("/recover/{id}")
+    public ResponseEntity<Void> recoverImage(@PathVariable Long id) {
+        imageService.recoverImage(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

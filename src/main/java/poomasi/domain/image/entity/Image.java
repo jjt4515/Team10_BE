@@ -55,4 +55,13 @@ public class Image {
         this.type = request.type();
         this.referenceId = request.referenceId();
     }
+
+    public ImageRequest toRequest(Image image){
+        return new ImageRequest(
+                image.objectKey,
+                image.imageUrl,
+                image.type,
+                image.referenceId
+        );
+    }
 }
