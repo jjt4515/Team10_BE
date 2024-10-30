@@ -35,7 +35,7 @@ public class Image {
     @Column(name = "reference_id", nullable = false)
     private Long referenceId;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = new Date();
 
