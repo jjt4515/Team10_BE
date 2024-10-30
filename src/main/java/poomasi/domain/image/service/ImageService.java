@@ -94,7 +94,8 @@ public class ImageService {
 
     @Transactional
     public void recoverImage(Long id) {
-        Image image = getImageById(id);
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(IMAGE_NOT_FOUND));
 
         if (image.getDeletedAt() == null) {
             throw new BusinessException(IMAGE_ALREADY_EXISTS);
