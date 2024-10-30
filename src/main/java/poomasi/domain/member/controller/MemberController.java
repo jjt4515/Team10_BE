@@ -6,7 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import poomasi.domain.member.dto.MemberResponse;
+import poomasi.domain.member.dto.request.FarmerQualificationRequest;
+import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.service.MemberService;
 
 @RestController
@@ -18,8 +19,8 @@ public class MemberController {
 
     @PutMapping("/toFarmer/{memberId}")
     public ResponseEntity<Void> upgradeToFarmer(@PathVariable Long memberId,
-                                                @RequestBody Boolean hasFarmerQualification) {
-        memberService.upgradeToFarmer(memberId, hasFarmerQualification);
+                                                @RequestBody FarmerQualificationRequest request) {
+        memberService.upgradeToFarmer(memberId, request.hasFarmerQualification());
         return ResponseEntity.noContent().build();
     }
 

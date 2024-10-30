@@ -1,4 +1,4 @@
-package poomasi.domain.member.dto;
+package poomasi.domain.member.dto.response;
 
 import poomasi.domain.member.entity.Member;
 

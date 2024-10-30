@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.member.dto.MemberResponse;
+import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
