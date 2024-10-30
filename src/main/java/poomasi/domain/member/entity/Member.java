@@ -78,6 +78,10 @@ public class Member {
         this.memberProfile = memberProfile;
     }
 
+    public boolean isCustomer() {
+        return role == Role.ROLE_CUSTOMER;
+    }
+
     public boolean isFarmer() {
         return role == Role.ROLE_FARMER;
     }

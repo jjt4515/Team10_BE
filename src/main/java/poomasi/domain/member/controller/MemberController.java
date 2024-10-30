@@ -18,9 +18,15 @@ public class MemberController {
     private final MemberService memberService;
 
     @PutMapping("/toFarmer/{memberId}")
-    public ResponseEntity<Void> upgradeToFarmer(@PathVariable Long memberId,
+    public ResponseEntity<Void> convertToFarmer(@PathVariable Long memberId,
                                                 @RequestBody FarmerQualificationRequest request) {
-        memberService.upgradeToFarmer(memberId, request.hasFarmerQualification());
+        memberService.convertToFarmer(memberId, request.hasFarmerQualification());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/toCustomer/{memberId}")
+    public ResponseEntity<Void> convertToCustomer(@PathVariable Long memberId) {
+        memberService.convertToCustomer(memberId);
         return ResponseEntity.noContent().build();
     }
 

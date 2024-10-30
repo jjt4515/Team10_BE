@@ -10,9 +10,9 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
 
+import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
 import static poomasi.domain.member.entity.Role.ROLE_FARMER;
-import static poomasi.global.error.BusinessError.INVALID_FARMER_QUALIFICATION;
-import static poomasi.global.error.BusinessError.MEMBER_NOT_FOUND;
+import static poomasi.global.error.BusinessError.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +22,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public MemberResponse getMemberById(Long memberId) {
-        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+        Member member = findMemberById(memberId);
         return MemberResponse.fromEntity(member);
     }
 
@@ -34,8 +33,12 @@ public class MemberService {
 
 
     @Transactional
-    public void upgradeToFarmer(Long memberId, Boolean hasFarmerQualification) {
+    public void convertToFarmer(Long memberId, Boolean hasFarmerQualification) {
         Member member = findMemberById(memberId);
+
+        if (isFarmer(memberId)) {
+            throw new BusinessException(MEMBER_ALREADY_FARMER);
+        }
 
         if (!hasFarmerQualification) {
             throw new BusinessException(INVALID_FARMER_QUALIFICATION);
@@ -45,14 +48,31 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    public boolean isFarmer(Long memberId) {
+    @Transactional
+    public void convertToCustomer(Long memberId) {
         Member member = findMemberById(memberId);
-        return member.isFarmer();
+
+        if (isCustomer(memberId)) {
+            throw new BusinessException(MEMBER_ALREADY_CUSTOMER);
+        }
+
+        member.setRole(ROLE_CUSTOMER);
+        memberRepository.save(member);
     }
 
     public Member findMemberById(Long memberId) {
         return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+    }
+
+    public boolean isCustomer(Long memberId) {
+        Member member = findMemberById(memberId);
+        return member.isCustomer();
+    }
+
+    public boolean isFarmer(Long memberId) {
+        Member member = findMemberById(memberId);
+        return member.isFarmer();
     }
 
     public boolean isAdmin(Long memberId) {
