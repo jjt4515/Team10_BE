@@ -1,8 +1,11 @@
 package poomasi.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.member.dto.MemberResponse;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
@@ -17,6 +20,18 @@ import static poomasi.global.error.BusinessError.MEMBER_NOT_FOUND;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    public MemberResponse getMemberById(Long memberId) {
+        Member member = memberRepository.findByIdAndDeletedAtIsNull(memberId)
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+        return MemberResponse.fromEntity(member);
+    }
+
+    public Page<MemberResponse> getAllMembers(Pageable pageable) {
+        Page<Member> members = memberRepository.findAll(pageable);
+        return members.map(MemberResponse::fromEntity);
+    }
+
 
     @Transactional
     public void upgradeToFarmer(Long memberId, Boolean hasFarmerQualification) {
