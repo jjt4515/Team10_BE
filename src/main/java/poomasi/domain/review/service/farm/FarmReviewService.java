@@ -34,7 +34,6 @@ public class FarmReviewService {
         // s3 이미지 저장하고 주소 받아와서 review에 추가해주기
 
         Review pReview = reviewRequest.toEntity(entityId, EntityType.FARM, member);
-        pReview.setEntityType(EntityType.FARM);
         pReview = reviewRepository.save(pReview);
 
         return pReview.getId();
