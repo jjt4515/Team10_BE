@@ -19,13 +19,7 @@ public class ProductTagService {
     @Transactional
     public void addTag(ProductTagRequest productTagRequest) {
         Product product = CheckProduct(productTagRequest);
-
-        ProductTagEnum productTagEnum = null;
-        try {
-            productTagEnum = ProductTagEnum.valueOf(productTagRequest.tagEnum());
-        } catch (IllegalArgumentException e) {
-            throw new BusinessException(BusinessError.INVALID_TAG_NAME);
-        }
+        ProductTagEnum productTagEnum = checkEnum(productTagRequest);
 
         product.getTags().add(productTagEnum);
     }
@@ -38,14 +32,18 @@ public class ProductTagService {
     @Transactional
     public void deleteTag(ProductTagRequest productTagRequest) {
         Product product = CheckProduct(productTagRequest);
+        ProductTagEnum productTagEnum = checkEnum(productTagRequest);
 
+        product.getTags().remove(productTagEnum);
+    }
+
+    private ProductTagEnum checkEnum(ProductTagRequest productTagRequest) {
         ProductTagEnum productTagEnum = null;
         try {
             productTagEnum = ProductTagEnum.valueOf(productTagRequest.tagEnum());
         } catch (IllegalArgumentException e) {
             throw new BusinessException(BusinessError.INVALID_TAG_NAME);
         }
-
-        product.getTags().remove(productTagEnum);
+        return productTagEnum;
     }
 }

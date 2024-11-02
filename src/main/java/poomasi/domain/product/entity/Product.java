@@ -29,7 +29,7 @@ import poomasi.domain.review.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
+//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
 public class Product {
 
     @Id
@@ -70,7 +70,7 @@ public class Product {
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "enum_value")
     @Enumerated(EnumType.STRING)
