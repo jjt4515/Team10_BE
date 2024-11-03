@@ -1,8 +1,10 @@
 package poomasi.domain.farm.entity;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
 
 import java.time.LocalDateTime;
+
 import poomasi.domain.review.entity.Review;
 
 @Entity
@@ -100,4 +103,15 @@ public class Farm {
         return this;
     }
 
+    public void updateExpPrice(Long expPrice) {
+        this.experiencePrice = expPrice;
+    }
+
+    public void updateMaxCapacity(Integer maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public void updateMaxReservation(Integer maxReservation) {
+        this.maxReservation = maxReservation;
+    }
 }
