@@ -15,6 +15,8 @@ import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,7 +32,7 @@ public class ReservationPlatformService {
     public ReservationResponse createReservation(ReservationRequest request) {
         Member member = memberService.findMemberById(request.memberId());
         Farm farm = farmService.getValidFarmByFarmId(request.farmId());
-        FarmSchedule farmSchedule = farmScheduleService.getFarmScheduleByFarmIdAndDate(farm.getId(), request.reservationDate());
+        FarmSchedule farmSchedule = farmScheduleService.getFarmScheduleByScheduleId(request.scheduleId());
 
         // 1. 농장에 최대 수용 가능 팀 확인
         int reservationCount = reservationService.getValidReservationsByFarmIdAndScheduleId(farm.getId(), farmSchedule).size();
@@ -43,7 +45,6 @@ public class ReservationPlatformService {
         if (request.memberCount() > farm.getMaxCapacity()) {
             throw new BusinessException(BusinessError.RESERVATION_MEMBER_EXCEED);
         }
-
         Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule));
 
         return reservation.toResponse();

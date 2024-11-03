@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public record ReservationRequest(
         Long farmId,
         Long memberId,
-        LocalDate reservationDate,
+        Long scheduleId,
 
         int memberCount,
         String request
@@ -22,7 +22,7 @@ public record ReservationRequest(
                 .member(member)
                 .farm(farm)
                 .scheduleId(farmSchedule)
-                .reservationDate(reservationDate)
+                .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
                 .build();

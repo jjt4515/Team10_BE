@@ -12,8 +12,7 @@ import poomasi.global.error.BusinessException;
 import java.time.LocalDate;
 import java.util.List;
 
-import static poomasi.global.error.BusinessError.FARM_SCHEDULE_ALREADY_EXISTS;
-import static poomasi.global.error.BusinessError.START_TIME_SHOULD_BE_BEFORE_END_TIME;
+import static poomasi.global.error.BusinessError.*;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +48,11 @@ public class FarmScheduleService {
 
     public List<FarmSchedule> getFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
         return farmScheduleRepository.findByFarmIdAndDate(farmId, date);
+    }
+
+    public FarmSchedule getFarmScheduleByScheduleId(Long id) {
+        return farmScheduleRepository.findById(id).orElseThrow(
+                () -> new BusinessException(FARM_SCHEDULE_NOT_FOUND)
+        );
     }
 }
