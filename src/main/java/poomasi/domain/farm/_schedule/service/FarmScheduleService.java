@@ -11,10 +11,9 @@ import poomasi.global.error.BusinessException;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static poomasi.global.error.BusinessError.*;
+import static poomasi.global.error.BusinessError.FARM_SCHEDULE_ALREADY_EXISTS;
+import static poomasi.global.error.BusinessError.START_TIME_SHOULD_BE_BEFORE_END_TIME;
 
 @Service
 @RequiredArgsConstructor

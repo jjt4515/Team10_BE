@@ -21,5 +21,4 @@ public class FarmScheduleFarmerController {
         farmScheduleService.addFarmSchedule(request);
         return ResponseEntity.ok().build();
     }
-
 }
