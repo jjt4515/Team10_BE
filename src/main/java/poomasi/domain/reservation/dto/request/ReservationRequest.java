@@ -5,6 +5,7 @@ import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.entity.Reservation;
+import poomasi.domain.reservation.entity.ReservationStatus;
 
 import java.time.LocalDate;
 
@@ -25,6 +26,7 @@ public record ReservationRequest(
                 .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
+                .status(ReservationStatus.ACCEPTED)
                 .build();
     }
 }
