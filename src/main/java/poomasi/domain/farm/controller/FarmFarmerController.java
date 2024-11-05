@@ -3,6 +3,7 @@ package poomasi.domain.farm.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.farm.dto.FarmRegisterRequest;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
@@ -17,8 +18,11 @@ public class FarmFarmerController {
     private final FarmScheduleService farmScheduleService;
 
     // TODO: 판매자만 접근가능하도록 인증/인가 annotation 추가
+    @Secured("ROLE_FARMER")
     @PostMapping("")
-    public ResponseEntity<?> registerFarm(@RequestBody FarmRegisterRequest request) {
+    public ResponseEntity<?> registerFarm(
+
+            @RequestBody FarmRegisterRequest request) {
         return ResponseEntity.ok(farmFarmerService.registerFarm(request));
     }
 

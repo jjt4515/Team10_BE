@@ -1,7 +1,13 @@
 package poomasi.domain.product.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -64,6 +70,12 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "enum_value")
+    @Enumerated(EnumType.STRING)
+    List<ProductTagEnum> tags = new ArrayList<>();
 
     @Comment("평균 평점")
     private double averageRating = 0.0;

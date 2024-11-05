@@ -1,5 +1,6 @@
 package poomasi.global.error;
 
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
@@ -54,6 +55,10 @@ public enum BusinessError {
 
     //Cart
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
+
+    //ProductTag
+    INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
 
     // ETC
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
