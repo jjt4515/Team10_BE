@@ -20,6 +20,7 @@ public class FarmFarmerController {
     private final FarmFarmerService farmFarmerService;
     private final FarmScheduleService farmScheduleService;
 
+
     @Secured("ROLE_FARMER")
     @PostMapping("")
     public ResponseEntity<?> registerFarm(
@@ -27,6 +28,7 @@ public class FarmFarmerController {
             @RequestBody FarmRegisterRequest request) {
         Member member = userDetails.getMember();
         return ResponseEntity.ok(farmFarmerService.registerFarm(member, request));
+
     }
 
     @Secured("ROLE_FARMER")

@@ -40,6 +40,30 @@ public class FarmFarmerService {
         return farmRepository.findByIdAndDeletedAtIsNull(farmId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
     }
 
+    public void updateFarmExpPrice(Long farmerId, Long farmId, Long expPrice) {
+        Farm farm = this.getFarmByFarmId(farmId);
+        if (!farm.getOwnerId().equals(farmerId)) {
+            throw new BusinessException(FARM_OWNER_MISMATCH);
+        }
+        farm.updateExpPrice(expPrice);
+    }
+
+    public void updateFarmMaxCapacity(Long farmerId, Long farmId, Integer maxCapacity) {
+        Farm farm = this.getFarmByFarmId(farmId);
+        if (!farm.getOwnerId().equals(farmerId)) {
+            throw new BusinessException(FARM_OWNER_MISMATCH);
+        }
+        farm.updateMaxCapacity(maxCapacity);
+    }
+
+    public void updateFarmMaxReservation(Long farmerId, Long farmId, Integer maxReservation) {
+        Farm farm = this.getFarmByFarmId(farmId);
+        if (!farm.getOwnerId().equals(farmerId)) {
+            throw new BusinessException(FARM_OWNER_MISMATCH);
+        }
+        farm.updateMaxReservation(maxReservation);
+    }
+
     public void deleteFarm(Long farmerId, Long farmId) {
         Farm farm = this.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {

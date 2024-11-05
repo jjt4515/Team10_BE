@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
+import java.time.LocalTime;
+import java.util.Collection;
 
 @Entity
 @Getter
@@ -31,20 +33,17 @@ public class FarmSchedule {
     @Comment("예약 가능 날짜")
     private LocalDate date;
 
-    @Setter
-    @Comment("예약 가능 여부")
-    @Enumerated(EnumType.STRING)
-    private ScheduleStatus status;
+    @Comment("시작 시간")
+    private LocalTime startTime;
+
+    @Comment("종료 시간")
+    private LocalTime endTime;
 
     @Builder
-    public FarmSchedule(Long farmId, LocalDate date, ScheduleStatus status) {
+    public FarmSchedule(Long farmId, LocalDate date, LocalTime startTime, LocalTime endTime, ScheduleStatus status) {
         this.farmId = farmId;
         this.date = date;
-        this.status = status;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
-
-    public void updateStatus(ScheduleStatus status) {
-        this.status = status;
-    }
-
 }

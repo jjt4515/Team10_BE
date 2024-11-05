@@ -1,7 +1,13 @@
 package poomasi.domain.product.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,13 +23,14 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.order.entity.OrderProductDetails;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
+//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
 public class Product {
 
     @Id
@@ -60,12 +67,23 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "enum_value")
+    @Enumerated(EnumType.STRING)
+    List<ProductTagEnum> tags = new ArrayList<>();
+
     @Comment("평균 평점")
     private double averageRating = 0.0;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_product_details_id")
+    private List<OrderProductDetails> orderProductDetails;
+
 
     @Builder
     public Product(Long productId,
@@ -106,5 +124,7 @@ public class Product {
                 .average() // 평균 계산
                 .orElse(0.0);
     }
+
+
 
 }

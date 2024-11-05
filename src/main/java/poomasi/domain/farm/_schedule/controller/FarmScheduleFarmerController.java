@@ -30,5 +30,4 @@ public class FarmScheduleFarmerController {
         farmScheduleService.addFarmSchedule(request, member);
         return ResponseEntity.ok().build();
     }
-
 }
