@@ -23,6 +23,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.order.entity.OrderProductDetails;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -66,7 +67,7 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
@@ -78,6 +79,11 @@ public class Product {
 
     @Comment("평균 평점")
     private double averageRating = 0.0;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_product_details_id")
+    private List<OrderProductDetails> orderProductDetails;
+
 
     @Builder
     public Product(Long productId,
@@ -118,5 +124,7 @@ public class Product {
                 .average() // 평균 계산
                 .orElse(0.0);
     }
+
+
 
 }
