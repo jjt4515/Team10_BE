@@ -3,11 +3,12 @@ package poomasi.domain.farm._schedule.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import poomasi.domain.farm._schedule.entity.FarmSchedule;
+import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 
 public record FarmScheduleUpdateRequest(
         Long farmId,
