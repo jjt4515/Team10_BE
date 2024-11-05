@@ -24,7 +24,7 @@ import poomasi.domain.review.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor
-@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
+//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
 public class Product {
 
     @Id
@@ -61,7 +61,7 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
