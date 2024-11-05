@@ -11,7 +11,9 @@ public record FarmRegisterRequest(
         Double longitude,
         String phoneNumber,
         String description,
-        Long experiencePrice
+        Long experiencePrice,
+        Integer maxCapacity,
+        Integer maxReservation
 ) {
     public Farm toEntity() {
         return Farm.builder()
@@ -23,6 +25,8 @@ public record FarmRegisterRequest(
                 .longitude(longitude)
                 .description(description)
                 .experiencePrice(experiencePrice)
+                .maxCapacity(maxCapacity)
+                .maxReservation(maxReservation)
                 .build();
     }
 }

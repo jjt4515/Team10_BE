@@ -40,6 +40,7 @@ public enum BusinessError {
     FARM_SCHEDULE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 스케줄이 존재합니다."),
     FARM_SCHEDULE_ALREADY_RESERVED(HttpStatus.CONFLICT, "해당 날짜에 이미 예약이 존재합니다."),
     FARM_SCHEDULE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "예약이 불가능한 날짜입니다."),
+    START_TIME_SHOULD_BE_BEFORE_END_TIME(HttpStatus.BAD_REQUEST, "시작 시간은 종료 시간보다 이전이어야 합니다."),
 
 
     // Reservation
@@ -48,6 +49,8 @@ public enum BusinessError {
     RESERVATION_NOT_ACCESSIBLE(HttpStatus.FORBIDDEN, "접근할 수 없는 예약입니다."),
     RESERVATION_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예약입니다."),
     RESERVATION_CANCELLATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "예약 취소 기간이 지났습니다."),
+    RESERVATION_FULL(HttpStatus.BAD_REQUEST, "예약이 꽉 찼습니다."),
+    RESERVATION_MEMBER_EXCEED(HttpStatus.BAD_REQUEST, "최대 수용 가능 인원을 초과했습니다."),
 
     //Cart
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
