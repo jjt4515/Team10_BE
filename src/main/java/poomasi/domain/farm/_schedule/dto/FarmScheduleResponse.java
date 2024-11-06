@@ -10,6 +10,7 @@ import java.time.LocalTime;
 
 @Builder
 public record FarmScheduleResponse(
+        Long scheduleId,
         LocalDate date,
         LocalTime startTime,
         LocalTime endTime,
@@ -18,6 +19,7 @@ public record FarmScheduleResponse(
 
     public static FarmScheduleResponse fromEntity(FarmSchedule farmSchedule) {
         return FarmScheduleResponse.builder()
+                .scheduleId(farmSchedule.getId())
                 .startTime(farmSchedule.getStartTime())
                 .endTime(farmSchedule.getEndTime())
                 .date(farmSchedule.getDate())

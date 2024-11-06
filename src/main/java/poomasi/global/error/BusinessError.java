@@ -1,10 +1,8 @@
 package poomasi.global.error;
 
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -75,9 +73,8 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
 
     // PAYMENT
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND , "결제를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다.")
-    ;
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
 

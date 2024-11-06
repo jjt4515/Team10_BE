@@ -24,11 +24,11 @@ public class FarmScheduleService {
             throw new BusinessException(START_TIME_SHOULD_BE_BEFORE_END_TIME);
         }
 
-        // 이미 겹치는 예약이 존재하는지 확인
         List<FarmSchedule> farmSchedules = farmScheduleRepository.findByFarmIdAndDate(request.farmId(), request.date());
-        if (farmSchedules.stream().anyMatch(farmSchedule -> {
-            return (request.startTime().isBefore(farmSchedule.getEndTime()) && request.endTime().isAfter(farmSchedule.getStartTime()));
-        })) {
+        if (farmSchedules.stream().anyMatch(farmSchedule ->
+                (request.startTime().isBefore(farmSchedule.getEndTime()) && request.endTime().isAfter(farmSchedule.getStartTime())) ||
+                        (request.startTime().equals(farmSchedule.getStartTime()) || request.endTime().equals(farmSchedule.getEndTime()))
+        )) {
             throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
         }
 
