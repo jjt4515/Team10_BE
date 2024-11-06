@@ -27,7 +27,7 @@ public class FarmScheduleFarmerController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @Valid @RequestBody FarmScheduleUpdateRequest request) {
         Member member = userDetails.getMember();
-        farmScheduleService.addFarmSchedule(request, member);
+        farmScheduleService.addFarmSchedule(request);
         return ResponseEntity.ok().build();
     }
 }
