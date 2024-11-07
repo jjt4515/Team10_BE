@@ -60,7 +60,7 @@ public class MemberService {
     public void convertToFarmer(Long memberId, Boolean hasFarmerQualification) {
         Member member = findMemberById(memberId);
 
-        if (isFarmer(memberId)) {
+        if (member.isFarmer()) {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
         }
 
@@ -76,7 +76,7 @@ public class MemberService {
     public void convertToCustomer(Long memberId) {
         Member member = findMemberById(memberId);
 
-        if (isCustomer(memberId)) {
+        if (member.isCustomer()) {
             throw new BusinessException(MEMBER_ALREADY_CUSTOMER);
         }
 
@@ -87,16 +87,6 @@ public class MemberService {
     public Member findMemberById(Long memberId) {
         return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
-    }
-
-    public boolean isCustomer(Long memberId) {
-        Member member = findMemberById(memberId);
-        return member.isCustomer();
-    }
-
-    public boolean isFarmer(Long memberId) {
-        Member member = findMemberById(memberId);
-        return member.isFarmer();
     }
 
     public boolean isAdmin(Long memberId) {
