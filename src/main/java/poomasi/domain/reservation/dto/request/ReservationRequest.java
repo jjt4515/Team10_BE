@@ -7,8 +7,6 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.entity.ReservationStatus;
 
-import java.time.LocalDate;
-
 @Builder
 public record ReservationRequest(
         Long farmId,
