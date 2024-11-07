@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import poomasi.domain.member.dto.request.FarmerQualificationRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.service.MemberService;
+import poomasi.domain.member.dto.request.SignupRequest;
+import poomasi.domain.member.dto.response.SignUpResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +18,12 @@ import poomasi.domain.member.service.MemberService;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<SignUpResponse> signUp(@RequestBody SignupRequest signupRequest) {
+        return ResponseEntity.ok(memberService
+                .signUp(signupRequest));
+    }
 
     @PutMapping("/toFarmer/{memberId}")
     public ResponseEntity<Void> convertToFarmer(@PathVariable Long memberId,
