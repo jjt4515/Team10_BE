@@ -10,7 +10,6 @@ import poomasi.domain.reservation.entity.ReservationStatus;
 @Builder
 public record ReservationRequest(
         Long farmId,
-        Long memberId,
         Long scheduleId,
 
         int memberCount,

@@ -24,7 +24,7 @@ public class ReservationPlatformController {
             @RequestBody ReservationRequest request
     ) {
         Member member = userDetails.getMember();
-        ReservationResponse reservation = reservationPlatformService.createReservation(request);
+        ReservationResponse reservation = reservationPlatformService.createReservation(member, request);
         return ResponseEntity.ok(reservation);
     }
 
@@ -35,16 +35,18 @@ public class ReservationPlatformController {
             @PathVariable Long reservationId
     ) {
         Member member = userDetails.getMember();
-        ReservationResponse reservation = reservationPlatformService.getReservation(member.getId(), reservationId);
+        ReservationResponse reservation = reservationPlatformService.getReservation(member, reservationId);
         return ResponseEntity.ok(reservation);
     }
 
     @PostMapping("/cancel/{reservationId}")
-    public ResponseEntity<?> cancelReservation(@PathVariable Long reservationId) {
-        // FIXME: 로그인한 사용자의 ID를 가져오도록 수정
-        Long memberId = 1L;
-
-        reservationPlatformService.cancelReservation(memberId, reservationId);
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<?> cancelReservation(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long reservationId
+    ) {
+        Member member = userDetails.getMember();
+        reservationPlatformService.cancelReservation(member, reservationId);
         return ResponseEntity.ok().build();
     }
 
