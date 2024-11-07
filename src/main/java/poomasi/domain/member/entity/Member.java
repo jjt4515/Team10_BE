@@ -1,6 +1,19 @@
 package poomasi.domain.member.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +21,6 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.wishlist.entity.WishList;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -48,7 +58,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
-    @Column(name="deleted_at")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -58,7 +68,8 @@ public class Member {
     @Column(nullable = true)
     private String farmerTierCode;
 
-    public Member(String email, String password, LoginType loginType, Role role) {
+    @Builder
+    public Member(Long id, String email, String password, LoginType loginType, Role role) {
         this.email = email;
         this.password = password;
         this.loginType = loginType;
@@ -78,7 +89,8 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+    public Member(String email, Role role, LoginType loginType, String provideId,
+            MemberProfile memberProfile) {
         this.email = email;
         this.role = role;
         this.loginType = loginType;

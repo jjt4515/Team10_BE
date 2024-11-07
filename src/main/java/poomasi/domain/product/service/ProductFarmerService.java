@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.repository.CategoryRepository;
+import poomasi.domain.product._store.entity.Store;
+import poomasi.domain.product._store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.entity.Product;
@@ -19,12 +21,16 @@ public class ProductFarmerService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final StoreRepository storeRepository;
 
     @Transactional
     public Long registerProduct(Member member, ProductRegisterRequest request) {
         Category category = getCategory(request.categoryId());
-        Product saveProduct = productRepository.save(request.toEntity(member));
+        Store store = storeRepository.findByMemberId(member.getId()).orElseThrow(()-> new BusinessException(BusinessError.STORE_NOT_FOUND));
+        Product saveProduct = productRepository.save(request.toEntity(member,store));
+
         category.addProduct(saveProduct);
+        store.addProduct(saveProduct);
         return saveProduct.getId();
     }
 
@@ -47,7 +53,6 @@ public class ProductFarmerService {
 
     @Transactional
     public void deleteProduct(Member member, Long productId) {
-        //TODO: 주인인지 알아보기
         Product product = getProductByProductId(productId);
         checkAuth(member, product);
 

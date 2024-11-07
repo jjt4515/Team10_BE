@@ -32,7 +32,7 @@ public class SignupService {
         memberRepository.findByEmail(email)
                 .ifPresent(member -> { throw new BusinessException(DUPLICATE_MEMBER_EMAIL); });
 
-        Member newMember = new Member(email,
+        Member newMember = new Member(null, email,
                 passwordEncoder.encode(password),
                 LoginType.LOCAL,
                 ROLE_CUSTOMER);

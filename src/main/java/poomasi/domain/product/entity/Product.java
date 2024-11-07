@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.order.entity.OrderProductDetails;
+import poomasi.domain.product._store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -71,6 +73,10 @@ public class Product {
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "store_id")  // 외래 키 컬럼 지정
+    private Store store;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "enum_value")
@@ -93,7 +99,9 @@ public class Product {
             String description,
             String imageUrl,
             Integer stock,
-            Long price) {
+            Long price,
+            Store store) {
+        this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
         this.name = name;
@@ -101,6 +109,7 @@ public class Product {
         this.imageUrl = imageUrl;
         this.stock = stock;
         this.price = price;
+        this.store = store;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
@@ -116,15 +125,5 @@ public class Product {
     public void addStock(Integer stock) {
         this.stock += stock;
     }
-
-    public void addReview(Review pReview) {
-        this.reviewList.add(pReview);
-        this.averageRating = reviewList.stream()
-                .mapToDouble(Review::getRating) // 각 리뷰의 평점을 double로 변환
-                .average() // 평균 계산
-                .orElse(0.0);
-    }
-
-
 
 }
