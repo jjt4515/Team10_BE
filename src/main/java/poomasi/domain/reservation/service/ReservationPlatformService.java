@@ -15,8 +15,6 @@ import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
