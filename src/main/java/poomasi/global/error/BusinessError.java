@@ -60,18 +60,15 @@ public enum BusinessError {
     INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
 
-    //Cart
-    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
-
     // ETC
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
 
     // Image
     IMAGE_LIMIT_EXCEED(HttpStatus.BAD_REQUEST, "사진은 최대 5장까지 등록 가능합니다."),
     IMAGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이미지가 존재합니다"),
-    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다.");
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
 
-    // 
+    // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
     INVALID_ORDER_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 주문 요청입니다."),
     ORDER_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "주문 검증에 실패했습니다."),

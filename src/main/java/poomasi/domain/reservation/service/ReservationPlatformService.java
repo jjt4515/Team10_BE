@@ -8,29 +8,24 @@ import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.service.FarmService;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.service.MemberService;
 import poomasi.domain.reservation.dto.request.ReservationRequest;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReservationPlatformService {
     private final ReservationService reservationService;
-    private final MemberService memberService;
     private final FarmService farmService;
     private final FarmScheduleService farmScheduleService;
 
     private final int RESERVATION_CANCELLATION_PERIOD = 3;
 
     @Transactional
-    public ReservationResponse createReservation(ReservationRequest request) {
-        Member member = memberService.findMemberById(request.memberId());
+    public ReservationResponse createReservation(Member member, ReservationRequest request) {
         Farm farm = farmService.getValidFarmByFarmId(request.farmId());
         FarmSchedule farmSchedule = farmScheduleService.getFarmScheduleByScheduleId(request.scheduleId());
 
@@ -50,9 +45,9 @@ public class ReservationPlatformService {
         return reservation.toResponse();
     }
 
-    public ReservationResponse getReservation(Long memberId, Long reservationId) {
+    public ReservationResponse getReservation(Member member, Long reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
-        if (!reservation.getMember().getId().equals(memberId) || !memberService.isAdmin(memberId)) {
+        if (!reservation.getMember().getId().equals(member.getId()) && !member.isAdmin() && !reservation.getFarm().getOwnerId().equals(member.getId())) {
             throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
         }
 
@@ -60,10 +55,10 @@ public class ReservationPlatformService {
     }
 
     @Transactional
-    public void cancelReservation(Long memberId, Long reservationId) {
+    public void cancelReservation(Member member, Long reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
 
-        if (!reservation.getMember().getId().equals(memberId) || !memberService.isAdmin(memberId)) {
+        if (!reservation.getMember().getId().equals(member.getId()) && !member.isAdmin()) {
             throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
         }
 
