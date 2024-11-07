@@ -80,7 +80,8 @@ public class Farm {
     List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public Farm(String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
+        this.id = id;
         this.name = name;
         this.ownerId = ownerId;
         this.address = address;
