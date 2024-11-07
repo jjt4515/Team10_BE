@@ -3,6 +3,7 @@ package poomasi.domain.reservation.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
+import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.repository.ReservationRepository;
@@ -51,5 +52,9 @@ public class ReservationService {
         return reservationRepository.findAllByFarmIdAndScheduleId(farmId, farmSchedule).stream()
                 .filter(Reservation::isNotCancelled)
                 .toList();
+    }
+
+    public List<Reservation> getReservationByFarmIds(List<Farm> farms) {
+        return reservationRepository.findAllByFarmIn(farms);
     }
 }
