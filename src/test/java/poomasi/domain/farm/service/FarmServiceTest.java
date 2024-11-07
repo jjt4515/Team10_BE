@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import poomasi.domain.farm.FarmTestHelper;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
@@ -15,7 +14,6 @@ import poomasi.domain.farm.repository.FarmRepository;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
