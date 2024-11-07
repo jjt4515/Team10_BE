@@ -29,9 +29,13 @@ public class ReservationPlatformController {
     }
 
     @GetMapping("/get/{reservationId}")
-    public ResponseEntity<?> getReservation(@PathVariable Long reservationId) {
-        Long memberId = 1L;
-        ReservationResponse reservation = reservationPlatformService.getReservation(memberId, reservationId);
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<?> getReservation(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long reservationId
+    ) {
+        Member member = userDetails.getMember();
+        ReservationResponse reservation = reservationPlatformService.getReservation(member.getId(), reservationId);
         return ResponseEntity.ok(reservation);
     }
 

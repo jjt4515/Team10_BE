@@ -52,7 +52,7 @@ public class ReservationPlatformService {
 
     public ReservationResponse getReservation(Long memberId, Long reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
-        if (!reservation.getMember().getId().equals(memberId) || !memberService.isAdmin(memberId)) {
+        if (!reservation.getMember().getId().equals(memberId) && !memberService.isAdmin(memberId) && !reservation.getFarm().getOwnerId().equals(memberId)) {
             throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
         }
 
