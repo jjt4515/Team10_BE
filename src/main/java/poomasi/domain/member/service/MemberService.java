@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.member.dto.response.MemberResponse;
+import poomasi.domain.member.dto.response.MemberSummaryResponse;
 import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
@@ -50,11 +51,15 @@ public class MemberService {
         return MemberResponse.fromEntity(member);
     }
 
+    public MemberSummaryResponse getMemberSummary(Long memberId) {
+        Member member = findMemberById(memberId);
+        return MemberSummaryResponse.fromEntity(member);
+    }
+
     public Page<MemberResponse> getAllMembers(Pageable pageable) {
         Page<Member> members = memberRepository.findAll(pageable);
         return members.map(MemberResponse::fromEntity);
     }
-
 
     @Transactional
     public void convertToFarmer(Long memberId, Boolean hasFarmerQualification) {

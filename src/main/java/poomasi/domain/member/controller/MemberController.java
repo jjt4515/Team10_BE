@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.member.dto.request.FarmerQualificationRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
+import poomasi.domain.member.dto.response.MemberSummaryResponse;
 import poomasi.domain.member.service.MemberService;
 import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.SignUpResponse;
@@ -48,6 +49,18 @@ public class MemberController {
     public ResponseEntity<Page<MemberResponse>> getMembers(@PageableDefault(size = 10) Pageable pageable) {
         Page<MemberResponse> memberResponses = memberService.getAllMembers(pageable);
         return ResponseEntity.ok(memberResponses);
+    }
+
+    @GetMapping("/self")
+    public ResponseEntity<MemberResponse> getSelfMember(@PathVariable Long memberId) {
+        MemberResponse memberResponse = memberService.getMemberById(memberId);
+        return ResponseEntity.ok(memberResponse);
+    }
+
+    @GetMapping("/summary/{memberId}")
+    public ResponseEntity<MemberSummaryResponse> getMemberSummaryById(@PathVariable Long memberId) {
+        MemberSummaryResponse memberSummaryResponse = memberService.getMemberSummary(memberId);
+        return ResponseEntity.ok(memberSummaryResponse);
     }
 
 

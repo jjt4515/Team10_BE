@@ -52,7 +52,7 @@ public class S3PresignedUrlService {
         String encodedTime = encryptionUtil.encodeTime(now).substring(0, 10);
 
         // jpg 말고 다른 형식 파일 들어오는 경우에 대해서도 따로 처리 필요
-        // 주기적으로 s3 정리하는 스케줄러 구현 필요(사진 5개 이상이면 db에서 저장 안한것들은 지움)
+        // 사진 갯수 5개로 제한하기
         // 극악의 확률로 url이 겹치면?? -> 그럴일 거의 없긴할텐데 생기면 s3 원래 파일 지워짐
 
         String uniqueIdentifier = UUID.randomUUID().toString();

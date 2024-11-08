@@ -50,7 +50,10 @@ public class ImageService {
     }
 
     private void validateImageLimit(ImageRequest imageRequest) {
-        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= 5) {
+        int imageLimit = 5;
+        if (imageRequest.type() == ImageType.MEMBER) imageLimit = 1; // 멤버 프로필 이미지는 한 장으로 제한
+
+        if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= imageLimit) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }
     }
