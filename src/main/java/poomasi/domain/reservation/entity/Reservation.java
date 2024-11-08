@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "reservation", indexes = {
         @Index(name = "idx_farm_id", columnList = "farm_id"),
-        @Index(name = "idx_user_id", columnList = "user_id")
+        @Index(name = "idx_member_id", columnList = "member_id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
@@ -100,5 +100,9 @@ public class Reservation {
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
+    }
+
+    public boolean isNotCancelled() {
+        return !isCanceled();
     }
 }
