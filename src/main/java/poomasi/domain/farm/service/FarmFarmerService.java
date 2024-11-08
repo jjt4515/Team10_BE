@@ -40,7 +40,7 @@ public class FarmFarmerService {
         return farmRepository.findByIdAndDeletedAtIsNull(farmId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
     }
 
-    public void updateFarmExpPrice(Long farmerId, Long farmId, Long expPrice) {
+    public void updateFarmExpPrice(Long farmerId, Long farmId, int expPrice) {
         Farm farm = this.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
