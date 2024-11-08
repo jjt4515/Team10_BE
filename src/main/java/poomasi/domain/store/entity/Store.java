@@ -1,7 +1,8 @@
-package poomasi.domain.product._store.entity;
+package poomasi.domain.store.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,8 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product._store.dto.StoreFeeRequest;
-import poomasi.domain.product._store.dto.StoreRegisterRequest;
+import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.product.entity.Product;
 
 @Entity
@@ -25,19 +25,19 @@ public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String name;
-    String address;
-    String phone;
+    private Long id;
+    private String name;
+    private String address;
+    private String phone;
 
-    @OneToOne
-    Member owner;
+    @OneToOne(fetch = FetchType.LAZY)
+    private Member owner;
 
-    String ownerPhone;
+    private String ownerPhone;
     @Comment("사업자 번호")
-    String businessNumber;
+    private String businessNumber;
     @Comment("배송비")
-    Integer shipingFee;
+    private Integer shipingFee;
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     List<Product> products = new ArrayList<>();
@@ -55,10 +55,6 @@ public class Store {
         this.shipingFee = shipingFee;
     }
 
-    public void setShipingFee(Integer shipingFee) {
-        this.shipingFee = shipingFee;
-    }
-
     public void updateStore(StoreRegisterRequest storeRegisterRequest) {
         this.name = storeRegisterRequest.name();
         this.address = storeRegisterRequest.address();
@@ -66,10 +62,6 @@ public class Store {
         this.ownerPhone = storeRegisterRequest.ownerPhone();
         this.businessNumber = storeRegisterRequest.businessNumber();
         this.shipingFee = storeRegisterRequest.shipingFee();
-    }
-
-    public void updateFee(StoreFeeRequest storeFeeRequest) {
-        this.shipingFee = storeFeeRequest.fee();
     }
 
     public void addProduct(Product saveProduct) {

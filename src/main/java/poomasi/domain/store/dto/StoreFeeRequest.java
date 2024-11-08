@@ -1,4 +1,4 @@
-package poomasi.domain.product._store.dto;
+package poomasi.domain.store.dto;
 
 public record StoreFeeRequest(
         Integer fee

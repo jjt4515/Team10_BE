@@ -1,8 +1,8 @@
-package poomasi.domain.product._store.dto;
+package poomasi.domain.store.dto;
 
 import org.hibernate.annotations.Comment;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product._store.entity.Store;
+import poomasi.domain.store.entity.Store;
 
 public record StoreRegisterRequest(
         String name,

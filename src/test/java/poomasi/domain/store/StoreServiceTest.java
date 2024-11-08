@@ -17,12 +17,11 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product._store.dto.StoreFeeRequest;
-import poomasi.domain.product._store.dto.StoreRegisterRequest;
-import poomasi.domain.product._store.dto.StoreResponse;
-import poomasi.domain.product._store.entity.Store;
-import poomasi.domain.product._store.repository.StoreRepository;
-import poomasi.domain.product._store.service.StoreService;
+import poomasi.domain.store.dto.StoreRegisterRequest;
+import poomasi.domain.store.dto.StoreResponse;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
+import poomasi.domain.store.service.StoreService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -46,7 +45,7 @@ class StoreServiceTest {
     @BeforeEach
     void setUp() {
         // 테스트 멤버와 Authentication 설정
-        testMember = Member.builder().id(1L).build();
+        testMember = Member.builder().build();
 
         SecurityContextHolder.setContext(securityContext);
         when(securityContext.getAuthentication()).thenReturn(authentication);
@@ -72,26 +71,14 @@ class StoreServiceTest {
     void getStore_StoreExists_ReturnStoreResponse() {
         // given
         Store store = new Store(1L, "test","test","test",testMember,"test","test",100);
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.of(store));
+        when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
         StoreResponse response = storeService.getStore();
 
         // then
         assertNotNull(response);
-        verify(storeRepository, times(1)).findByMemberId(testMember.getId());
-    }
-
-    @Test
-    void getStore_StoreDoesNotExist_ReturnNull() {
-        // given
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.empty());
-
-        // when
-        StoreResponse response = storeService.getStore();
-
-        // then
-        assertNull(response);
+        verify(storeRepository, times(1)).findByOwnerId(testMember.getId());
     }
 
     @Test
@@ -100,7 +87,7 @@ class StoreServiceTest {
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         Store store = mock(Store.class);
 
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.of(store));
+        when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
         storeService.updateStore(request);
@@ -113,36 +100,11 @@ class StoreServiceTest {
     void updateStore_StoreDoesNotExist_ThrowsBusinessException() {
         // given
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.empty());
+        when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.empty());
 
         // when & then
         BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateStore(request));
         assertEquals(BusinessError.STORE_NOT_FOUND, exception.getBusinessError());
     }
 
-    @Test
-    void updateFee_StoreExists_FeeUpdatedSuccessfully() {
-        // given
-        StoreFeeRequest feeRequest = mock(StoreFeeRequest.class);
-        Store store = mock(Store.class);
-
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.of(store));
-
-        // when
-        storeService.updateFee(feeRequest);
-
-        // then
-        verify(store, times(1)).updateFee(feeRequest);
-    }
-
-    @Test
-    void updateFee_StoreDoesNotExist_ThrowsBusinessException() {
-        // given
-        StoreFeeRequest feeRequest = mock(StoreFeeRequest.class);
-        when(storeRepository.findByMemberId(testMember.getId())).thenReturn(Optional.empty());
-
-        // when & then
-        BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateFee(feeRequest));
-        assertEquals(BusinessError.STORE_NOT_FOUND, exception.getBusinessError());
-    }
 }

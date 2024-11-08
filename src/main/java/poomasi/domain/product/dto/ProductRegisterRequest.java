@@ -1,7 +1,7 @@
 package poomasi.domain.product.dto;
 
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product._store.entity.Store;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.entity.Product;
 
 public record ProductRegisterRequest(

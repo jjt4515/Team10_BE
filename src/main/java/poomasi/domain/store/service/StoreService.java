@@ -1,4 +1,4 @@
-package poomasi.domain.product._store.service;
+package poomasi.domain.store.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -7,16 +7,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product._store.dto.StoreFeeRequest;
-import poomasi.domain.product._store.dto.StoreRegisterRequest;
-import poomasi.domain.product._store.dto.StoreResponse;
-import poomasi.domain.product._store.entity.Store;
-import poomasi.domain.product._store.repository.StoreRepository;
+import poomasi.domain.store.dto.StoreRegisterRequest;
+import poomasi.domain.store.dto.StoreResponse;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StoreService {
 
     private final StoreRepository storeRepository;
@@ -25,16 +25,19 @@ public class StoreService {
     public void addStore(StoreRegisterRequest storeRegisterRequest) {
         Member member = getMember();
         Store store = storeRegisterRequest.toEntity(member);
+        member.setStore(store);
         storeRepository.save(store);
     }
 
     public StoreResponse getStore() {
         Member member = getMember();
-        Store store = storeRepository.findByMemberId(member.getId()).orElse(null);
-        if (store == null) {
-            return null;
-        }
+        Store store = getStore(member);
         return StoreResponse.fromEntity(store);
+    }
+
+    private Store getStore(Member member) {
+        return storeRepository.findByOwnerId(member.getId())
+                .orElseThrow(() -> new BusinessException(BusinessError.STORE_NOT_FOUND));
     }
 
     private Member getMember() {
@@ -47,16 +50,7 @@ public class StoreService {
     @Transactional
     public void updateStore(StoreRegisterRequest storeRegisterRequest) {
         Member member = getMember();
-        Store store = storeRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> new BusinessException(BusinessError.STORE_NOT_FOUND));
+        Store store = getStore(member);
         store.updateStore(storeRegisterRequest);
-    }
-
-    @Transactional
-    public void updateFee(StoreFeeRequest storeFeeRequest) {
-        Member member = getMember();
-        Store store = storeRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> new BusinessException(BusinessError.STORE_NOT_FOUND));
-        store.updateFee(storeFeeRequest);
     }
 }

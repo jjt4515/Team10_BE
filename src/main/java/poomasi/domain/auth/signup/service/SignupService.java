@@ -13,6 +13,7 @@ import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessException;
 
 import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
+import static poomasi.domain.member.entity.Role.ROLE_FARMER;
 import static poomasi.global.error.BusinessError.*;
 
 @Service
@@ -32,11 +33,12 @@ public class SignupService {
         memberRepository.findByEmail(email)
                 .ifPresent(member -> { throw new BusinessException(DUPLICATE_MEMBER_EMAIL); });
 
-        Member newMember = new Member(null, email,
-                passwordEncoder.encode(password),
-                LoginType.LOCAL,
-                ROLE_CUSTOMER);
-
+        Member newMember = Member.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .loginType(LoginType.LOCAL)
+                .role(ROLE_FARMER)
+                .build();
         memberRepository.save(newMember);
         return new SignUpResponse(email, "회원 가입 성공");
     }

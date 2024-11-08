@@ -20,7 +20,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
+import poomasi.global.error.BusinessError;
+import poomasi.global.error.BusinessException;
 
 @Getter
 @Entity
@@ -68,8 +71,12 @@ public class Member {
     @Column(nullable = true)
     private String farmerTierCode;
 
+    @Setter
+    @OneToOne(mappedBy="owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Store store;
+
     @Builder
-    public Member(Long id, String email, String password, LoginType loginType, Role role) {
+    public Member(String email, String password, LoginType loginType, Role role) {
         this.email = email;
         this.password = password;
         this.loginType = loginType;
@@ -109,4 +116,11 @@ public class Member {
     public boolean isAdmin() {
         return role == Role.ROLE_ADMIN;
     }
+
+    public Store getStore() {
+        if(store == null)
+            throw new BusinessException(BusinessError.STORE_NOT_FOUND);
+        return store;
+    }
+
 }

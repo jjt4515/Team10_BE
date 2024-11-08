@@ -22,10 +22,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.order.entity.OrderProductDetails;
-import poomasi.domain.product._store.entity.Store;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
