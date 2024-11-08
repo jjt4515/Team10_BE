@@ -77,6 +77,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/farm/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
                 .requestMatchers("/api/sign-up", "/api/login", "api/reissue").permitAll()
                 .requestMatchers("/api/need-auth/**").authenticated()
                 .anyRequest().

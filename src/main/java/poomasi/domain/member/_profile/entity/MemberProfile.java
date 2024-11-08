@@ -1,8 +1,9 @@
-package poomasi.domain.member.entity;
+package poomasi.domain.member._profile.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import poomasi.domain.image.entity.Image;
+import poomasi.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
 

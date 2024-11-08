@@ -1,7 +1,7 @@
 package poomasi.domain.member.dto.response;
 
 import poomasi.domain.image.entity.Image;
-import poomasi.domain.member.entity.MemberProfile;
+import poomasi.domain.member._profile.entity.MemberProfile;
 
 import java.time.LocalDateTime;
 
