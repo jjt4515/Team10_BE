@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
+import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.wishlist.entity.WishList;
 
 import java.time.LocalDateTime;

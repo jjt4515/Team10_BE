@@ -1,6 +1,7 @@
 package poomasi.domain.member.dto.response;
 
-import poomasi.domain.member.entity.MemberProfile;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.member._profile.entity.MemberProfile;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,8 @@ public record MemberProfileResponse(
         Long coordinateX,
         Long coordinateY,
         boolean isBanned,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Image profileImage
 ) {
     public static MemberProfileResponse fromEntity(MemberProfile profile) {
         return new MemberProfileResponse(
@@ -23,7 +25,8 @@ public record MemberProfileResponse(
                 profile.getCoordinateX(),
                 profile.getCoordinateY(),
                 profile.isBanned(),
-                profile.getCreatedAt()
+                profile.getCreatedAt(),
+                profile.getProfileImage()
         );
     }
 }
