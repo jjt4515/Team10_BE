@@ -15,6 +15,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
 
 import java.time.LocalDateTime;
+
+import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;
 
 @Entity
@@ -69,7 +71,11 @@ public class Farm {
 
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
-    List<Review> reviewList = new ArrayList<>();
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordered_farm_id")
+    private OrderedFarm orderedFarm;
 
     @Builder
     public Farm(String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice) {

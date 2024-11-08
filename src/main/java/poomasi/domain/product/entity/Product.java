@@ -17,7 +17,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.order.entity.OrderProductDetails;
+import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -70,7 +70,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderProductDetails> orderProductDetails;
+    private List<OrderedProduct> orderProductDetails;
 
 
     @Builder
@@ -113,6 +113,9 @@ public class Product {
                 .orElse(0.0);
     }
 
+    public void subtractStock(Integer stock) {
+        this.stock -= stock;
+    }
 
 
 }
