@@ -65,7 +65,4 @@ public class Review {
         this.content = reviewRequest.content();
     }
 
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
 }

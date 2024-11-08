@@ -1,9 +1,8 @@
 package poomasi.global.error;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -22,6 +21,8 @@ public enum BusinessError {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원이 존재하지 않습니다."),
     DUPLICATE_MEMBER_EMAIL(HttpStatus.CONFLICT, "중복된 이메일입니다."),
     INVALID_FARMER_QUALIFICATION(HttpStatus.BAD_REQUEST, "농부 자격 증명이 필요합니다."),
+    MEMBER_ALREADY_CUSTOMER(HttpStatus.BAD_REQUEST, "이미 고객인 회원입니다."),
+    MEMBER_ALREADY_FARMER(HttpStatus.BAD_REQUEST, "이미 농부인 회원입니다."),
     MEMBER_ID_MISMATCH(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
 
     // Auth
@@ -40,6 +41,7 @@ public enum BusinessError {
     FARM_SCHEDULE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 스케줄이 존재합니다."),
     FARM_SCHEDULE_ALREADY_RESERVED(HttpStatus.CONFLICT, "해당 날짜에 이미 예약이 존재합니다."),
     FARM_SCHEDULE_NOT_AVAILABLE(HttpStatus.BAD_REQUEST, "예약이 불가능한 날짜입니다."),
+    START_TIME_SHOULD_BE_BEFORE_END_TIME(HttpStatus.BAD_REQUEST, "시작 시간은 종료 시간보다 이전이어야 합니다."),
 
 
     // Reservation
@@ -48,15 +50,25 @@ public enum BusinessError {
     RESERVATION_NOT_ACCESSIBLE(HttpStatus.FORBIDDEN, "접근할 수 없는 예약입니다."),
     RESERVATION_ALREADY_CANCELED(HttpStatus.BAD_REQUEST, "이미 취소된 예약입니다."),
     RESERVATION_CANCELLATION_PERIOD_EXPIRED(HttpStatus.BAD_REQUEST, "예약 취소 기간이 지났습니다."),
+    RESERVATION_FULL(HttpStatus.BAD_REQUEST, "예약이 꽉 찼습니다."),
+    RESERVATION_MEMBER_EXCEED(HttpStatus.BAD_REQUEST, "최대 수용 가능 인원을 초과했습니다."),
 
     //Cart
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
 
+    //ProductTag
+    INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
+    TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
+
     // ETC
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
 
+    // Image
+    IMAGE_LIMIT_EXCEED(HttpStatus.BAD_REQUEST, "사진은 최대 5장까지 등록 가능합니다."),
+    IMAGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이미지가 존재합니다"),
+    IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
 
-    // ORDER
+    // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
     INVALID_ORDER_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 주문 요청입니다."),
     ORDER_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "주문 검증에 실패했습니다."),
@@ -67,9 +79,8 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
 
     // PAYMENT
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND , "결제를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다.")
-    ;
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다.");
 
     private final HttpStatus httpStatus;
 
