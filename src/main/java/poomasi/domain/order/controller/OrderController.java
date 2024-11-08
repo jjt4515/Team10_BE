@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.order._payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.domain.order._payment.service.PaymentService;
+import poomasi.domain.order.dto.request.OrderRegisterRequest;
 import poomasi.domain.order.service.OrderService;
 
 import java.io.IOException;
@@ -27,15 +28,26 @@ public class OrderController {
     private final PaymentService paymentService;
 
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/pre-order")
-    public ResponseEntity<?> createPreOrder(@AuthenticationPrincipal UserDetailsImpl user) throws IOException, IamportResponseException {
-        PaymentPreRegisterRequest paymentPreRegisterRequest = orderService.preOrderRegister();
+    @PostMapping("/product/pre-order")
+    @Description("product 사전 결제")
+    public ResponseEntity<?> createProductPreOrder(@RequestBody OrderRegisterRequest orderRegisterRequest) throws IOException, IamportResponseException {
+        PaymentPreRegisterRequest paymentPreRegisterRequest = orderService.productPreOrderRegister(orderRegisterRequest);
         return ResponseEntity.ok(
                 paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
         );
     }
-    
-    @Description("멤버의 결제 완료가 된 단건 주문 조회")
+
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
+    @PostMapping("/farm/pre-order")
+    @Description("farm 사전 결제")
+    public ResponseEntity<?> createFarmPreOrder() throws IOException, IamportResponseException {
+        PaymentPreRegisterRequest paymentPreRegisterRequest = orderService.farmPreOrderRegister();
+        return ResponseEntity.ok(
+                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
+        );
+    }
+
+    @Description("멤버의 결제 완료가 된 단건 주문 조회. 특정 건만 조회")
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getAllOrdersByMember(@PathVariable Long orderId) {
         return ResponseEntity.ok(
@@ -43,7 +55,7 @@ public class OrderController {
         );
     }
 
-    @Description("멤버의 결제 완료가 된 전체 주문 목록 조회")
+    @Description("멤버의 결제 완료가 된 전체 주문 목록 조회. 전체 주문 목록 조회")
     @GetMapping("/")
     public ResponseEntity<?> getOrdersByMember() {
         return ResponseEntity.ok(
