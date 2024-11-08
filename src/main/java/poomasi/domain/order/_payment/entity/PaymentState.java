@@ -1,5 +1,9 @@
 package poomasi.domain.order._payment.entity;
 
+
+import jdk.jfr.Description;
+
+@Description("임시로 남겨둠 .. . .")
 public enum PaymentState {
     PENDING,        // 결제 대기 중
     COMPLETED,      // 결제 완료

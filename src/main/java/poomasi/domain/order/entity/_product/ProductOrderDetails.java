@@ -1,4 +1,4 @@
-package poomasi.domain.order.entity;
+package poomasi.domain.order.entity._product;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
@@ -6,17 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="order_details")
+@Table(name="product_order_details")
 @Getter
 @NoArgsConstructor
-public class OrderDetails {
+public class ProductOrderDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "orderDetails")
-    private Order order;
+    @OneToOne(mappedBy = "productOrderDetails", cascade = CascadeType.ALL) // 필드명으로 지정
+    private ProductOrder productOrder;
 
     @Column(name = "address")
     private String address;
@@ -28,7 +28,7 @@ public class OrderDetails {
     @Column(name = "delivery_request", length = 255)
     private String deliveryRequest;
 
-    public OrderDetails(String address, String addressDetail, String deliveryRequest) {
+    public ProductOrderDetails(String address, String addressDetail, String deliveryRequest) {
         this.address = address;
         this.addressDetail = addressDetail;
         this.deliveryRequest = deliveryRequest;
