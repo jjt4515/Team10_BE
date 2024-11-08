@@ -3,7 +3,6 @@ package poomasi.domain.farm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import poomasi.domain.farm.dto.FarmResponse;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.entity.FarmStatus;
 import poomasi.domain.farm.repository.FarmRepository;
@@ -18,6 +17,9 @@ import java.util.stream.Collectors;
 public class FarmService {
     private final FarmRepository farmRepository;
 
+    public List<Farm> getFarmListByOwnerId(Long farmerId) {
+        return farmRepository.findAllByOwnerIdAndDeletedAtIsNull(farmerId);
+    }
     public Farm getValidFarmByFarmId(Long farmId) {
         Farm farm = getFarmByFarmId(farmId);
         if (farm.getStatus() != FarmStatus.OPEN) {

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
+import poomasi.domain.order.entity.Order;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.wishlist.entity.WishList;
 
@@ -50,6 +51,13 @@ public class Member {
 
     @Column(name="deleted_at")
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orderLists;
+
+    @Setter
+    @Column(nullable = true)
+    private String farmerTierCode;
 
     public Member(String email, String password, LoginType loginType, Role role) {
         this.email = email;

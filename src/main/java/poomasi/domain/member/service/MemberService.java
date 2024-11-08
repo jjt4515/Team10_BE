@@ -94,8 +94,4 @@ public class MemberService {
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
-    public boolean isAdmin(Long memberId) {
-        Member member = findMemberById(memberId);
-        return member.isAdmin();
-    }
 }
