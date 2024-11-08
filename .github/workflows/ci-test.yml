@@ -5,8 +5,8 @@ on:
     types: [ opened, synchronize, reopened ]
 
 permissions:
-  contents: read
-  checks: write
+  contents: write
+  pull-requests: write
 
 jobs:
   test:
@@ -21,9 +21,6 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
@@ -34,6 +31,8 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -43,11 +42,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           seconds_between_github_reads: 5
           seconds_between_github_writes: 5
-
-      - name: 실패한 테스트를 코드에 체크로 표시합니다
-        uses: mikepenz/action-junit-report@v3
-        if: always()
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
-          check_name: Test Report
-          github_token: ${{ secrets.GITHUB_TOKEN }}
