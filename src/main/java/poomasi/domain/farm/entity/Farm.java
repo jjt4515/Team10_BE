@@ -56,7 +56,7 @@ public class Farm {
     private FarmStatus status = FarmStatus.OPEN;
 
     @Comment("체험 비용")
-    private Long experiencePrice;
+    private int experiencePrice;
 
     @Comment("팀 최대 인원")
     private Integer maxCapacity;
@@ -80,7 +80,7 @@ public class Farm {
     List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -104,7 +104,7 @@ public class Farm {
         return this;
     }
 
-    public void updateExpPrice(Long expPrice) {
+    public void updateExpPrice(int expPrice) {
         this.experiencePrice = expPrice;
     }
 
