@@ -41,6 +41,8 @@ jobs:
         with:
           files: '**/build/test-results/test/TEST-*.xml'
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          seconds_between_github_reads: 5
+          seconds_between_github_writes: 5
 
       - name: 실패한 테스트를 코드에 체크로 표시합니다
         uses: mikepenz/action-junit-report@v3
