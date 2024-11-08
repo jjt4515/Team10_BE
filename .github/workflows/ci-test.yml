@@ -2,7 +2,11 @@ name: Run Tests on PR
 
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  checks: write
 
 jobs:
   test:
@@ -33,7 +37,7 @@ jobs:
         if: always()
         with:
           files: '**/build/test-results/test/TEST-*.xml'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 실패한 테스트를 코드에 체크로 표시합니다
         uses: mikepenz/action-junit-report@v3
@@ -41,4 +45,4 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           check_name: Test Report
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
