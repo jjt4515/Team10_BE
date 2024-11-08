@@ -1,9 +1,10 @@
 package poomasi.domain.farm.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,6 +59,12 @@ public class Farm {
     @Comment("체험 비용")
     private Long experiencePrice;
 
+    @Comment("팀 최대 인원")
+    private Integer maxCapacity;
+
+    @Comment("동일 시간대 최대 예약 가능 팀 수")
+    private Integer maxReservation;
+
     @Comment("삭제 일시")
     private LocalDateTime deletedAt;
 
@@ -78,7 +85,8 @@ public class Farm {
     private OrderedFarm orderedFarm;
 
     @Builder
-    public Farm(String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
+        this.id = id;
         this.name = name;
         this.ownerId = ownerId;
         this.address = address;
@@ -87,6 +95,8 @@ public class Farm {
         this.longitude = longitude;
         this.description = description;
         this.experiencePrice = experiencePrice;
+        this.maxCapacity = maxCapacity;
+        this.maxReservation = maxReservation;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
@@ -97,5 +107,17 @@ public class Farm {
         this.longitude = farmUpdateRequest.longitude();
         this.description = farmUpdateRequest.description();
         return this;
+    }
+
+    public void updateExpPrice(Long expPrice) {
+        this.experiencePrice = expPrice;
+    }
+
+    public void updateMaxCapacity(Integer maxCapacity) {
+        this.maxCapacity = maxCapacity;
+    }
+
+    public void updateMaxReservation(Integer maxReservation) {
+        this.maxReservation = maxReservation;
     }
 }

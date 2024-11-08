@@ -48,6 +48,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
+    @Column(name="deleted_at")
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -83,6 +84,10 @@ public class Member {
         this.loginType = loginType;
         this.provideId = provideId;
         this.memberProfile = memberProfile;
+    }
+
+    public boolean isCustomer() {
+        return role == Role.ROLE_CUSTOMER;
     }
 
     public boolean isFarmer() {

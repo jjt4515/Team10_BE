@@ -30,7 +30,7 @@ import poomasi.domain.auth.token.util.JwtUtil;
 @AllArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true , prePostEnabled = false) // 인가 처리에 대한 annotation
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = false) // 인가 처리에 대한 annotation
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -76,7 +76,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/farm/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
-                .requestMatchers("/api/sign-up", "/api/login", "api/reissue", "api/payment/**", "api/order/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                .requestMatchers("/api/sign-up", "/api/login", "api/reissue", "api/payment/**", "api/order/**", "api/reservation/**", "/api/v1/farmer/reservations").permitAll()
                 .requestMatchers("/api/need-auth/**").authenticated()
                 .anyRequest().
                 authenticated()
