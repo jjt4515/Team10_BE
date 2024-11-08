@@ -13,7 +13,7 @@ env:
   ECR_REPOSITORY: poomasi-server
   ECS_SERVICE: poomasi-server
   ECS_CLUSTER: poomasi
-  ECS_TASK_DEFINITION: tf-staging.json
+  ECS_TASK_DEFINITION: tf-prod.json
   CONTAINER_NAME: spring
   PROGRESS_SLACK_CHANNEL: C080DMAE7MX
 permissions:
@@ -64,10 +64,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 22
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '22'
+          java-version: '21'
           distribution: 'adopt'
 
       - name: Grant execute permission for gradlew
