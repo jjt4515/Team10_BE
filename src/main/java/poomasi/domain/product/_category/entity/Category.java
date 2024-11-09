@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import poomasi.domain.product._category.dto.CategoryRequest;
@@ -27,6 +28,13 @@ public class Category {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "categoryId")
     List<Product> products = new ArrayList<>();
+
+    @Builder
+    public Category(Long id, String name) {
+        this.id = id;
+        this.name = name;
+        this.products = new ArrayList<>();
+    }
 
     public Category(String name) {
         this.name = name;
