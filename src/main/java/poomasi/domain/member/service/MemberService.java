@@ -62,9 +62,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void convertToFarmer(Long memberId, Boolean hasFarmerQualification) {
-        Member member = findMemberById(memberId);
-
+    public void convertToFarmer(Member member, Boolean hasFarmerQualification) {
         if (member.isFarmer()) {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
         }

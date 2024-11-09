@@ -30,11 +30,12 @@ public class MemberController {
                 .signUp(signupRequest));
     }
 
-    @PutMapping("/toFarmer/{memberId}")
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> convertToFarmer(@PathVariable Long memberId,
+    @PutMapping("/toFarmer")
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                 @RequestBody FarmerQualificationRequest request) {
-        memberService.convertToFarmer(memberId, request.hasFarmerQualification());
+        Member member = userDetails.getMember();
+        memberService.convertToFarmer(member, request.hasFarmerQualification());
         return ResponseEntity.noContent().build();
     }
 
@@ -60,7 +61,7 @@ public class MemberController {
     }
 
     @GetMapping("/self")
-    @Secured({"ROLE_MEMBER", "ROLE_FARMER", "ROLE_ADMIN"})
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<MemberResponse> getSelfMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         MemberResponse memberResponse = memberService.getMemberById(member.getId());
@@ -68,7 +69,7 @@ public class MemberController {
     }
 
     @GetMapping("/summary/{memberId}")
-    @Secured({"ROLE_MEMBER", "ROLE_FARMER", "ROLE_ADMIN"})
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<MemberSummaryResponse> getMemberSummaryById(@PathVariable Long memberId) {
         MemberSummaryResponse memberSummaryResponse = memberService.getMemberSummary(memberId);
         return ResponseEntity.ok(memberSummaryResponse);
