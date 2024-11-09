@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 @Table(name = "member_profile")
 @AllArgsConstructor
 @Builder
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "profile_type")
 public class MemberProfile {
 
     @Id
@@ -23,18 +25,6 @@ public class MemberProfile {
 
     @Column(nullable = true, length = 20)
     private String phoneNumber;
-
-    @Column(nullable = true, length = 255)
-    private String address;
-
-    @Column(nullable = true, length = 255)
-    private String addressDetail;
-
-    @Column(nullable=true, length=255)
-    private Long coordinateX;
-
-    @Column(nullable=true, length=255)
-    private Long coordinateY;
 
     @Column(nullable = false)
     @Builder.Default
