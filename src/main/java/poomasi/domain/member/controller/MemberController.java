@@ -60,7 +60,7 @@ public class MemberController {
     }
 
     @GetMapping("/self")
-    @Secured({"ROLE_MEMBER", "ROLE_FARMER"})
+    @Secured({"ROLE_MEMBER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<MemberResponse> getSelfMember(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
         MemberResponse memberResponse = memberService.getMemberById(member.getId());
