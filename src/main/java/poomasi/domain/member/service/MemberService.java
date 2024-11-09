@@ -35,7 +35,7 @@ public class MemberService {
         String email = signupRequest.email();
         String password = signupRequest.password();
 
-        memberRepository.findByEmail(email)
+        memberRepository.findByEmailAndDeletedAtIsNull(email)
                 .ifPresent(member -> { throw new BusinessException(DUPLICATE_MEMBER_EMAIL); });
 
         Member newMember = new Member(name, email,
