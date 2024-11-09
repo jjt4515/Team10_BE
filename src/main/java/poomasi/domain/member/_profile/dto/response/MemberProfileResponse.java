@@ -4,9 +4,9 @@ import poomasi.domain.member._profile.entity.CustomerProfile;
 import poomasi.domain.member._profile.entity.FarmerProfile;
 import poomasi.domain.member._profile.entity.MemberProfile;
 
-public class MemberProfileResponse {
+public interface MemberProfileResponse {
 
-    public static Object fromEntity(MemberProfile profile) {
+    static MemberProfileResponse fromEntity(MemberProfile profile) {
         if (profile instanceof FarmerProfile farmerProfile) {
             return FarmerProfileResponse.fromEntity(farmerProfile);
         } else if (profile instanceof CustomerProfile customerProfile) {

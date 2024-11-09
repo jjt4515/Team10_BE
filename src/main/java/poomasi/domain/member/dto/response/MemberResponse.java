@@ -8,7 +8,7 @@ public record MemberResponse(
         String name,
         String email,
         String role,
-        Object memberProfile
+        MemberProfileResponse memberProfile
 ) {
     public static MemberResponse fromEntity(Member member) {
         return new MemberResponse(
