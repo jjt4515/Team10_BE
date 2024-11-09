@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.member.dto.request.CustomerUpdateRequest;
+import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.dto.response.MemberSummaryResponse;
 import poomasi.domain.member.entity.LoginType;
@@ -15,6 +17,8 @@ import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.global.error.BusinessException;
+
+import java.util.Optional;
 
 import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
 import static poomasi.domain.member.entity.Role.ROLE_FARMER;
@@ -91,6 +95,25 @@ public class MemberService {
     public Member findMemberById(Long memberId) {
         return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+    }
+
+    public Member updateCustomer(Member member, CustomerUpdateRequest customerUpdateRequest)
+    {
+        Optional.ofNullable(customerUpdateRequest.name()).ifPresent(member::setName);
+        Optional.ofNullable(customerUpdateRequest.email()).ifPresent(member::setEmail);
+        Optional.ofNullable(customerUpdateRequest.password()).ifPresent(member::setPassword);
+
+        return memberRepository.save(member);
+    }
+
+    public Member updateFarmer(Member member, FarmerUpdateRequest farmerUpdateRequest)
+    {
+        Optional.ofNullable(farmerUpdateRequest.name()).ifPresent(member::setName);
+        Optional.ofNullable(farmerUpdateRequest.email()).ifPresent(member::setEmail);
+        Optional.ofNullable(farmerUpdateRequest.password()).ifPresent(member::setPassword);
+
+
+        return memberRepository.save(member);
     }
 
 }

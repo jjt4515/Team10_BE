@@ -9,7 +9,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerQualificationRequest;
+import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.dto.response.MemberSummaryResponse;
 import poomasi.domain.member.entity.Member;
@@ -74,6 +76,33 @@ public class MemberController {
         MemberSummaryResponse memberSummaryResponse = memberService.getMemberSummary(memberId);
         return ResponseEntity.ok(memberSummaryResponse);
     }
+
+    @PutMapping("/customer/update")
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<MemberResponse> updateCustomer(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody CustomerUpdateRequest customerUpdateRequest) {
+
+        Member member = userDetails.getMember();
+        Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
+
+        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
+        return ResponseEntity.ok(memberResponse);
+    }
+
+    @PutMapping("/farmer/update")
+    @Secured("ROLE_FARMER")
+    public ResponseEntity<MemberResponse> updateFarmer(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
+
+        Member member = userDetails.getMember();
+        Member updatedMember = memberService.updateFarmer(member, farmerUpdateRequest);
+
+        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
+        return ResponseEntity.ok(memberResponse);
+    }
+
 
 
 }
