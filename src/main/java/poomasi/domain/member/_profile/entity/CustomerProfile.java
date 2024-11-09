@@ -3,8 +3,10 @@ package poomasi.domain.member._profile.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import lombok.Getter;
 
 @Entity
+@Getter
 @DiscriminatorValue("CUSTOMER")
 public class CustomerProfile extends MemberProfile{
     @Column(nullable = true, length = 255)

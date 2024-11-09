@@ -44,7 +44,7 @@ public class MemberService {
                 ROLE_CUSTOMER);
 
         memberRepository.save(newMember);
-        return new SignUpResponse(email, "회원 가입 성공");
+        return new SignUpResponse(name, email, "회원 가입 성공");
     }
 
     public MemberResponse getMemberById(Long memberId) {

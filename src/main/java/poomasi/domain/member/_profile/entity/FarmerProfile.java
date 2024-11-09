@@ -1,10 +1,12 @@
 package poomasi.domain.member._profile.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.List;
 
 @Entity
+@Getter
 @DiscriminatorValue("FARMER")
 public class FarmerProfile extends MemberProfile{
     @Column(nullable = true, length = 100, unique = true)
