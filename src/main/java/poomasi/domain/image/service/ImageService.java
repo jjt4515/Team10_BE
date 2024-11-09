@@ -10,7 +10,6 @@ import poomasi.domain.image.repository.ImageRepository;
 import poomasi.domain.image.validation.ImageOwnerValidator;
 import poomasi.domain.image.validation.ImageOwnerValidatorFactory;
 import poomasi.domain.member._profile.entity.MemberProfile;
-import poomasi.domain.member._profile.repository.MemberProfileRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
@@ -33,7 +32,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final ImageOwnerValidatorFactory validatorFactory;
     private final MemberRepository memberRepository;
-    private final MemberProfileRepository memberProfileRepository;
+    private final MemberProfileService memberProfileService;
 
 
     @Transactional
@@ -98,10 +97,9 @@ public class ImageService {
     }
 
     private void linkImageToMemberProfile(Long referenceId, Image savedImage) {
-        MemberProfile memberProfile = memberProfileRepository.findById(referenceId)
-                .orElseThrow(() -> new BusinessException(MEMBER_PROFILE_NOT_FOUND));
+        MemberProfile memberProfile = memberProfileService.getMemberProfileById(referenceId);
         memberProfile.setProfileImage(savedImage);
-        memberProfileRepository.save(memberProfile);
+        memberProfileService.saveMemberProfile(memberProfile);
     }
 
     // 여러 이미지 저장

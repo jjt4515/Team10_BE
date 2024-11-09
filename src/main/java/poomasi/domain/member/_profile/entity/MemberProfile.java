@@ -62,4 +62,7 @@ public class MemberProfile {
         this.name = "UNKNOWN"; // name not null 조건 때문에 임시로 넣었습니다. nullable도 true로 넣었는데 안 되네요
     }
 
+    public MemberProfile(String name){
+        this.name = name;
+    }
 }
