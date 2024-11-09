@@ -79,7 +79,8 @@ public class Member {
     }
 
     @Builder
-    public Member(String email, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+    public Member(Long id, String email, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+        this.id = id;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
