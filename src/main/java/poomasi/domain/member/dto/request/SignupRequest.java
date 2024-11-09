@@ -1,4 +1,4 @@
-package poomasi.domain.auth.signup.dto.request;
+package poomasi.domain.member.dto.request;
 
 public record SignupRequest(String email, String password) {
 }

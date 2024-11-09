@@ -23,6 +23,7 @@ public record ReservationRequest(
                 .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
+                .price(farm.getExperiencePrice() * memberCount)
                 .status(ReservationStatus.ACCEPTED)
                 .build();
     }

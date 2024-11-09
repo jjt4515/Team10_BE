@@ -1,19 +1,7 @@
 package poomasi.domain.member.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,9 +9,11 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.store.entity.Store;
+import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.wishlist.entity.WishList;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+import java.util.*;
 
 @Getter
 @Entity

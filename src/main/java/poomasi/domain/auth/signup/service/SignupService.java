@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.auth.signup.dto.request.SignupRequest;
-import poomasi.domain.auth.signup.dto.response.SignUpResponse;
+
+import poomasi.domain.member.dto.request.SignupRequest;
+import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.member.entity.Member;

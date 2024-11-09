@@ -18,9 +18,13 @@ public class ReissueTokenService {
     private final RefreshTokenService refreshTokenService;
 
     // 토큰 재발급
-    public ReissueResponse reissueToken(ReissueRequest reissueRequest) {
+    public ReissueResponse reissueToken(Long memberId, ReissueRequest reissueRequest) {
         String refreshToken = reissueRequest.refreshToken();
-        Long memberId = jwtUtil.getIdFromToken(refreshToken);
+        Long requestMemberId = jwtUtil.getIdFromToken(refreshToken);
+
+        if (!requestMemberId.equals(memberId)) {
+            throw new BusinessException(REFRESH_TOKEN_NOT_VALID);
+        }
 
         checkRefreshToken(refreshToken, memberId);
 
