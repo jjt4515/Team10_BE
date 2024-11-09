@@ -21,9 +21,6 @@ import poomasi.domain.member.service.MemberService;
 @Configuration
 public class SecurityBeanGenerator {
 
-    private final TokenStorageService tokenStorageService;
-    private final MemberService memberService;
-    private final TokenBlacklistService tokenBlacklistService;
 
     @Bean
     @Description("AuthenticationProvider를 위한 Spring bean")
@@ -37,11 +34,5 @@ public class SecurityBeanGenerator {
         return new MvcRequestMatcher.Builder(introspector);
     }
 
-    @Bean
-    JwtUtil jwtUtil(){
-        return new JwtUtil(tokenBlacklistService,
-                tokenStorageService,
-                memberService);
-    }
 
 }
