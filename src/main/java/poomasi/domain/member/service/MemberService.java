@@ -31,13 +31,14 @@ public class MemberService {
     @Description("카카오톡으로 먼저 회원가입이 되어 있는 경우, 계정 연동을 진행합니다. ")
     @Transactional
     public SignUpResponse signUp(SignupRequest signupRequest) {
+        String name = signupRequest.name();
         String email = signupRequest.email();
         String password = signupRequest.password();
 
         memberRepository.findByEmail(email)
                 .ifPresent(member -> { throw new BusinessException(DUPLICATE_MEMBER_EMAIL); });
 
-        Member newMember = new Member(email,
+        Member newMember = new Member(name, email,
                 passwordEncoder.encode(password),
                 LoginType.LOCAL,
                 ROLE_CUSTOMER);

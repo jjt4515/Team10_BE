@@ -3,7 +3,6 @@ package poomasi.domain.member._profile.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.member._profile.dto.request.MemberProfileRequest;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member._profile.repository.MemberProfileRepository;
 import poomasi.global.error.BusinessException;

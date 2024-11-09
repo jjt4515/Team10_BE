@@ -24,6 +24,9 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true, length = 50)
+    private String name;
+
     @Column(unique = true, nullable = true, length = 50)
     private String email;
 
@@ -59,15 +62,11 @@ public class Member {
     @Column(nullable = true)
     private String farmerTierCode;
 
-    public Member(String email, String password, LoginType loginType, Role role) {
+    public Member(String name, String email, String password, LoginType loginType, Role role) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.loginType = loginType;
-        this.role = role;
-    }
-
-    public Member(String email, Role role) {
-        this.email = email;
         this.role = role;
     }
 
