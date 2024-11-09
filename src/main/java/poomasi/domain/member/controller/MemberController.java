@@ -53,11 +53,11 @@ public class MemberController {
         return ResponseEntity.ok(memberResponse);
     }
 
-    @GetMapping
+    @GetMapping("/summary")
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Page<MemberResponse>> getMembers(@PageableDefault(size = 10) Pageable pageable) {
-        Page<MemberResponse> memberResponses = memberService.getAllMembers(pageable);
-        return ResponseEntity.ok(memberResponses);
+    public ResponseEntity<Page<MemberSummaryResponse>> getMembersSummary(@PageableDefault(size = 10) Pageable pageable) {
+        Page<MemberSummaryResponse> memberSummaryResponses = memberService.getAllMembersSummary(pageable);
+        return ResponseEntity.ok(memberSummaryResponses);
     }
 
     @GetMapping("/self")

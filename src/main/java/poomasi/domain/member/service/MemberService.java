@@ -57,9 +57,9 @@ public class MemberService {
         return MemberSummaryResponse.fromEntity(member);
     }
 
-    public Page<MemberResponse> getAllMembers(Pageable pageable) {
+    public Page<MemberSummaryResponse> getAllMembersSummary(Pageable pageable) {
         Page<Member> members = memberRepository.findAll(pageable);
-        return members.map(MemberResponse::fromEntity);
+        return members.map(MemberSummaryResponse::fromEntity);
     }
 
     @Transactional
