@@ -10,6 +10,7 @@ import poomasi.domain.image.repository.ImageRepository;
 import poomasi.domain.image.validation.ImageOwnerValidator;
 import poomasi.domain.image.validation.ImageOwnerValidatorFactory;
 import poomasi.domain.member._profile.entity.MemberProfile;
+import poomasi.domain.member._profile.service.MemberProfileService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
