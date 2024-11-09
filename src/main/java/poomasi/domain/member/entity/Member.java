@@ -10,6 +10,7 @@ import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
