@@ -23,8 +23,7 @@ public class MemberProfileService {
     }
 
     @Transactional
-    public MemberProfile saveMemberProfile(MemberProfileRequest memberProfileRequest){
-        MemberProfile memberProfile = MemberProfileRequest.toEntity(memberProfileRequest);
+    public MemberProfile saveMemberProfile(MemberProfile memberProfile){
         return memberProfileRepository.save(memberProfile);
     }
 }
