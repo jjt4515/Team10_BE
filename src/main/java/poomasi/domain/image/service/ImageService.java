@@ -26,6 +26,10 @@ import static poomasi.global.error.BusinessError.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ImageService {
+
+    private static final int DEFAULT_IMAGE_LIMIT = 5;
+    private static final int MEMBER_PROFILE_IMAGE_LIMIT = 1;
+
     private final ImageRepository imageRepository;
     private final ImageOwnerValidatorFactory validatorFactory;
     private final MemberRepository memberRepository;
@@ -83,8 +87,10 @@ public class ImageService {
     }
 
     private void validateImageLimit(ImageRequest imageRequest) {
-        int imageLimit = 5;
-        if (imageRequest.type() == ImageType.MEMBER_PROFILE) imageLimit = 1; // 멤버 프로필 이미지는 한 장으로 제한
+        int imageLimit = DEFAULT_IMAGE_LIMIT;
+        if (imageRequest.type() == ImageType.MEMBER_PROFILE) {
+            imageLimit = MEMBER_PROFILE_IMAGE_LIMIT; // 멤버 프로필 이미지는 한 장으로 제한
+        }
 
         if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= imageLimit) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
