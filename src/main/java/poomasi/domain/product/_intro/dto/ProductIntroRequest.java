@@ -19,7 +19,8 @@ public record ProductIntroRequest(
         String subDesc3,
         String subImage3
 ) {
-    public ProductIntro toEntity(Product product){
+
+    public ProductIntro toEntity(Product product) {
         return ProductIntro.builder()
                 .product(product)
 

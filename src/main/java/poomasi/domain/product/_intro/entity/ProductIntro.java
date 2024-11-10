@@ -16,6 +16,7 @@ import poomasi.domain.product.entity.Product;
 @Getter
 @NoArgsConstructor
 public class ProductIntro {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

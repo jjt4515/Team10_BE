@@ -2,7 +2,6 @@ package poomasi.domain.product._intro.dto;
 
 import lombok.Builder;
 import poomasi.domain.product._intro.entity.ProductIntro;
-import poomasi.domain.product.entity.Product;
 
 @Builder
 public record ProductIntroResponse(
@@ -21,7 +20,8 @@ public record ProductIntroResponse(
         String subDesc3,
         String subImage3
 ) {
-    public static ProductIntroResponse fromEntity(ProductIntro product){
+
+    public static ProductIntroResponse fromEntity(ProductIntro product) {
         return ProductIntroResponse.builder()
                 .mainImage(product.getMainImage())
                 .mainTitle(product.getMainTitle())

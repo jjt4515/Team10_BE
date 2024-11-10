@@ -9,7 +9,6 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._intro.dto.ProductIntroRequest;
 import poomasi.domain.product._intro.dto.ProductIntroResponse;
-import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product._intro.repository.ProductIntroRepository;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
@@ -19,6 +18,7 @@ import poomasi.global.error.BusinessException;
 @Service
 @RequiredArgsConstructor
 public class ProductIntroService {
+
     private final ProductIntroRepository productIntroRepository;
     private final ProductRepository productRepository;
 
@@ -31,8 +31,9 @@ public class ProductIntroService {
     public void updateIntro(ProductIntroRequest productIntroRequest, Long productId) {
         Member member = getMember();
         Product product = getProduct(productId);
-        if(!member.getId().equals(product.getFarmerId()))
+        if (!member.getId().equals(product.getFarmerId())) {
             throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
+        }
 
         product.getProductIntro().update(productIntroRequest);
     }
@@ -46,6 +47,6 @@ public class ProductIntroService {
 
     private Product getProduct(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(()-> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
     }
 }
