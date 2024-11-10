@@ -67,13 +67,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void convertToFarmer(Member member, Boolean hasFarmerQualification) {
+    public void convertToFarmer(Member member) {
         if (member.isFarmer()) {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
-        }
-
-        if (!hasFarmerQualification) {
-            throw new BusinessException(INVALID_FARMER_QUALIFICATION);
         }
 
         member.setRole(ROLE_FARMER);

@@ -66,7 +66,7 @@ public class Member {
 
     @Setter
     @OneToOne(mappedBy="owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Store store;
+    private Store store;
 
     public Member(String name, String email, String password, LoginType loginType, Role role) {
         this.name = name;
@@ -77,14 +77,13 @@ public class Member {
     }
 
     @Builder
-    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
         this.provideId = provideId;
-        this.memberProfile = memberProfile;
     }
 
     public boolean isCustomer() {
