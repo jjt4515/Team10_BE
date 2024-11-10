@@ -111,6 +111,8 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+
+
     // 배송지 수정
     // 이미지 등록, 수정, 삭제
     // 금지

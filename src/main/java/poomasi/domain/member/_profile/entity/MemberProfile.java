@@ -45,7 +45,6 @@ public class MemberProfile {
     @Column(nullable=true, length=255)
     private Long coordinateX;
 
-    @Setter
     @Column(nullable=true, length=255)
     private Long coordinateY;
 

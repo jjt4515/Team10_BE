@@ -103,7 +103,7 @@ public class MemberService {
             throw new BusinessException(INVALID_ROLE);
         }
 
-        updateCommonAttributes(member, customerUpdateRequest.name(),customerUpdateRequest.email(), customerUpdateRequest.password());
+        updateCommonAttributes(member, customerUpdateRequest.name(),customerUpdateRequest.email(), customerUpdateRequest.password(), customerUpdateRequest.phoneNumber());
 
         return memberRepository.save(member);
     }
@@ -115,13 +115,7 @@ public class MemberService {
             throw new BusinessException(INVALID_ROLE);
         }
 
-        updateCommonAttributes(member, farmerUpdateRequest.name(), farmerUpdateRequest.email(), farmerUpdateRequest.password());
-
-        MemberProfile profile = member.getOrCreateProfile();
-
-        if (farmerUpdateRequest.phoneNumber() != null) {
-            profile.setPhoneNumber(farmerUpdateRequest.phoneNumber());
-        }
+        updateCommonAttributes(member, farmerUpdateRequest.name(), farmerUpdateRequest.email(), farmerUpdateRequest.password(), farmerUpdateRequest.phoneNumber());
 
         Store store = member.getOrCreateStore();
 
@@ -135,10 +129,15 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    private void updateCommonAttributes(Member member, String name, String email, String password) {
+    private void updateCommonAttributes(Member member, String name, String email, String password, String phoneNumber) {
         if (name != null) member.setName(name);
         if (email != null) member.setEmail(email);
         if (password != null) member.setPassword(passwordEncoder.encode(password));
+
+        MemberProfile profile = member.getOrCreateProfile();
+        if (phoneNumber != null) {
+            profile.setPhoneNumber(phoneNumber);
+        }
     }
 
     @Transactional
