@@ -1,39 +1,25 @@
 package poomasi.domain.member._profile.dto.response;
 
-import lombok.AllArgsConstructor;
 import poomasi.domain.image.entity.Image;
-import poomasi.domain.member._profile.entity.FarmerProfile;
+import poomasi.domain.member._profile.entity.MemberProfile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@AllArgsConstructor
-public class FarmerProfileResponse implements MemberProfileResponse {
-    String phoneNumber;
-    boolean isBanned;
-    LocalDateTime createdAt;
-    Image profileImage;
-    String storeName;
-    String farmName;
-    List<String> businessRegistrationNumbers;
-    String storeAddress;
-    String storeAddressDetail;
-    String farmAddress;
-    String farmAddressDetail;
-
-    public static FarmerProfileResponse fromEntity(FarmerProfile profile) {
+public record FarmerProfileResponse(
+        String phoneNumber,
+        boolean isBanned,
+        LocalDateTime createdAt,
+        Image profileImage,
+        List<String> businessRegistrationNumbers
+){
+    public static FarmerProfileResponse fromEntity(MemberProfile profile) {
         return new FarmerProfileResponse(
                 profile.getPhoneNumber(),
                 profile.isBanned(),
                 profile.getCreatedAt(),
                 profile.getProfileImage(),
-                profile.getStoreName(),
-                profile.getFarmName(),
-                profile.getBusinessRegistrationNumbers(),
-                profile.getStoreAddress(),
-                profile.getStoreAddressDetail(),
-                profile.getFarmAddress(),
-                profile.getFarmAddressDetail()
+                profile.getBusinessRegistrationNumbers()
         );
     }
 }

@@ -76,13 +76,6 @@ public class Member {
         this.role = role;
     }
 
-    public void setMemberProfile(MemberProfile memberProfile) {
-        this.memberProfile = memberProfile;
-        if (memberProfile != null) {
-            memberProfile.setMember(this);
-        }
-    }
-
     @Builder
     public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
         this.id = id;

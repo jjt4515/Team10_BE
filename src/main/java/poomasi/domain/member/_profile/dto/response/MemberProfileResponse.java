@@ -1,18 +1,34 @@
 package poomasi.domain.member._profile.dto.response;
 
-import poomasi.domain.member._profile.entity.CustomerProfile;
-import poomasi.domain.member._profile.entity.FarmerProfile;
+import poomasi.domain.image.entity.Image;
 import poomasi.domain.member._profile.entity.MemberProfile;
 
-public interface MemberProfileResponse {
+import java.time.LocalDateTime;
+import java.util.List;
 
-    static MemberProfileResponse fromEntity(MemberProfile profile) {
-        if (profile instanceof FarmerProfile farmerProfile) {
-            return FarmerProfileResponse.fromEntity(farmerProfile);
-        } else if (profile instanceof CustomerProfile customerProfile) {
-            return CustomerProfileResponse.fromEntity(customerProfile);
-        } else {
-            return CommonProfileResponse.fromEntity(profile);
-        }
+public record MemberProfileResponse(
+        String phoneNumber,
+        String address,
+        String addressDetail,
+        Long coordinateX,
+        Long coordinateY,
+        List<String> businessRegistrationNumbers,
+        boolean isBanned,
+        LocalDateTime createdAt,
+        Image profileImage){
+
+
+    public static MemberProfileResponse fromEntity(MemberProfile profile) {
+        return new MemberProfileResponse(
+                profile.getPhoneNumber(),
+                profile.getAddress(),
+                profile.getAddressDetail(),
+                profile.getCoordinateX(),
+                profile.getCoordinateY(),
+                profile.getBusinessRegistrationNumbers(),
+                profile.isBanned(),
+                profile.getCreatedAt(),
+                profile.getProfileImage()
+        );
     }
 }

@@ -6,14 +6,13 @@ import poomasi.domain.image.entity.Image;
 import poomasi.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
 @Table(name = "member_profile")
 @AllArgsConstructor
 @Builder
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "profile_type")
 public class MemberProfile {
 
     @Id
@@ -35,10 +34,29 @@ public class MemberProfile {
     @JoinColumn(name = "profile_image_id")
     private Image profileImage;
 
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "id")
-    private Member member;
+    // customer인 경우
+    @Column(nullable = true, length = 255)
+    private String address;
+
+    @Column(nullable = true, length = 255)
+    private String addressDetail;
+
+    @Column(nullable=true, length=255)
+    private Long coordinateX;
+
+    @Column(nullable=true, length=255)
+    private Long coordinateY;
+
+    // farmer인 경우
+    @ElementCollection
+    @CollectionTable(name = "business_registration_numbers", joinColumns = @JoinColumn(name = "farmer_profile_id"))
+    @Column(nullable = true, length=255)
+    private List<String> businessRegistrationNumbers;
+
+//    @Setter
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id", referencedColumnName = "id")
+//    private Member member;
 
     @PrePersist
     public void prePersist() {
