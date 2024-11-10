@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
-import poomasi.domain.member.dto.response.MemberResponse;
-import poomasi.domain.member.dto.response.MemberSummaryResponse;
+import poomasi.domain.member.dto.response.*;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
 import poomasi.domain.member.dto.request.SignupRequest;
-import poomasi.domain.member.dto.response.SignUpResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -77,27 +75,27 @@ public class MemberController {
 
     @PutMapping("/customer/update")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<MemberResponse> updateCustomer(
+    public ResponseEntity<CustomerResponse> updateCustomer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CustomerUpdateRequest customerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
 
-        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
+        CustomerResponse memberResponse = CustomerResponse.fromEntity(updatedMember);
         return ResponseEntity.ok(memberResponse);
     }
 
     @PutMapping("/farmer/update")
     @Secured("ROLE_FARMER")
-    public ResponseEntity<MemberResponse> updateFarmer(
+    public ResponseEntity<FarmerResponse> updateFarmer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateFarmer(member, farmerUpdateRequest);
 
-        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
+        FarmerResponse memberResponse = FarmerResponse.fromEntity(updatedMember);
         return ResponseEntity.ok(memberResponse);
     }
 

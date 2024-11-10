@@ -26,12 +26,15 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(nullable = true, length = 50)
     private String name;
 
+    @Setter
     @Column(unique = true, nullable = true, length = 50)
     private String email;
 
+    @Setter
     @Column(nullable = true)
     private String password;
 
