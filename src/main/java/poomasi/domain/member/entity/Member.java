@@ -107,5 +107,22 @@ public class Member {
         return store;
     }
 
+    public MemberProfile getOrCreateProfile() {
+        if (this.memberProfile == null) {
+            this.memberProfile = new MemberProfile();
+        }
+        return memberProfile;
+    }
+
+    public Store getOrCreateStore() {
+        if (this.store == null) {
+            this.store = new Store();
+            this.store.setOwner(this);
+        }
+        return store;
+    }
+
+
+
 }
 //멤버에 농장, 스토어 두고 거기서 주솟값 가져오는 걸로 바꾸기

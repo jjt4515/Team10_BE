@@ -3,10 +3,8 @@ package poomasi.domain.member._profile.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import poomasi.domain.image.entity.Image;
-import poomasi.domain.member.entity.Member;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -19,6 +17,7 @@ public class MemberProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Column(nullable = true, length = 20)
     private String phoneNumber;
 
@@ -34,9 +33,9 @@ public class MemberProfile {
     @JoinColumn(name = "profile_image_id")
     private Image profileImage;
 
-    // customer인 경우
+    // 기본 배송지
     @Column(nullable = true, length = 255)
-    private String address;
+    private String defaultAddress;
 
     @Column(nullable = true, length = 255)
     private String addressDetail;
@@ -46,17 +45,6 @@ public class MemberProfile {
 
     @Column(nullable=true, length=255)
     private Long coordinateY;
-
-    // farmer인 경우
-    @ElementCollection
-    @CollectionTable(name = "business_registration_numbers", joinColumns = @JoinColumn(name = "farmer_profile_id"))
-    @Column(nullable = true, length=255)
-    private List<String> businessRegistrationNumbers;
-
-//    @Setter
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "member_id", referencedColumnName = "id")
-//    private Member member;
 
     @PrePersist
     public void prePersist() {

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
@@ -16,6 +17,7 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.SignUpResponse;
+import poomasi.domain.store.entity.Store;
 import poomasi.global.error.BusinessException;
 
 import java.util.Optional;
@@ -95,21 +97,44 @@ public class MemberService {
 
     public Member updateCustomer(Member member, CustomerUpdateRequest customerUpdateRequest)
     {
-        Optional.ofNullable(customerUpdateRequest.name()).ifPresent(member::setName);
-        Optional.ofNullable(customerUpdateRequest.email()).ifPresent(member::setEmail);
-        Optional.ofNullable(customerUpdateRequest.password()).ifPresent(member::setPassword);
+        if (!member.isCustomer()) {
+            throw new BusinessException(INVALID_ROLE);
+        }
+
+        updateCommonAttributes(member, customerUpdateRequest.name(),customerUpdateRequest.email(), customerUpdateRequest.password());
 
         return memberRepository.save(member);
     }
 
     public Member updateFarmer(Member member, FarmerUpdateRequest farmerUpdateRequest)
     {
-        Optional.ofNullable(farmerUpdateRequest.name()).ifPresent(member::setName);
-        Optional.ofNullable(farmerUpdateRequest.email()).ifPresent(member::setEmail);
-        Optional.ofNullable(farmerUpdateRequest.password()).ifPresent(member::setPassword);
+        if (!member.isFarmer()) {
+            throw new BusinessException(INVALID_ROLE);
+        }
+
+        updateCommonAttributes(member, farmerUpdateRequest.name(), farmerUpdateRequest.email(), farmerUpdateRequest.password());
+
+        MemberProfile profile = member.getOrCreateProfile();
+
+        Optional.ofNullable(farmerUpdateRequest.phoneNumber()).ifPresent(profile::setPhoneNumber);
+
+        Store store = member.getOrCreateStore();
+
+        if (farmerUpdateRequest.storeName() != null) {
+            store.setName(farmerUpdateRequest.storeName());
+        }
+        if (farmerUpdateRequest.storeAddress() != null) {
+            store.setAddress(farmerUpdateRequest.storeAddress());
+        }
 
 
         return memberRepository.save(member);
+    }
+
+    private void updateCommonAttributes(Member member, String name, String email, String password) {
+        if (name != null) member.setName(name);
+        if (email != null) member.setEmail(email);
+        if (password != null) member.setPassword(passwordEncoder.encode(password));
     }
 
 }

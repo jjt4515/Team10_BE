@@ -75,14 +75,14 @@ public class MemberController {
 
     @PutMapping("/customer/update")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<CustomerResponse> updateCustomer(
+    public ResponseEntity<MemberResponse> updateCustomer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody CustomerUpdateRequest customerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
 
-        CustomerResponse memberResponse = CustomerResponse.fromEntity(updatedMember);
+        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
         return ResponseEntity.ok(memberResponse);
     }
 

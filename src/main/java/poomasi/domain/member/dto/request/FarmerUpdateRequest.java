@@ -6,6 +6,5 @@ public record FarmerUpdateRequest(
         String password,
         String phoneNumber,
         String storeName,
-        String storeAddress,
-        String storeAddressDetail) {
+        String storeAddress) {
 }

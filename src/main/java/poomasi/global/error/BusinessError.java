@@ -24,6 +24,7 @@ public enum BusinessError {
     MEMBER_ALREADY_CUSTOMER(HttpStatus.BAD_REQUEST, "이미 고객인 회원입니다."),
     MEMBER_ALREADY_FARMER(HttpStatus.BAD_REQUEST, "이미 농부인 회원입니다."),
     MEMBER_ID_MISMATCH(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
+    INVALID_ROLE(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
 
     // MemberProfile
     MEMBER_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 세부 정보가 존재하지 않습니다."),
