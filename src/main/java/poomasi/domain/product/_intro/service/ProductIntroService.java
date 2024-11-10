@@ -28,21 +28,13 @@ public class ProductIntroService {
     }
 
     @Transactional
-    public void updateIntro(ProductIntroRequest productIntroRequest, Long productId) {
-        Member member = getMember();
+    public void updateIntro(Member member, ProductIntroRequest productIntroRequest, Long productId) {
         Product product = getProduct(productId);
         if (!member.getId().equals(product.getFarmerId())) {
             throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
         }
 
         product.getProductIntro().update(productIntroRequest);
-    }
-
-    private Member getMember() {
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        Object impl = authentication.getPrincipal();
-        return ((UserDetailsImpl) impl).getMember();
     }
 
     private Product getProduct(Long productId) {

@@ -5,6 +5,8 @@ import poomasi.domain.product._intro.entity.ProductIntro;
 
 @Builder
 public record ProductIntroResponse(
+        Long productIntroId,
+
         String mainTitle,
         String mainImage,
 
@@ -23,6 +25,8 @@ public record ProductIntroResponse(
 
     public static ProductIntroResponse fromEntity(ProductIntro product) {
         return ProductIntroResponse.builder()
+                .productIntroId(product.getId())
+
                 .mainImage(product.getMainImage())
                 .mainTitle(product.getMainTitle())
 

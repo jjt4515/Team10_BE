@@ -8,7 +8,6 @@ public record StoreRegisterRequest(
         String name,
         String address,
         String phone,
-        String ownerPhone,
         @Comment("사업자 번호")
         String businessNumber,
         @Comment("배송비")
@@ -20,7 +19,6 @@ public record StoreRegisterRequest(
                 .name(name)
                 .address(address)
                 .phone(phone)
-                .ownerPhone(ownerPhone)
                 .businessNumber(businessNumber)
                 .shipingFee(shipingFee)
                 .owner(member)

@@ -41,7 +41,6 @@ public record StoreResponse(
                 .name(store.getName())
                 .address(store.getAddress())
                 .phone(store.getPhone())
-                .ownerPhone(store.getOwnerPhone())
                 .businessNumber(store.getBusinessNumber())
                 .shipingFee(store.getShipingFee())
                 //TODO 나중에 삼항연산자 삭제

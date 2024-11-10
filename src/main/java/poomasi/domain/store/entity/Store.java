@@ -33,7 +33,6 @@ public class Store {
     @OneToOne(fetch = FetchType.LAZY)
     private Member owner;
 
-    private String ownerPhone;
     @Comment("사업자 번호")
     private String businessNumber;
     @Comment("배송비")
@@ -44,13 +43,12 @@ public class Store {
 
     @Builder
     public Store(Long id, String name, String address, String phone, Member owner,
-            String ownerPhone, String businessNumber, Integer shipingFee) {
+            String businessNumber, Integer shipingFee) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.owner = owner;
-        this.ownerPhone = ownerPhone;
         this.businessNumber = businessNumber;
         this.shipingFee = shipingFee;
     }
@@ -59,7 +57,6 @@ public class Store {
         this.name = storeRegisterRequest.name();
         this.address = storeRegisterRequest.address();
         this.phone = storeRegisterRequest.phone();
-        this.ownerPhone = storeRegisterRequest.ownerPhone();
         this.businessNumber = storeRegisterRequest.businessNumber();
         this.shipingFee = storeRegisterRequest.shipingFee();
     }
