@@ -7,7 +7,7 @@ public record MemberSummaryResponse(String name, Image profileImage) {
     public static MemberSummaryResponse fromEntity(Member member) {
         return new MemberSummaryResponse(
                 member.getName(),
-                member.getMemberProfile().getProfileImage()
+                member.getMemberProfile() != null ? member.getMemberProfile().getProfileImage() : null
         );
     }
 }
