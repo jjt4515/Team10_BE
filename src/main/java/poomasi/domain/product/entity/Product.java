@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.order.entity.OrderProductDetails;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
@@ -89,6 +91,8 @@ public class Product {
     @JoinColumn(name = "order_product_details_id")
     private List<OrderProductDetails> orderProductDetails;
 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductIntro productIntro;
 
     @Builder
     public Product(Long productId,
@@ -99,7 +103,8 @@ public class Product {
             String imageUrl,
             Integer stock,
             Long price,
-            Store store) {
+            Store store
+    ) {
         this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
@@ -109,6 +114,7 @@ public class Product {
         this.stock = stock;
         this.price = price;
         this.store = store;
+        this.productIntro = new ProductIntro(this);
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {

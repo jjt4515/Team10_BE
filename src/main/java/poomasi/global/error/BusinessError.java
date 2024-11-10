@@ -87,7 +87,10 @@ public enum BusinessError {
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다."),
 
     //Store
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다.");
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
+
+    //Product intro
+    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다.");
 
     private final HttpStatus httpStatus;
 
