@@ -2,6 +2,7 @@ package poomasi.domain.member._profile.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.image.entity.Image;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "member_profile")
 @AllArgsConstructor
 @Builder
+@SQLDelete(sql = "UPDATE member SET deleted_at = current_timestamp WHERE id = ?")
 public class MemberProfile {
 
     @Id
@@ -43,6 +45,7 @@ public class MemberProfile {
     @Column(nullable=true, length=255)
     private Long coordinateX;
 
+    @Setter
     @Column(nullable=true, length=255)
     private Long coordinateY;
 
@@ -53,4 +56,18 @@ public class MemberProfile {
 
     public MemberProfile() {
     }
+
+    public void setAddress(
+            String defaultAddress,
+            String addressDetail,
+            Long coordinateX,
+            Long coordinateY) {
+        if (defaultAddress != null) this.defaultAddress = defaultAddress;
+        if (addressDetail != null) this.addressDetail = addressDetail;
+        if (coordinateX != null) this.coordinateX = coordinateX;
+        if (coordinateY != null) this.coordinateY = coordinateY;
+
+    }
+
+
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.member._profile.dto.request.AddressUpdateRequest;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
@@ -95,6 +96,7 @@ public class MemberService {
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
+    @Transactional
     public Member updateCustomer(Member member, CustomerUpdateRequest customerUpdateRequest)
     {
         if (!member.isCustomer()) {
@@ -106,6 +108,7 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public Member updateFarmer(Member member, FarmerUpdateRequest farmerUpdateRequest)
     {
         if (!member.isFarmer()) {
@@ -116,7 +119,9 @@ public class MemberService {
 
         MemberProfile profile = member.getOrCreateProfile();
 
-        Optional.ofNullable(farmerUpdateRequest.phoneNumber()).ifPresent(profile::setPhoneNumber);
+        if (farmerUpdateRequest.phoneNumber() != null) {
+            profile.setPhoneNumber(farmerUpdateRequest.phoneNumber());
+        }
 
         Store store = member.getOrCreateStore();
 
@@ -127,7 +132,6 @@ public class MemberService {
             store.setAddress(farmerUpdateRequest.storeAddress());
         }
 
-
         return memberRepository.save(member);
     }
 
@@ -135,6 +139,15 @@ public class MemberService {
         if (name != null) member.setName(name);
         if (email != null) member.setEmail(email);
         if (password != null) member.setPassword(passwordEncoder.encode(password));
+    }
+
+    @Transactional
+    public void updateAddress(Member member, AddressUpdateRequest request) {
+        MemberProfile profile = member.getOrCreateProfile();
+
+        profile.setAddress(request.defaultAddress(), request.addressDetail(), request.coordinateX(), request.coordinateY());
+
+        memberRepository.save(member);
     }
 
 }

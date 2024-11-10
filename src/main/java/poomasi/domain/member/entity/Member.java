@@ -77,16 +77,18 @@ public class Member {
         this.password = password;
         this.loginType = loginType;
         this.role = role;
+        this.memberProfile = getOrCreateProfile();
     }
 
     @Builder
-    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId) {
+    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
         this.provideId = provideId;
+        this.memberProfile = memberProfile;
     }
 
     public boolean isCustomer() {

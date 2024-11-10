@@ -9,6 +9,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.member._profile.dto.request.AddressUpdateRequest;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.*;
@@ -98,6 +99,23 @@ public class MemberController {
         FarmerResponse memberResponse = FarmerResponse.fromEntity(updatedMember);
         return ResponseEntity.ok(memberResponse);
     }
+
+    @PutMapping("/customer/update/address")
+    @Secured("ROLE_CUSTOMER")
+    public ResponseEntity<Void> updateAddress(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody AddressUpdateRequest addressUpdateRequest
+    ) {
+        Member member = userDetails.getMember();
+        memberService.updateAddress(member, addressUpdateRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    // 배송지 수정
+    // 이미지 등록, 수정, 삭제
+    // 금지
+    // 회원 탈퇴, 복구
+
 
 
 
