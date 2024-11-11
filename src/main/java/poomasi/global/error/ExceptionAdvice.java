@@ -30,4 +30,15 @@ public class ExceptionAdvice {
                 .title(exception.getClass().getSimpleName())
                 .build();
     }
+
+    @ExceptionHandler(PaymentConfirmException.class)
+    public ErrorResponse paymentConfirmExceptionHandler(PaymentConfirmException exception) {
+        PaymentConfirmError paymentConfirmError = exception.getPaymentConfirmError();
+        log.error("[{}] : {}", paymentConfirmError.name(), paymentConfirmError.getReason());
+        return ErrorResponse
+                .builder(exception, paymentConfirmError.getHttpStatus(), paymentConfirmError.getReason())
+                .title(paymentConfirmError.name())
+                .build();
+    }
+
 }

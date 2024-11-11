@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import poomasi.domain.order.entity.Order;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.member._profile.entity.MemberProfile;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.store.entity.Store;
@@ -59,7 +62,7 @@ public class Member {
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orderLists;
+    private List<ProductOrder> productOrderLists;
 
     @Setter
     @Column(nullable = true)
@@ -74,6 +77,11 @@ public class Member {
         this.email = email;
         this.password = password;
         this.loginType = loginType;
+        this.role = role;
+    }
+
+    public Member(String email, Role role) {
+        this.email = email;
         this.role = role;
     }
 
