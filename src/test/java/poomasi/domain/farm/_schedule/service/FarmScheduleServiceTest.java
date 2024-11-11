@@ -17,7 +17,10 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static poomasi.global.error.BusinessError.FARM_SCHEDULE_ALREADY_EXISTS;
 import static poomasi.global.error.BusinessError.START_TIME_SHOULD_BE_BEFORE_END_TIME;
 
@@ -86,6 +89,25 @@ class FarmScheduleServiceTest {
             // when & then
             BusinessException exception = assertThrows(BusinessException.class, () -> farmScheduleService.addFarmSchedule(request));
             assertEquals(FARM_SCHEDULE_ALREADY_EXISTS, exception.getBusinessError());
+        }
+
+        @Test
+        @DisplayName("중복된 스케줄이 있는 경우 save 메서드가 호출되지 않는다")
+        void should_notCallSave_when_scheduleAlreadyExists() {
+            // given
+            FarmSchedule farmSchedule = FarmSchedule.builder()
+                    .startTime(LocalTime.of(10, 0))
+                    .endTime(LocalTime.of(12, 0))
+                    .build();
+            List<FarmSchedule> farmSchedules = List.of(farmSchedule);
+
+            given(farmScheduleRepository.findByFarmIdAndDate(1L, LocalDate.now())).willReturn(farmSchedules);
+
+            FarmScheduleUpdateRequest request = new FarmScheduleUpdateRequest(1L, LocalDate.now(), LocalTime.of(11, 0), LocalTime.of(13, 0));
+
+            // when & then
+            assertThrows(BusinessException.class, () -> farmScheduleService.addFarmSchedule(request));
+            verify(farmScheduleRepository, never()).save(any(FarmSchedule.class));
         }
     }
 
