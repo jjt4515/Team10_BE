@@ -8,8 +8,7 @@ import java.util.Optional;
 
 public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long> {
     List<ProductOrder> findByMemberId(Long memberId);
-    //List<ProductOrder> findById(Long id);
     Optional<ProductOrder> findByMerchantUid(String merchantUid);
-    Optional<ProductOrder> findByImpUid(String impUid);
-    Optional<ProductOrder> findByMerchantUidAndImpUid(String merchantUid, String impUid);
+    //Optional<ProductOrder> findByImpUid(String impUid);
+    //Optional<ProductOrder> findByMerchantUidAndImpUid(String merchantUid, String impUid);
 }

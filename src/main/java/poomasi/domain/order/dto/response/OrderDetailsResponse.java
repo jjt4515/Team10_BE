@@ -9,8 +9,8 @@ public record OrderDetailsResponse(
 ) {
     public static OrderDetailsResponse fromEntity(ProductOrderDetails productOrderDetails) {
         return new OrderDetailsResponse(
-                productOrderDetails.getAddress(),
-                productOrderDetails.getAddressDetail(),
+                productOrderDetails.getDestinationAddress(),
+                productOrderDetails.getDestinationAddressDetail(),
                 productOrderDetails.getDeliveryRequest()
         );
     }

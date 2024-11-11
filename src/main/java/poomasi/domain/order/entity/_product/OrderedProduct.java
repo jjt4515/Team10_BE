@@ -11,6 +11,7 @@ import poomasi.domain.product.entity.Product;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "ordered_products")
@@ -23,24 +24,22 @@ public class OrderedProduct implements Serializable {
     @Column(name = "ordered_product_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "product_after_sales_detail_id")
-    private ProductAfterSalesDetail productAfterSalesDetail;
+    private List<ProductAfterSalesDetail> productAfterSalesDetails;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_order_id")
     private ProductOrder productOrder;
 
-
     //FIXME : store Id를 참조해야 한다.
     //나중에 store Id로 변경해야 한다
-    private Long storeId;
+    //private Store store;
+    //private Long storeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
-
-
 
     @Column(name = "product_description", nullable = true)
     private String productDescription;
@@ -50,7 +49,8 @@ public class OrderedProduct implements Serializable {
 
     @Description("구매 당시 1개당 가격")
     private BigDecimal price;
-
+    
+    @Description("구매 수량")
     @Column(name="count")
     private Integer count;
 
@@ -58,7 +58,21 @@ public class OrderedProduct implements Serializable {
     @Column(name = "invoice_number", nullable = true)
     private String invoiceNumber;
 
-    private ShippingStatus shippingStatus = ShippingStatus.ORDERED;
+    private OrderedProductStatus orderedProductStatus = OrderedProductStatus.PENDING_SELLER_APPROVAL;
+
+    @Description("TODO : product의 delivery fee를 참조해야 한다.")
+    private BigDecimal deliveryFee;
+
+    @Description("환불 가능한 남은 수량")
+    @Column(name = "refundable_count")
+    private Integer adjustableQuantity;
+
+    @Description("취소 된 수량")
+    @Column(name = "cacnel_quantity")
+    private Integer cancelQuantity;
+
+    @Description("flag가 설정되어 있으면 배송비 환불하지 않아도 된다")
+    private boolean isCanceled = false;
     
     // 웹훅 받아서 조회해야 함.
     // findByInvoiceNumber 후 
@@ -79,12 +93,45 @@ public class OrderedProduct implements Serializable {
         this.invoiceNumber = invoiceNumber;
     }
 
-    public void setShippingStatus(ShippingStatus shippingStatus) {
-        this.shippingStatus = shippingStatus;
+    public void setOrderedProductStatus(OrderedProductStatus orderedProductStatus) {
+        this.orderedProductStatus = orderedProductStatus;
+    }
+
+    public void addProductAfterSalesDetail(ProductAfterSalesDetail productAfterSalesDetail) {
+        this.productAfterSalesDetails.add(productAfterSalesDetail);
+        productAfterSalesDetail.setOrderedProduct(this);
     }
 
     public Long getOrderId(){
         return this.productOrder.getId();
     }
+
+    public void subtractRefundableCount(Integer refundableCount) {
+        this.adjustableQuantity -= refundableCount;
+    }
+
+    public void addCancelQuantity(Integer cancelQuantity) {
+        this.isCanceled = true;
+        this.cancelQuantity += cancelQuantity;
+    }
+
+    public OrderedProductStatus changeOrderedProductStatusToCancel() {
+        if (this.count == this.cancelQuantity) {
+            this.orderedProductStatus = OrderedProductStatus.CANCELLED;
+        }
+        return this.orderedProductStatus;
+    }
+
+    public String getStoreAddress(){
+        //return this.store.getStoreAddress()
+        return "TODO : store의 address를 참조해야 함";
+    }
+
+    public String getStoreAddressDetail(){
+        //return this.store.getStoreAddressDetail()
+        return "TODO: store의 address detail을 참조해야 함";
+    }
+
+
 }
 

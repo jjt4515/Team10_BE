@@ -4,19 +4,23 @@ import jakarta.persistence.*;
 import jdk.jfr.Description;
 import jdk.jfr.Timestamp;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.order._payment.entity.Payment;
-import poomasi.domain.order.entity.OrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
+
 
 @MappedSuperclass
 @Getter
+@Setter
+@SuperBuilder // 빌더 패턴을 사용하도록 설정
+@NoArgsConstructor
 public abstract class AbstractOrder {
 
     @Id
@@ -30,14 +34,6 @@ public abstract class AbstractOrder {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Payment payment;
-
-    @Column(name = "merchant_uid")
-    @Description("서버 내부 주문 id(아임포트 id)")
-    private String merchantUid = "p" + new Date().getTime();
-
-    @Column(name = "imp_uid")
-    @Description("아임포트 결제 imp_uid")
-    private String impUid;
 
     @Column(name = "created_at")
     @CreationTimestamp
@@ -55,34 +51,22 @@ public abstract class AbstractOrder {
     @Description("총 결제 금액")
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus = OrderStatus.PENDING;
-
-    @Description("checksum")
-    private BigDecimal checksum;
-
-    public void setCheckSum(BigDecimal checksum) {
-        this.checksum = checksum;
+    public void setCheckSum(BigDecimal checkSum) {
+        this.payment.setCheckSum(checkSum);
     }
 
-    public void reduceChecksum(BigDecimal amount) {
-        checksum = checksum.subtract(amount);
+    public void subtractChecksum(BigDecimal checkSum) {
+        this.payment.subtractCheckSum(checkSum);
     }
+
+    public BigDecimal getCheckSum(){
+        return this.payment.getCheckSum();
+    }
+
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public void setImpUid(String impUid) {
-        this.impUid = impUid;
-    }
-
-    public void setMerchantUid(String merchantUid) {
-        this.merchantUid = merchantUid;
-    }
 
 }
 
