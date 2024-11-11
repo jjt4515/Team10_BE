@@ -88,4 +88,22 @@ class FarmScheduleServiceTest {
             assertEquals(FARM_SCHEDULE_ALREADY_EXISTS, exception.getBusinessError());
         }
     }
+
+    @Nested
+    @DisplayName("농장 스케줄 조회")
+    class GetFarmSchedules {
+        @Test
+        @DisplayName("텅 빈 스케줄을 조회한다")
+        void should_getFarmSchedulesBySpecificDate() {
+            // given
+            LocalDate date = LocalDate.now();
+            given(farmScheduleRepository.findByFarmIdAndDate(1L, date)).willReturn(List.of());
+
+            // when
+            List<FarmSchedule> farmSchedules = farmScheduleService.getFarmScheduleByFarmIdAndDate(1L, date);
+
+            // then
+            assertTrue(farmSchedules.isEmpty());
+        }
+    }
 }
