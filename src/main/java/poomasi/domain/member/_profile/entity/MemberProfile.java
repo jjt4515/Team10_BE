@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "member_profile")
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = "UPDATE member SET deleted_at = current_timestamp WHERE id = ?")
+@SQLDelete(sql = "UPDATE member_profile SET deleted_at = current_timestamp WHERE id = ?")
 public class MemberProfile {
 
     @Id
@@ -29,6 +29,10 @@ public class MemberProfile {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Setter
+    @Column
+    private LocalDateTime deletedAt;
 
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
@@ -51,6 +55,14 @@ public class MemberProfile {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    @PreRemove
+    public void preRemove() {
+        // MemberProfile이 삭제되기 전에 연관된 이미지를 삭제
+        if (profileImage != null) {
+            profileImage.setDeletedAt(LocalDateTime.now());
+        }
     }
 
     public MemberProfile() {
