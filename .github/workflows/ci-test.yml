@@ -28,7 +28,7 @@ jobs:
       - name: Cache Gradle packages
         uses: actions/cache@v3
         env:
-          IMzP_API_KEY: ${{ secrets.IMP_API_KEY }}
+          IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
           IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
         with:
           path: ~/.gradle/caches
