@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import poomasi.domain.farm._schedule.dto.FarmScheduleRequest;
+import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
 import poomasi.domain.farm._schedule.dto.FarmScheduleUpdateRequest;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm._schedule.repository.FarmScheduleRepository;
@@ -15,14 +17,14 @@ import poomasi.global.error.BusinessException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static poomasi.global.error.BusinessError.FARM_SCHEDULE_ALREADY_EXISTS;
-import static poomasi.global.error.BusinessError.START_TIME_SHOULD_BE_BEFORE_END_TIME;
+import static poomasi.global.error.BusinessError.*;
 
 @ExtendWith(MockitoExtension.class)
 class FarmScheduleServiceTest {
@@ -166,6 +168,44 @@ class FarmScheduleServiceTest {
 
             // then
             assertTrue(result.isEmpty());
+        }
+
+        @Test
+        @DisplayName("특정 월에 해당하는 스케줄을 올바르게 조회한다")
+        void should_returnSchedulesWithinSpecifiedMonth() {
+            // given
+            LocalDate startDate = LocalDate.of(2024, 11, 1);
+            LocalDate endDate = LocalDate.of(2024, 11, 30);
+            FarmSchedule farmSchedule = FarmSchedule.builder()
+                    .farmId(1L)
+                    .date(LocalDate.of(2024, 11, 10))
+                    .startTime(LocalTime.of(10, 0))
+                    .endTime(LocalTime.of(12, 0))
+                    .build();
+
+            given(farmScheduleRepository.findByFarmIdAndDateRange(1L, startDate, endDate)).willReturn(List.of(farmSchedule));
+
+            // when
+            FarmScheduleRequest request = new FarmScheduleRequest(1L, 2024, 11);
+            List<FarmScheduleResponse> result = farmScheduleService.getFarmSchedulesByYearAndMonth(request);
+
+            // then
+            assertEquals(1, result.size());
+            assertEquals(farmSchedule.getDate(), result.get(0).date());
+            assertEquals(farmSchedule.getStartTime(), result.get(0).startTime());
+            assertEquals(farmSchedule.getEndTime(), result.get(0).endTime());
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 스케줄 ID로 조회 시 예외가 발생한다")
+        void should_throwException_when_scheduleIdNotFound() {
+            // given
+            Long invalidId = 999L;
+            given(farmScheduleRepository.findById(invalidId)).willReturn(Optional.empty());
+
+            // when & then
+            BusinessException exception = assertThrows(BusinessException.class, () -> farmScheduleService.getFarmScheduleByScheduleId(invalidId));
+            assertEquals(FARM_SCHEDULE_NOT_FOUND, exception.getBusinessError());
         }
     }
 }
