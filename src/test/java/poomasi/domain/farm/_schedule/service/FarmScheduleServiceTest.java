@@ -94,7 +94,7 @@ class FarmScheduleServiceTest {
     class GetFarmSchedules {
         @Test
         @DisplayName("텅 빈 스케줄을 조회한다")
-        void should_getFarmSchedulesBySpecificDate() {
+        void should_getEmptyFarmSchedules() {
             // given
             LocalDate date = LocalDate.now();
             given(farmScheduleRepository.findByFarmIdAndDate(1L, date)).willReturn(List.of());
@@ -104,6 +104,32 @@ class FarmScheduleServiceTest {
 
             // then
             assertTrue(farmSchedules.isEmpty());
+        }
+
+        @Test
+        @DisplayName("특정 날짜의 스케줄을 조회한다")
+        void should_getFarmSchedulesBySpecificDate() {
+            // given
+            LocalDate date = LocalDate.now();
+            FarmSchedule farmSchedule = FarmSchedule.builder()
+                    .farmId(1L)
+                    .date(date)
+                    .startTime(LocalTime.of(10, 0))
+                    .endTime(LocalTime.of(12, 0))
+                    .build();
+            given(farmScheduleRepository.findByFarmIdAndDate(1L, date)).willReturn(List.of(farmSchedule));
+
+            // when
+            List<FarmSchedule> farmSchedules = farmScheduleService.getFarmScheduleByFarmIdAndDate(1L, date);
+
+            // then
+            assertAll(
+                    () -> assertEquals(1, farmSchedules.size()),
+                    () -> assertEquals(1L, farmSchedules.get(0).getFarmId()),
+                    () -> assertEquals(date, farmSchedules.get(0).getDate()),
+                    () -> assertEquals(LocalTime.of(10, 0), farmSchedules.get(0).getStartTime()),
+                    () -> assertEquals(LocalTime.of(12, 0), farmSchedules.get(0).getEndTime())
+            );
         }
     }
 }
