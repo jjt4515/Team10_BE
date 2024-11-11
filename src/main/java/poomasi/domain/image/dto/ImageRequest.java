@@ -9,7 +9,7 @@ public record ImageRequest(String objectKey, String imageUrl, ImageType type, Lo
                 imageRequest.objectKey,
                 imageRequest.imageUrl,
                 imageRequest.type,
-                imageRequest.referenceId
+                imageRequest.referenceId // 타입이 멤버 프로필일 경우 멤버 id가 아닌 멤버 프로필 id를 넣습니다.
         );
     }
 }

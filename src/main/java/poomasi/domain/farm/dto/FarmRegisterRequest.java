@@ -10,7 +10,7 @@ public record FarmRegisterRequest(
         Double longitude,
         String phoneNumber,
         String description,
-        Long experiencePrice,
+        int experiencePrice,
         Integer maxCapacity,
         Integer maxReservation
 ) {

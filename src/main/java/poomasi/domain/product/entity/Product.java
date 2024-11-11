@@ -1,18 +1,7 @@
 package poomasi.domain.product.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.order.entity.OrderProductDetails;
+import poomasi.domain.order.entity._product.OrderedProduct;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 
@@ -71,6 +60,10 @@ public class Product {
     @JoinColumn(name = "entityId")
     List<Review> reviewList = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "store_id")  // 외래 키 컬럼 지정
+    private Store store;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "product_tag", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "enum_value")
@@ -82,7 +75,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderProductDetails> orderProductDetails;
+    private List<OrderedProduct> orderProductDetails;
 
 
     @Builder
@@ -93,7 +86,9 @@ public class Product {
             String description,
             String imageUrl,
             Integer stock,
-            Long price) {
+            Long price,
+            Store store) {
+        this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
         this.name = name;
@@ -101,6 +96,7 @@ public class Product {
         this.imageUrl = imageUrl;
         this.stock = stock;
         this.price = price;
+        this.store = store;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
@@ -125,6 +121,9 @@ public class Product {
                 .orElse(0.0);
     }
 
+    public void subtractStock(Integer stock) {
+        this.stock -= stock;
+    }
 
 
 }

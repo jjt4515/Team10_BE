@@ -14,6 +14,7 @@ public record ProductResponse(
         String description,
         String imageUrl,
         Long categoryId,
+        String storeName,
         List<String> tags
 ) {
 
@@ -27,6 +28,7 @@ public record ProductResponse(
                 .stock(product.getStock())
                 .description(product.getDescription())
                 .imageUrl(product.getImageUrl())
+                .storeName(product.getStore().getName())
                 .categoryId(product.getCategoryId())
                 .tags(tags)
                 .build();

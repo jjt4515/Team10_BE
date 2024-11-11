@@ -17,6 +17,7 @@ import poomasi.domain.farm.dto.FarmUpdateRequest;
 
 import java.time.LocalDateTime;
 
+import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;
 
 @Entity
@@ -56,7 +57,7 @@ public class Farm {
     private FarmStatus status = FarmStatus.OPEN;
 
     @Comment("체험 비용")
-    private Long experiencePrice;
+    private int experiencePrice;
 
     @Comment("팀 최대 인원")
     private Integer maxCapacity;
@@ -77,10 +78,14 @@ public class Farm {
 
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
-    List<Review> reviewList = new ArrayList<>();
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ordered_farm_id")
+    private OrderedFarm orderedFarm;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, Long experiencePrice, Integer maxCapacity, Integer maxReservation) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -104,7 +109,7 @@ public class Farm {
         return this;
     }
 
-    public void updateExpPrice(Long expPrice) {
+    public void updateExpPrice(int expPrice) {
         this.experiencePrice = expPrice;
     }
 

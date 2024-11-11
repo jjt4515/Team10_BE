@@ -39,7 +39,6 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
     private final UserDetailsServiceImpl userDetailsService;
 
-
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
 
@@ -74,10 +73,11 @@ public class SecurityConfig {
 
         // 기본 경로 및 테스트 경로
         http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET, "/api/farm/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/farm/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/health").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
                 .requestMatchers("/api/sign-up", "/api/login", "api/reissue", "api/payment/**", "api/order/**", "api/reservation/**", "/api/v1/farmer/reservations").permitAll()
                 .requestMatchers("/api/need-auth/**").authenticated()
                 .anyRequest().
