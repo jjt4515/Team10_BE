@@ -111,12 +111,25 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/profile-image")
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
+    public ResponseEntity<String> uploadProfileImage(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam("file") MultipartFile file) {
+        Member member = userDetails.getMember();
+        String imageUrl = memberService.uploadProfileImage(member, file);
+        return ResponseEntity.ok(imageUrl);
+    }
 
 
     // 배송지 수정
     // 이미지 등록, 수정, 삭제
     // 금지
     // 회원 탈퇴, 복구
+
+    // 이미지 저장 인자 바꾸기
+    // 이미지 validator 타입 추가
+
 
 
 
