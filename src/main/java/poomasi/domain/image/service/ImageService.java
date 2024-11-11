@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.image.dto.ImageRequest;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
+import poomasi.domain.image.linker.ImageLinker;
+import poomasi.domain.image.linker.ImageLinkerFactory;
 import poomasi.domain.image.repository.ImageRepository;
-import poomasi.domain.image.validation.ImageOwnerValidator;
-import poomasi.domain.image.validation.ImageOwnerValidatorFactory;
-import poomasi.domain.member._profile.entity.MemberProfile;
-import poomasi.domain.member._profile.service.MemberProfileService;
+import poomasi.domain.image.validator.ImageOwnerValidator;
+import poomasi.domain.image.validator.ImageOwnerValidatorFactory;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.repository.MemberRepository;
+import poomasi.domain.member.service.MemberService;
 import poomasi.global.error.BusinessException;
 
 import java.time.LocalDateTime;
@@ -28,12 +28,12 @@ import static poomasi.global.error.BusinessError.*;
 public class ImageService {
 
     private static final int DEFAULT_IMAGE_LIMIT = 5;
-    private static final int MEMBER_PROFILE_IMAGE_LIMIT = 1;
+    private static final int IMAGE_ONE_LIMIT = 1;
 
     private final ImageRepository imageRepository;
     private final ImageOwnerValidatorFactory validatorFactory;
-    private final MemberRepository memberRepository;
-    private final MemberProfileService memberProfileService;
+    private final MemberService memberService;
+    private final ImageLinkerFactory imageLinkerFactory;
 
 
     @Transactional
@@ -46,9 +46,8 @@ public class ImageService {
                 .map(existingImage -> recoverImageOrThrow(existingImage, imageRequest))
                 .orElseGet(() -> imageRequest.toEntity(imageRequest));
 
-        if (imageRequest.type() == ImageType.MEMBER_PROFILE) {
-            linkImageToMemberProfile(imageRequest.referenceId(), image);
-        }
+        ImageLinker linker = imageLinkerFactory.getLinker(imageRequest.type());
+        linker.link(imageRequest.referenceId(), image);
 
         return imageRepository.save(image);
     }
@@ -66,8 +65,7 @@ public class ImageService {
     }
 
     private boolean isAdmin(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberById(memberId);
         return member.isAdmin();
     }
 
@@ -88,19 +86,13 @@ public class ImageService {
 
     private void validateImageLimit(ImageRequest imageRequest) {
         int imageLimit = DEFAULT_IMAGE_LIMIT;
-        if (imageRequest.type() == ImageType.MEMBER_PROFILE) {
-            imageLimit = MEMBER_PROFILE_IMAGE_LIMIT; // 멤버 프로필 이미지는 한 장으로 제한
+        if (imageRequest.type() == ImageType.MEMBER_PROFILE || imageRequest.type() == ImageType.PRODUCT) {
+            imageLimit = IMAGE_ONE_LIMIT; // 멤버 프로필 이미지는 한 장으로 제한
         }
 
         if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= imageLimit) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }
-    }
-
-    private void linkImageToMemberProfile(Long referenceId, Image savedImage) {
-        MemberProfile memberProfile = memberProfileService.getMemberProfileById(referenceId);
-        memberProfile.setProfileImage(savedImage);
-        memberProfileService.saveMemberProfile(memberProfile);
     }
 
     // 여러 이미지 저장
@@ -115,7 +107,7 @@ public class ImageService {
     public void deleteImage(Long memberId, Long id) {
         Image image = getImageById(id);
         validateImageOwner(memberId, image.getType(), image.getReferenceId());
-        imageRepository.deleteById(id);
+        imageRepository.delete(image);
     }
 
     public Image getImageById(Long id) {

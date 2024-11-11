@@ -20,6 +20,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -50,6 +51,7 @@ public class Product {
     @Comment("상품 설명")
     private String description;
 
+    @Setter
     @Comment("이미지 URL")
     private String imageUrl;
 
