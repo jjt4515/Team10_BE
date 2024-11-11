@@ -24,17 +24,20 @@ jobs:
         with:
           java-version: '21'
           distribution: 'adopt'
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
         env:
           IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
           IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
+          
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+        env:
+          IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
+          IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
