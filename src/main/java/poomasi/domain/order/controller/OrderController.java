@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.farm.service.FarmService;
 import poomasi.domain.order._payment.dto.request.PaymentPreRegisterRequest;
-import poomasi.domain.order._payment.service.PaymentService;
-import poomasi.domain.order.dto.request.OrderRegisterRequest;
-import poomasi.domain.order.service.OrderService;
+import poomasi.domain.order._payment.service.ProductPaymentService;
+import poomasi.domain.order.dto.request.ProductOrderRegisterRequest;
+import poomasi.domain.order.service.FarmOrderService;
+import poomasi.domain.order.service.ProductOrderService;
 
 import java.io.IOException;
 
@@ -24,16 +24,17 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderService orderService;
-    private final PaymentService paymentService;
+    private final ProductOrderService productOrderService;
+    private final FarmOrderService farmOrderService;
+    private final ProductPaymentService productPaymentService;
 
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
     @PostMapping("/product/pre-order")
     @Description("product 사전 결제")
-    public ResponseEntity<?> createProductPreOrder(@RequestBody OrderRegisterRequest orderRegisterRequest) throws IOException, IamportResponseException {
-        PaymentPreRegisterRequest paymentPreRegisterRequest = orderService.productPreOrderRegister(orderRegisterRequest);
+    public ResponseEntity<?> createProductPreOrder(@RequestBody ProductOrderRegisterRequest productOrderRegisterRequest) throws IOException, IamportResponseException {
+        PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.productPreOrderRegister(productOrderRegisterRequest);
         return ResponseEntity.ok(
-                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
+                productPaymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
         );
     }
 
@@ -41,9 +42,9 @@ public class OrderController {
     @PostMapping("/farm/pre-order")
     @Description("farm 사전 결제")
     public ResponseEntity<?> createFarmPreOrder() throws IOException, IamportResponseException {
-        PaymentPreRegisterRequest paymentPreRegisterRequest = orderService.farmPreOrderRegister();
+        PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.farmPreOrderRegister();
         return ResponseEntity.ok(
-                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
+                productPaymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
         );
     }
 
@@ -51,7 +52,7 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getAllOrdersByMember(@PathVariable Long orderId) {
         return ResponseEntity.ok(
-                orderService.findOrderByMemberId(orderId)
+                productOrderService.findOrderByMemberId(orderId)
         );
     }
 
@@ -59,7 +60,7 @@ public class OrderController {
     @GetMapping("/")
     public ResponseEntity<?> getOrdersByMember() {
         return ResponseEntity.ok(
-                orderService.findAllOrdersByMemberId()
+                productOrderService.findAllOrdersByMemberId()
         );
     }
 
@@ -67,7 +68,7 @@ public class OrderController {
     @GetMapping("/{orderId}/details")
     public ResponseEntity<?> getOrderDetailsByMember(@PathVariable Long orderId) {
         return ResponseEntity.ok(
-                orderService.findOrderDetailsByOrderId(orderId)
+                productOrderService.findOrderDetailsByOrderId(orderId)
         );
     }
 
@@ -76,7 +77,7 @@ public class OrderController {
     @GetMapping("/{orderId}/product/details")
     public ResponseEntity<?> getOrderProductDetailsByOrderId(@PathVariable Long orderId) {
         return ResponseEntity.ok(
-                orderService.findAllOrderProductDetails(orderId)
+                productOrderService.findAllOrderProductDetails(orderId)
         );
     }
 
@@ -84,7 +85,7 @@ public class OrderController {
     @GetMapping("/{orderId}/product/details/{detailsId}")
     public ResponseEntity<?> getOrderProductDetailsByDetailsId(@PathVariable Long orderId, @PathVariable Long detailsId) {
         return ResponseEntity.ok(
-                orderService.findOrderProductDetailsById(orderId, detailsId)
+                productOrderService.findOrderProductDetailsById(orderId, detailsId)
         );
     }
 
