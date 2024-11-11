@@ -51,7 +51,7 @@ public class Member {
     @Column(nullable = true)
     private String provideId;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private MemberProfile memberProfile;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -127,4 +127,3 @@ public class Member {
 
 
 }
-//멤버에 농장, 스토어 두고 거기서 주솟값 가져오는 걸로 바꾸기
