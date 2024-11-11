@@ -16,7 +16,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -48,7 +47,7 @@ public class S3PresignedUrlService {
 
     }
 
-    public PresignedPutUrlResponse createPresignedPutUrl(String bucketName, String keyPrefix, Map<String, String> metadata) {
+    public PresignedPutUrlResponse createPresignedPutUrl(String bucketName, String region, String keyPrefix, Map<String, String> metadata) {
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DATE_FORMATTER);
         String encodedTime = encryptionUtil.encodeTime(now).substring(0, 10);
@@ -75,7 +74,9 @@ public class S3PresignedUrlService {
         log.info("Presigned URL to upload a file to: [{}]", myURL);
         log.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
 
-        return new PresignedPutUrlResponse(presignedRequest.url().toExternalForm(), keyName);
+        String objectUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, keyName);
+
+        return new PresignedPutUrlResponse(presignedRequest.url().toExternalForm(), keyName, objectUrl);
     }
 }
 

@@ -25,7 +25,10 @@ public class S3PresignedUrlController {
     @PostMapping("/presigned-url-put")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<?> presignedUrlPut(@RequestBody PresignedUrlPutRequest request) {
-        PresignedPutUrlResponse presignedPutUrl = s3PresignedUrlService.createPresignedPutUrl(awsProperties.getS3().getBucket(), request.keyPrefix(), request.metadata());
+        PresignedPutUrlResponse presignedPutUrl = s3PresignedUrlService.createPresignedPutUrl(
+                awsProperties.getS3().getBucket(),
+                awsProperties.getS3().getRegion(),
+                request.keyPrefix(), request.metadata());
         return ResponseEntity.ok(presignedPutUrl);
     }
 }
