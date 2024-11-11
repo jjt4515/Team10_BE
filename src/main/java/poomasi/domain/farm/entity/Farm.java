@@ -116,4 +116,8 @@ public class Farm {
     public void updateMaxReservation(Integer maxReservation) {
         this.maxReservation = maxReservation;
     }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
+    }
 }
