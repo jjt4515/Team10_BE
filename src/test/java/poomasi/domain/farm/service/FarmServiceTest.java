@@ -10,10 +10,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import poomasi.domain.farm.FarmTestHelper;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
+import poomasi.global.error.BusinessError;
+import poomasi.global.error.BusinessException;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +44,19 @@ class FarmServiceTest {
             assertThat(result.getId()).isEqualTo(farm.getId());
             assertThat(result.getName()).isEqualTo(farm.getName());
             assertThat(result.getStatus()).isEqualTo(farm.getStatus());
+        }
+
+        @Test
+        @DisplayName("농장이 존재하지 않는 경우 예외를 발생시킨다")
+        void should_throwException_when_farmNotExist() {
+            // given
+            Long farmId = 1L;
+            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> farmService.getFarmByFarmId(farmId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasFieldOrPropertyWithValue("businessError", BusinessError.FARM_NOT_FOUND);
         }
     }
 

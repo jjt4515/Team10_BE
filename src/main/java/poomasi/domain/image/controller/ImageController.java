@@ -2,11 +2,15 @@ package poomasi.domain.image.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.image.dto.ImageRequest;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.image.service.ImageService;
+import poomasi.domain.member.entity.Member;
 
 import java.util.List;
 
@@ -18,22 +22,28 @@ public class ImageController {
 
     // 이미지 정보 저장
     @PostMapping
-    public ResponseEntity<?> saveImageInfo(@RequestBody ImageRequest imageRequest) {
-            Image savedImage = imageService.saveImage(imageRequest);
-            return ResponseEntity.ok(savedImage);
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<?> saveImageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ImageRequest imageRequest) {
+        Member member = userDetails.getMember();
+        Image savedImage = imageService.saveImage(member.getId(), imageRequest);
+        return ResponseEntity.ok(savedImage);
     }
 
     // 여러 이미지 정보 저장
     @PostMapping("/multiple")
-    public ResponseEntity<List<Image>> saveMultipleImages(@RequestBody List<ImageRequest> imageRequests) {
-        List<Image> savedImages = imageService.saveMultipleImages(imageRequests);
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<List<Image>> saveMultipleImages(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody List<ImageRequest> imageRequests) {
+        Member member = userDetails.getMember();
+        List<Image> savedImages = imageService.saveMultipleImages(member.getId(), imageRequests);
         return ResponseEntity.ok(savedImages);
     }
 
     // 특정 이미지 삭제
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteImage(@PathVariable Long id) {
-        imageService.deleteImage(id);
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteImage(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        Member member = userDetails.getMember();
+        imageService.deleteImage(member.getId(), id);
         return ResponseEntity.noContent().build();
     }
 
@@ -51,15 +61,21 @@ public class ImageController {
     }
 
     // 이미지 정보 수정
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateImageInfo(@PathVariable Long id, @RequestBody ImageRequest imageRequest) {
-        Image updatedImage = imageService.updateImage(id, imageRequest);
+    @PutMapping("update/{id}")
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<?> updateImageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                             @PathVariable Long id,
+                                             @RequestBody ImageRequest imageRequest) {
+        Member member = userDetails.getMember();
+        Image updatedImage = imageService.updateImage(member.getId(), id, imageRequest);
         return ResponseEntity.ok(updatedImage);
     }
 
     @PutMapping("/recover/{id}")
-    public ResponseEntity<Void> recoverImage(@PathVariable Long id) {
-        imageService.recoverImage(id);
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<Void> recoverImage(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        Member member = userDetails.getMember();
+        imageService.recoverImage(member.getId(), id);
         return ResponseEntity.noContent().build();
     }
 

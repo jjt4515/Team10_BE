@@ -26,7 +26,8 @@ public class Cart {
     private Integer count;
 
     @Builder
-    public Cart(Long memberId, Long productId, Boolean selected, Integer count) {
+    public Cart(Long id, Long memberId, Long productId, Boolean selected, Integer count) {
+        this.id = id;
         this.memberId = memberId;
         this.productId = productId;
         this.selected = selected;
