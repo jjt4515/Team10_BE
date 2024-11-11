@@ -27,7 +27,7 @@ jobs:
         env:
           IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
           IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
-          
+
       - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
@@ -38,6 +38,13 @@ jobs:
         env:
           IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
           IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report
+          path: build/reports/tests/test
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
