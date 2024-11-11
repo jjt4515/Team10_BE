@@ -3,6 +3,8 @@ package poomasi.domain.image.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.image.deleteLinker.ImageDeleteFactory;
+import poomasi.domain.image.deleteLinker.ImageDeleteLinker;
 import poomasi.domain.image.dto.ImageRequest;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
@@ -31,10 +33,12 @@ public class ImageService {
     private static final int IMAGE_ONE_LIMIT = 1;
 
     private final ImageRepository imageRepository;
-    private final ImageOwnerValidatorFactory validatorFactory;
     private final MemberService memberService;
+    private final ImageOwnerValidatorFactory validatorFactory;
     private final ImageLinkerFactory imageLinkerFactory;
+    private final ImageDeleteFactory imageDeleteFactory;
 
+    // 이미지 타입에 맞게 link, deleteLink, 개수 제한, ownerValidate
 
     @Transactional
     public Image saveImage(Long memberId, ImageRequest imageRequest) {
@@ -46,8 +50,7 @@ public class ImageService {
                 .map(existingImage -> recoverImageOrThrow(existingImage, imageRequest))
                 .orElseGet(() -> imageRequest.toEntity(imageRequest));
 
-        ImageLinker linker = imageLinkerFactory.getLinker(imageRequest.type());
-        linker.link(imageRequest.referenceId(), image);
+        imageLink(image);
 
         return imageRepository.save(image);
     }
@@ -87,7 +90,7 @@ public class ImageService {
     private void validateImageLimit(ImageRequest imageRequest) {
         int imageLimit = DEFAULT_IMAGE_LIMIT;
         if (imageRequest.type() == ImageType.MEMBER_PROFILE || imageRequest.type() == ImageType.PRODUCT) {
-            imageLimit = IMAGE_ONE_LIMIT; // 멤버 프로필 이미지는 한 장으로 제한
+            imageLimit = IMAGE_ONE_LIMIT; // 멤버 프로필, 상품 이미지는 한 장으로 제한
         }
 
         if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= imageLimit) {
@@ -108,6 +111,8 @@ public class ImageService {
         Image image = getImageById(id);
         validateImageOwner(memberId, image.getType(), image.getReferenceId());
         imageRepository.delete(image);
+
+        imageDeleteLink(image);
     }
 
     public Image getImageById(Long id) {
@@ -130,7 +135,16 @@ public class ImageService {
             validateImageLimit(imageRequest);
         }
 
+        if (!image.getType().equals(imageRequest.type())) {
+            imageDeleteLink(image);
+        }
+
         image.update(imageRequest);
+
+        if (!image.getType().equals(imageRequest.type())) {
+            imageLink(image);
+        }
+
 
         return imageRepository.save(image);
     }
@@ -147,7 +161,27 @@ public class ImageService {
         validateImageLimit(image.toRequest(image));
 
         image.setDeletedAt(null);
+
+        imageLink(image);
+
         imageRepository.save(image);
     }
+
+    // 이미지와 해당 이미지를 가지는 엔티티 연결
+    private void imageLink(Image image){
+        ImageLinker linker = imageLinkerFactory.getLinker(image.getType());
+        if (linker != null){
+            linker.link(image.getReferenceId(), image);
+        }
+    }
+
+    // 이미지 삭제 시 해당 이미지를 가지는 엔티티에서도 처리
+    private void imageDeleteLink(Image image){
+        ImageDeleteLinker imageDeleteLinker = imageDeleteFactory.getDeleteLinker(image.getType());
+        if (imageDeleteLinker != null) {
+            imageDeleteLinker.handleImageDeletion(image);  // 해당 타입에 맞는 삭제 처리
+        }
+    }
+
 
 }

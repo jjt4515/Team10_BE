@@ -72,7 +72,6 @@ public enum BusinessError {
     IMAGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이미지가 존재합니다"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
     IMAGE_OWNER_MISMATCH(HttpStatus.FORBIDDEN, "해당 이미지의 소유자가 아닙니다."),
-    IMAGE_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "지원하지 않는 이미지 타입입니다."),
 
     // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
