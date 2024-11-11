@@ -12,29 +12,16 @@ import java.time.LocalDateTime;
 @Table(name = "member_profile")
 @AllArgsConstructor
 @Builder
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "profile_type")
 public class MemberProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = true, length = 50)
-    private String name;
-
     @Column(nullable = true, length = 20)
     private String phoneNumber;
-
-    @Column(nullable = true, length = 255)
-    private String address;
-
-    @Column(nullable = true, length = 255)
-    private String addressDetail;
-
-    @Column(nullable=true, length=255)
-    private Long coordinateX;
-
-    @Column(nullable=true, length=255)
-    private Long coordinateY;
 
     @Column(nullable = false)
     @Builder.Default
@@ -59,7 +46,5 @@ public class MemberProfile {
     }
 
     public MemberProfile() {
-        this.name = "UNKNOWN"; // name not null 조건 때문에 임시로 넣었습니다. nullable도 true로 넣었는데 안 되네요
     }
-
 }

@@ -31,19 +31,20 @@ public class MemberService {
     @Description("카카오톡으로 먼저 회원가입이 되어 있는 경우, 계정 연동을 진행합니다. ")
     @Transactional
     public SignUpResponse signUp(SignupRequest signupRequest) {
+        String name = signupRequest.name();
         String email = signupRequest.email();
         String password = signupRequest.password();
 
-        memberRepository.findByEmail(email)
+        memberRepository.findByEmailAndDeletedAtIsNull(email)
                 .ifPresent(member -> { throw new BusinessException(DUPLICATE_MEMBER_EMAIL); });
 
-        Member newMember = new Member(email,
+        Member newMember = new Member(name, email,
                 passwordEncoder.encode(password),
                 LoginType.LOCAL,
                 ROLE_CUSTOMER);
 
         memberRepository.save(newMember);
-        return new SignUpResponse(email, "회원 가입 성공");
+        return new SignUpResponse(name, email, "회원 가입 성공");
     }
 
     public MemberResponse getMemberById(Long memberId) {
@@ -56,15 +57,13 @@ public class MemberService {
         return MemberSummaryResponse.fromEntity(member);
     }
 
-    public Page<MemberResponse> getAllMembers(Pageable pageable) {
+    public Page<MemberSummaryResponse> getAllMembersSummary(Pageable pageable) {
         Page<Member> members = memberRepository.findAll(pageable);
-        return members.map(MemberResponse::fromEntity);
+        return members.map(MemberSummaryResponse::fromEntity);
     }
 
     @Transactional
-    public void convertToFarmer(Long memberId, Boolean hasFarmerQualification) {
-        Member member = findMemberById(memberId);
-
+    public void convertToFarmer(Member member, Boolean hasFarmerQualification) {
         if (member.isFarmer()) {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
         }

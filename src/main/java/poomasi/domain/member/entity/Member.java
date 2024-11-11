@@ -10,6 +10,7 @@ import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
@@ -25,6 +26,9 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = true, length = 50)
+    private String name;
 
     @Column(unique = true, nullable = true, length = 50)
     private String email;
@@ -65,15 +69,11 @@ public class Member {
     @OneToOne(mappedBy="owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Store store;
 
-    public Member(String email, String password, LoginType loginType, Role role) {
+    public Member(String name, String email, String password, LoginType loginType, Role role) {
+        this.name = name;
         this.email = email;
         this.password = password;
         this.loginType = loginType;
-        this.role = role;
-    }
-
-    public Member(String email, Role role) {
-        this.email = email;
         this.role = role;
     }
 
