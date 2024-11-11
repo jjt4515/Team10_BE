@@ -52,7 +52,7 @@ public class OAuth2UserDetailServiceImpl extends DefaultOAuth2UserService {
 
 
         //일단 없으면 가입시키는 쪽으로 구현ㄴ
-        Member member = memberRepository.findByEmail(email).orElse(null);
+        Member member = memberRepository.findByEmailAndDeletedAtIsNull(email).orElse(null);
         if(member == null) {
             member = Member.builder()
                     .email(email)

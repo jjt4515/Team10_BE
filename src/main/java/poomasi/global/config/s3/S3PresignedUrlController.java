@@ -15,14 +15,14 @@ public class S3PresignedUrlController {
     private final AwsProperties awsProperties;
 
     @GetMapping("/presigned-url-get")
-    @Secured({"ROLE_MEMBER", "ROLE_FARMER", "ROLE_ADMIN"})
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<?> presignedUrlGet(@RequestParam String keyname) {
         String presignedGetUrl = s3PresignedUrlService.createPresignedGetUrl(awsProperties.getS3().getBucket(), keyname);
         return ResponseEntity.ok(presignedGetUrl);
     }
 
     @PostMapping("/presigned-url-put")
-    @Secured({"ROLE_MEMBER", "ROLE_FARMER", "ROLE_ADMIN"})
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<?> presignedUrlPut(@RequestBody PresignedUrlPutRequest request) {
         String presignedPutUrl = s3PresignedUrlService.createPresignedPutUrl(awsProperties.getS3().getBucket(), request.keyPrefix(), request.metadata());
         return ResponseEntity.ok(presignedPutUrl);
