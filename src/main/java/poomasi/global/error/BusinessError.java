@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -11,7 +12,6 @@ public enum BusinessError {
     // Product
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     PRODUCT_STOCK_ZERO(HttpStatus.BAD_REQUEST, "재고가 없습니다."),
-    STOCK_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "장바구나 수량이 남은 재고를 초과하였습니다"),
 
     // Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
@@ -26,6 +26,9 @@ public enum BusinessError {
     MEMBER_ALREADY_CUSTOMER(HttpStatus.BAD_REQUEST, "이미 고객인 회원입니다."),
     MEMBER_ALREADY_FARMER(HttpStatus.BAD_REQUEST, "이미 농부인 회원입니다."),
     MEMBER_ID_MISMATCH(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
+
+    // MemberProfile
+    MEMBER_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 세부 정보가 존재하지 않습니다."),
 
     // Auth
     INVALID_CREDENTIAL(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호 입니다."),
@@ -69,6 +72,7 @@ public enum BusinessError {
     IMAGE_LIMIT_EXCEED(HttpStatus.BAD_REQUEST, "사진은 최대 5장까지 등록 가능합니다."),
     IMAGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이미지가 존재합니다"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
+    IMAGE_OWNER_MISMATCH(HttpStatus.FORBIDDEN, "해당 이미지의 소유자가 아닙니다."),
 
     // Order
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
@@ -81,9 +85,20 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
 
     // PAYMENT
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND , "결제를 찾을 수 없습니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다."),
-    PAYMENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못 된 결제 요청입니다.")
+    PAYMENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못 된 결제 요청입니다."),
+
+    //Store
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다.")
+
+
+
+
+
+
+
+
     ;
 
     private final HttpStatus httpStatus;
