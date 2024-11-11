@@ -11,6 +11,9 @@ permissions:
 
 jobs:
   test:
+    env:
+      IMP_API_KEY: ${{ secrets.IMP_API_KEY }}
+      IMP_SECRET_KEY: ${{ secrets.IMP_SECRET_KEY }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
