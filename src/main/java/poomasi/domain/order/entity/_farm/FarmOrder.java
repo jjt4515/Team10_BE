@@ -1,9 +1,12 @@
 package poomasi.domain.order.entity._farm;
 
 import jakarta.persistence.*;
+import jdk.jfr.Description;
 import org.hibernate.annotations.Comment;
 import poomasi.domain.order._payment.entity.Payment;
 import poomasi.domain.order.entity._abstract.AbstractOrder;
+
+import java.util.Date;
 
 //@Entity
 //@Table(name = "farm_order")
@@ -19,7 +22,7 @@ public class FarmOrder extends AbstractOrder {
     private String description;
 
     @Comment("도로명 주소")
-    private String address;
+    private String destinationAddress;
 
     @Comment("상세 주소")
     private String addressDetail;
@@ -30,5 +33,11 @@ public class FarmOrder extends AbstractOrder {
     @Comment("경도")
     private Double longitude;
     */
+
+    @Column(name = "merchant_uid")
+    @Description("서버 내부 주문 id(아임포트 id)")
+    private String merchantUid = "f" + new Date().getTime();
+
+
 }
 

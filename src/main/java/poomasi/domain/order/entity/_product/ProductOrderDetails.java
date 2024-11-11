@@ -2,6 +2,7 @@ package poomasi.domain.order.entity._product;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,21 +19,29 @@ public class ProductOrderDetails {
     @OneToOne(mappedBy = "productOrderDetails", cascade = CascadeType.ALL) // 필드명으로 지정
     private ProductOrder productOrder;
 
-    @Column(name = "address")
-    private String address;
+    @Column(name = "return_address")
+    @Description("도착 주소")
+    private String destinationAddress;
 
-    @Column(name = "address_detail")
-    private String addressDetail;
+    @Column(name = "destination_address_detail")
+    @Description("도착 상세 주소")
+    private String destinationAddressDetail;
 
     @Description("배송 요청 사항")
     @Column(name = "delivery_request", length = 255)
     private String deliveryRequest;
 
-    public ProductOrderDetails(String address, String addressDetail, String deliveryRequest) {
-        this.address = address;
-        this.addressDetail = addressDetail;
+
+    @Builder
+    public ProductOrderDetails(ProductOrder productOrder, String destinationAddress, String destinationAddressDetail, String deliveryRequest) {
+        this.productOrder = productOrder;
+        this.destinationAddress = destinationAddress;
+        this.destinationAddressDetail = destinationAddressDetail;
         this.deliveryRequest = deliveryRequest;
     }
 
+    public void setProductOrder(ProductOrder productOrder) {
+        this.productOrder = productOrder;
+    }
 
 }
