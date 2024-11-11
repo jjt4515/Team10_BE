@@ -15,7 +15,7 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessException;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -81,7 +81,7 @@ public class ImageService {
             throw new BusinessException(IMAGE_ALREADY_EXISTS);
         }
         existingImage.setDeletedAt(null);
-        existingImage.setCreatedAt(new Date());
+        existingImage.setCreatedAt(LocalDateTime.now());
         existingImage.update(imageRequest);
         return existingImage;
     }
