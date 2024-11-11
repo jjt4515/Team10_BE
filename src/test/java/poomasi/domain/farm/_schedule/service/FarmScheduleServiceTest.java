@@ -153,5 +153,19 @@ class FarmScheduleServiceTest {
                     () -> assertEquals(LocalTime.of(12, 0), farmSchedules.get(0).getEndTime())
             );
         }
+
+        @Test
+        @DisplayName("스케줄이 없는 날짜에 대해 빈 리스트를 반환한다")
+        void should_returnEmptyList_when_noSchedulesOnDate() {
+            // given
+            LocalDate date = LocalDate.of(2024, 11, 12);
+            given(farmScheduleRepository.findByFarmIdAndDate(1L, date)).willReturn(List.of());
+
+            // when
+            List<FarmSchedule> result = farmScheduleService.getFarmScheduleByFarmIdAndDate(1L, date);
+
+            // then
+            assertTrue(result.isEmpty());
+        }
     }
 }
