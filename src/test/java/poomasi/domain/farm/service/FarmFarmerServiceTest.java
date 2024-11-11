@@ -137,5 +137,41 @@ class FarmFarmerServiceTest {
             // then
             verify(farmRepository).delete(farm);
         }
+
+        @Test
+        @DisplayName("농장이 존재하지 않는 경우 예외를 발생시킨다")
+        void should_throwException_when_farmNotExistOnDelete() {
+            // given
+            Long farmId = 1L;
+            Long farmerId = 1L;
+            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.empty());
+
+            // when & then
+            assertThatThrownBy(() -> farmFarmerService.deleteFarm(farmerId, farmId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasFieldOrPropertyWithValue("businessError", BusinessError.FARM_NOT_FOUND);
+        }
+
+        @Test
+        @DisplayName("농장이 이미 삭제된 경우 예외를 발생시킨다")
+        void should_throwException_when_farmAlreadyDeleted() {
+            // given
+            Long farmId = 1L;
+            Long farmerId = 1L;
+            Farm farm = Farm.builder()
+                    .id(farmId)
+                    .name("Farm")
+                    .ownerId(farmerId)
+                    .deletedAt(null)
+                    .build();
+
+            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.of(farm));
+
+            // when
+            farmFarmerService.deleteFarm(farmerId, farmId);
+
+            // then
+            verify(farmRepository).delete(farm);
+        }
     }
 }

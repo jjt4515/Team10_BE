@@ -80,7 +80,7 @@ public class Farm {
     List<Review> reviewList = new ArrayList<>();
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, LocalDateTime deletedAt) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -92,6 +92,7 @@ public class Farm {
         this.experiencePrice = experiencePrice;
         this.maxCapacity = maxCapacity;
         this.maxReservation = maxReservation;
+        this.deletedAt = deletedAt;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
