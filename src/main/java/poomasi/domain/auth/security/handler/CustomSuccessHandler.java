@@ -50,9 +50,11 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtUtil.generateAccessTokenById(memberId);
         String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
-        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-        response.setStatus(HttpStatus.OK.value());
         response.addCookie(createCookie("refresh", refreshToken));
+        response.addCookie(createCookie("access", accessToken));
+
+        response.setStatus(HttpStatus.OK.value());
+
         response.getWriter();
     }
 
