@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -38,6 +39,7 @@ public class Product {
     @Comment("상품 설명")
     private String description;
 
+    @Setter
     @Comment("이미지 URL")
     private String imageUrl;
 
@@ -77,6 +79,13 @@ public class Product {
     @JoinColumn(name = "order_product_details_id")
     private List<OrderedProduct> orderProductDetails;
 
+//    @PreRemove
+//    public void preRemove() {
+//        // Product가 삭제되기 전에 연관된 이미지를 삭제
+//        for (Image image : images) {
+//            image.setDeletedAt(LocalDateTime.now());
+//        }
+//    }
 
     @Builder
     public Product(Long productId,

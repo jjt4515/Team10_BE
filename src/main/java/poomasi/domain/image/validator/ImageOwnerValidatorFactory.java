@@ -1,4 +1,4 @@
-package poomasi.domain.image.validation;
+package poomasi.domain.image.validator;
 
 import org.springframework.stereotype.Component;
 import poomasi.domain.image.entity.ImageType;
