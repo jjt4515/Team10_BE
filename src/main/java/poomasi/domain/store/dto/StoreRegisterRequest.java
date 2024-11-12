@@ -8,7 +8,6 @@ public record StoreRegisterRequest(
         String name,
         String address,
         String phone,
-        String ownerPhone,
         @Comment("사업자 번호")
         String businessNumber
 ) {
@@ -18,7 +17,6 @@ public record StoreRegisterRequest(
                 .name(name)
                 .address(address)
                 .phone(phone)
-                .ownerPhone(ownerPhone)
                 .businessNumber(businessNumber)
                 .owner(member)
                 .build();

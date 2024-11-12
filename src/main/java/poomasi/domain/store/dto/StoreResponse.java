@@ -17,9 +17,6 @@ public record StoreResponse(
 
         String phone,
 
-        @NotNull
-        String ownerPhone,
-
         @Comment("사업자 번호")
         @NotNull
         String businessNumber,
@@ -35,7 +32,6 @@ public record StoreResponse(
                 .name(store.getName())
                 .address(store.getAddress())
                 .phone(store.getPhone())
-                .ownerPhone(store.getOwnerPhone())
                 .businessNumber(store.getBusinessNumber())
                 //TODO 나중에 삼항연산자 삭제
                 .ownerName( store.getOwner().getName() == null ? ""

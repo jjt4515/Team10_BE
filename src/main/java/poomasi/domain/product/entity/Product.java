@@ -1,22 +1,8 @@
 package poomasi.domain.product.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.math.BigDecimal;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +13,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
@@ -101,6 +88,9 @@ public class Product {
     @JoinColumn(name = "order_product_details_id")
     private List<OrderedProduct> orderProductDetails;
 
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductIntro productIntro;
+
 //    @PreRemove
 //    public void preRemove() {
 //        // Product가 삭제되기 전에 연관된 이미지를 삭제
@@ -120,7 +110,8 @@ public class Product {
             BigDecimal price,
             Store store,
             String growEnv,
-            BigDecimal shippingFee) {
+            BigDecimal shippingFee,
+            ProductIntro productIntro) {
         this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
@@ -130,6 +121,7 @@ public class Product {
         this.stock = stock;
         this.price = price;
         this.store = store;
+        this.productIntro = productIntro;
         this.growEnv = growEnv;
         this.shippingFee = shippingFee;
     }

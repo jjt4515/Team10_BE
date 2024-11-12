@@ -61,7 +61,7 @@ public class ImageController {
     }
 
     // 이미지 정보 수정
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<?> updateImageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long id,

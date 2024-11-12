@@ -1,7 +1,5 @@
 package poomasi.global.error;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -87,15 +85,14 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
     ORDERED_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 주문입니다."),
 
+    //Store
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
 
     // PAYMENT
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다."),
     PAYMENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못 된 결제 요청입니다."),
     CHECKSUM_EXCESSIVE_REFUND_AMOUNT(HttpStatus.BAD_REQUEST, "환불 요청 금액이 환불 가능한 금액보다 더 많습니다"),
-
-    //Store
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
 
     // After sales
     SHIPPING_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "배송 준비 중이거나 배송 중인 주문입니다."),
@@ -107,10 +104,11 @@ public enum BusinessError {
     REFUND_NOT_ALLOWED_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "배송 대기 전 상태에서는 환불을 요청할 수 없습니다."),
     REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND , "찾을 수 없는 환불 요청입니다."),
     REFUND_AFTER_SALES_REQUEST_INVALID_OWNER(HttpStatus.BAD_REQUEST, "판매자의 환불 요청이 아닙니다."),
-    ;
+
+    //Product intro
+    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다.");
 
     private final HttpStatus httpStatus;
 
     private final String message;
 }
-

@@ -3,9 +3,13 @@ package poomasi.domain.product.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.image.repository.ImageRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.repository.CategoryRepository;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.entity.Product;
@@ -22,16 +26,31 @@ public class ProductFarmerService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final StoreRepository storeRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public Long registerProduct(Member member, ProductRegisterRequest request) {
         Category category = getCategory(request.categoryId());
         Store store = member.getStore();
-        Product saveProduct = productRepository.save(request.toEntity(member, store));
+
+        Image introMainImage = getImage(request.mainImageId());
+        Image introSubImage1 = getImage(request.subImage1Id());
+        Image introSubImage2 = getImage(request.subImage2Id());
+        Image introSubImage3 = getImage(request.subImage3Id());
+
+        Product saveProduct = productRepository.save(request.toEntity(member,store, introMainImage,introSubImage1,introSubImage2,introSubImage3));
 
         category.addProduct(saveProduct);
         store.addProduct(saveProduct);
+        saveProduct.getProductIntro().setProduct(saveProduct);
         return saveProduct.getId();
+    }
+
+    private Image getImage(Long imageId) {
+        if(imageId == null)
+            return null;
+        return imageRepository.findById(imageId)
+                .orElseThrow(() -> new BusinessException(BusinessError.IMAGE_NOT_FOUND));
     }
 
     @Transactional
