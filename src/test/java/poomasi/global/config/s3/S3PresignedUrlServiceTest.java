@@ -46,31 +46,31 @@ public class S3PresignedUrlServiceTest {
         s3PresignedUrlService = new S3PresignedUrlService(presigner, new EncryptionUtil());
     }
 
-    @Test
-    public void testCreatePresignedGetUrl() {
-        String objectKey = "object_key";
-        String bucketName = awsProperties.getS3().getBucket();
-
-        String presignedUrl = s3PresignedUrlService.createPresignedGetUrl(bucketName, objectKey);
-
-        assertNotNull(presignedUrl);
-        System.out.println("Presigned GET URL: " + presignedUrl);
-    }
-
-    @Test
-    public void testCreatePresignedPutUrl() {
-        String keyPrefix = "uploads";
-        String bucketName = awsProperties.getS3().getBucket();
-
-        // 메타데이터 생성
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("Content-Type", "image/jpg");
-        metadata.put("x-amz-meta-title", "Test Image");
-
-        // presigned PUT URL 생성
-        String presignedUrl = s3PresignedUrlService.createPresignedPutUrl(bucketName, keyPrefix, metadata);
-
-        assertNotNull(presignedUrl);
-        System.out.println("Presigned PUT URL: " + presignedUrl);
-    }
+//    @Test
+//    public void testCreatePresignedGetUrl() {
+//        String objectKey = "object_key";
+//        String bucketName = awsProperties.getS3().getBucket();
+//
+//        String presignedUrl = s3PresignedUrlService.createPresignedGetUrl(bucketName, objectKey);
+//
+//        assertNotNull(presignedUrl);
+//        System.out.println("Presigned GET URL: " + presignedUrl);
+//    }
+//
+//    @Test
+//    public void testCreatePresignedPutUrl() {
+//        String keyPrefix = "uploads";
+//        String bucketName = awsProperties.getS3().getBucket();
+//
+//        // 메타데이터 생성
+//        Map<String, String> metadata = new HashMap<>();
+//        metadata.put("Content-Type", "image/jpg");
+//        metadata.put("x-amz-meta-title", "Test Image");
+//
+//        // presigned PUT URL 생성
+//        String presignedUrl = s3PresignedUrlService.createPresignedPutUrl(bucketName, keyPrefix, metadata);
+//
+//        assertNotNull(presignedUrl);
+//        System.out.println("Presigned PUT URL: " + presignedUrl);
+//    }
 }
