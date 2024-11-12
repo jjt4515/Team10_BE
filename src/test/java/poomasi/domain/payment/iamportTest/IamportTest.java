@@ -38,6 +38,7 @@ public class IamportTest {
     @BeforeEach
     public void setUp() {
         this.iamportClient = new IamportClient(apiKey, secretKey);
+
     }
 
 //    @Test
@@ -55,5 +56,6 @@ public class IamportTest {
 //        System.out.println("Response Code: " + prepareIamportResponse.getCode());
 //        System.out.println("Response Message: " + prepareIamportResponse.getMessage());
 //    }
+
 }
 
