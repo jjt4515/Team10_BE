@@ -5,14 +5,12 @@ import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.entity.Reservation;
-
-import java.time.LocalDate;
+import poomasi.domain.reservation.entity.ReservationStatus;
 
 @Builder
 public record ReservationRequest(
         Long farmId,
-        Long memberId,
-        LocalDate reservationDate,
+        Long scheduleId,
 
         int memberCount,
         String request
@@ -22,9 +20,11 @@ public record ReservationRequest(
                 .member(member)
                 .farm(farm)
                 .scheduleId(farmSchedule)
-                .reservationDate(reservationDate)
+                .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
+                .price(farm.getExperiencePrice() * memberCount)
+                .status(ReservationStatus.ACCEPTED)
                 .build();
     }
 }

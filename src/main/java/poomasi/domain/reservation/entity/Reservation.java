@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "reservation", indexes = {
         @Index(name = "idx_farm_id", columnList = "farm_id"),
-        @Index(name = "idx_user_id", columnList = "user_id")
+        @Index(name = "idx_member_id", columnList = "member_id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
@@ -60,6 +60,10 @@ public class Reservation {
     @Column(nullable = false)
     private String request;
 
+    @Comment("결제 예정 금액")
+    @Column(nullable = false)
+    private int price;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -71,7 +75,7 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request) {
+    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, int price) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -79,6 +83,7 @@ public class Reservation {
         this.memberCount = memberCount;
         this.status = status;
         this.request = request;
+        this.price = price;
     }
 
     public ReservationResponse toResponse() {
@@ -90,6 +95,7 @@ public class Reservation {
                 .memberCount(memberCount)
                 .status(status)
                 .request(request)
+                .price(price)
                 .build();
     }
 
@@ -100,5 +106,9 @@ public class Reservation {
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
+    }
+
+    public boolean isNotCancelled() {
+        return !isCanceled();
     }
 }

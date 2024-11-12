@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import poomasi.domain.farm.entity.Farm;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +18,6 @@ public interface FarmRepository extends JpaRepository<Farm, Long> {
     Optional<Farm> getFarmByOwnerIdAndDeletedAtIsNull(Long ownerId);
 
     Optional<Farm> findByIdAndDeletedAtIsNull(Long id);
+
+    List<Farm> findAllByOwnerIdAndDeletedAtIsNull(Long farmerId);
 }
