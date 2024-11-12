@@ -45,7 +45,7 @@ public record StoreResponse(
                 .shipingFee(store.getShipingFee())
                 //TODO 나중에 삼항연산자 삭제
                 .ownerName( store.getOwner().getMemberProfile() == null ? ""
-                                : store.getOwner().getMemberProfile().getName())
+                                : store.getOwner().getName())
                 .products(store.getProducts().stream().map(ProductResponse::fromEntity).toList())
                 .build();
 
