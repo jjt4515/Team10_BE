@@ -12,8 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.image.entity.Image;
-import poomasi.domain.order.entity.OrderProductDetails;
+import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
@@ -78,7 +77,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderProductDetails> orderProductDetails;
+    private List<OrderedProduct> orderProductDetails;
 
 //    @PreRemove
 //    public void preRemove() {
@@ -122,5 +121,18 @@ public class Product {
     public void addStock(Integer stock) {
         this.stock += stock;
     }
+
+    public void addReview(Review pReview) {
+        this.reviewList.add(pReview);
+        this.averageRating = reviewList.stream()
+                .mapToDouble(Review::getRating) // 각 리뷰의 평점을 double로 변환
+                .average() // 평균 계산
+                .orElse(0.0);
+    }
+
+    public void subtractStock(Integer stock) {
+        this.stock -= stock;
+    }
+
 
 }

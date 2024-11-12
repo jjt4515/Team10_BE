@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import poomasi.global.config.aws.AwsProperties;
 import poomasi.global.util.EncryptionUtil;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -18,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class S3PresignedUrlServiceTest {
-
     private S3PresignedUrlService s3PresignedUrlService;
 
     @Autowired

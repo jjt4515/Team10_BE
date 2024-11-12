@@ -7,9 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import poomasi.domain.order.entity.Order;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
+import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.wishlist.entity.WishList;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
@@ -61,7 +61,7 @@ public class Member {
     private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orderLists;
+    private List<ProductOrder> productOrderLists;
 
     @Setter
     @Column(nullable = true)
