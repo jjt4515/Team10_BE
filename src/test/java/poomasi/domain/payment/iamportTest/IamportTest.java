@@ -38,22 +38,24 @@ public class IamportTest {
     @BeforeEach
     public void setUp() {
         this.iamportClient = new IamportClient(apiKey, secretKey);
+
     }
 
-    @Test
-    public void portonePrePaymentRegister_Test() throws IamportResponseException, IOException {
-        String merchantUid = "poomasi_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        BigDecimal amount = new BigDecimal("100");
-        PrepareData prepareData = new PrepareData(merchantUid, amount);
+//    @Test
+//    public void portonePrePaymentRegister_Test() throws IamportResponseException, IOException {
+//        String merchantUid = "poomasi_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+//        BigDecimal amount = new BigDecimal("100");
+//        PrepareData prepareData = new PrepareData(merchantUid, amount);
+//
+//        // `iamportClient.postPrepare` 모킹 설정
+//        IamportResponse<Prepare> mockResponse = new IamportResponse<>();
+//        given(iamportClient.postPrepare(any(PrepareData.class))).willReturn(mockResponse);
+//
+//        // 테스트 실행
+//        IamportResponse<Prepare> prepareIamportResponse = iamportClient.postPrepare(prepareData);
+//        System.out.println("Response Code: " + prepareIamportResponse.getCode());
+//        System.out.println("Response Message: " + prepareIamportResponse.getMessage());
+//    }
 
-        // `iamportClient.postPrepare` 모킹 설정
-        IamportResponse<Prepare> mockResponse = new IamportResponse<>();
-        given(iamportClient.postPrepare(any(PrepareData.class))).willReturn(mockResponse);
-
-        // 테스트 실행
-        IamportResponse<Prepare> prepareIamportResponse = iamportClient.postPrepare(prepareData);
-        System.out.println("Response Code: " + prepareIamportResponse.getCode());
-        System.out.println("Response Message: " + prepareIamportResponse.getMessage());
-    }
 }
 

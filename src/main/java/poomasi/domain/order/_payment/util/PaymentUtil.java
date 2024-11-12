@@ -35,8 +35,8 @@ public class PaymentUtil {
     }
 
     @Description("단건 결제 조회 API")
-    public IamportResponse<com.siot.IamportRestClient.response.Payment> getSingleTransaction(String impUid) throws IOException, IamportResponseException {
-        IamportResponse<com.siot.IamportRestClient.response.Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
+    public IamportResponse<Payment> getSingleTransaction(String impUid) throws IOException, IamportResponseException {
+        IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
         return iamportResponse;
     }
 
@@ -73,7 +73,7 @@ public class PaymentUtil {
 
     @Description("단건 조회 후, 결제 되어야 할 금액과 결제 된 금액이 같은지 확인하는 메서드")
     public boolean validatePaymentAmount(String impUid, BigDecimal amountToBePaid) throws IOException, IamportResponseException{
-        IamportResponse<com.siot.IamportRestClient.response.Payment> iamportResponse = getSingleTransaction(impUid); //내가 보냄
+        IamportResponse<Payment> iamportResponse = getSingleTransaction(impUid); //내가 보냄
         BigDecimal amount = iamportResponse.getResponse().getAmount();
         if(amountToBePaid.compareTo(amount)!=0){
             return false;
