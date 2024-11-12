@@ -93,12 +93,12 @@ public class SecurityConfig {
 
 
         //endpoint : {domain}/oauth2/authentication/kakao
-        http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(oAuth2UserDetailServiceImpl))
-                        .successHandler(customSuccessHandler)
-                );
+//        http
+//                .oauth2Login((oauth2) -> oauth2
+//                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+//                                .userService(oAuth2UserDetailServiceImpl))
+//                        .successHandler(customSuccessHandler)
+//                );
 
         CustomUsernamePasswordAuthenticationFilter customUsernameFilter =
                 new CustomUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil);

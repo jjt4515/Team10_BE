@@ -51,7 +51,7 @@ public class Member {
     @Column(nullable = true)
     private String provideId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberProfile memberProfile;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

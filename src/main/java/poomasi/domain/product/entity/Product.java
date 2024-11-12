@@ -1,5 +1,20 @@
 package poomasi.domain.product.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.math.BigDecimal;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +31,7 @@ import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
+import poomasi.domain.store.entity.Store;
 
 @Entity
 @Getter
@@ -47,7 +63,13 @@ public class Product {
     private Integer stock;
 
     @Comment("가격")
-    private Long price;
+    private BigDecimal price;
+
+    @Comment("재배 환경")
+    private String growEnv;
+
+    @Comment("배송비")
+    BigDecimal shippingFee;
 
     @Comment("삭제 일시")
     private LocalDateTime deletedAt;
@@ -95,8 +117,10 @@ public class Product {
             String description,
             String imageUrl,
             Integer stock,
-            Long price,
-            Store store) {
+            BigDecimal price,
+            Store store,
+            String growEnv,
+            BigDecimal shippingFee) {
         this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
@@ -106,6 +130,8 @@ public class Product {
         this.stock = stock;
         this.price = price;
         this.store = store;
+        this.growEnv = growEnv;
+        this.shippingFee = shippingFee;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
@@ -115,6 +141,8 @@ public class Product {
         this.imageUrl = productRegisterRequest.imageUrl();
         this.stock = productRegisterRequest.stock();
         this.price = productRegisterRequest.price();
+        this.growEnv = productRegisterRequest.growEnv();
+        this.shippingFee = productRegisterRequest.shippingFee();
         return this;
     }
 
