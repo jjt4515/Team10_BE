@@ -1,5 +1,6 @@
 package poomasi.domain.product._intro.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,12 +10,13 @@ import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import poomasi.domain.product._intro.dto.ProductIntroRequest;
+import lombok.Setter;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.product._intro.dto.ProductIntroUpdateRequest;
 import poomasi.domain.product.entity.Product;
 
 @Entity
 @Getter
-@NoArgsConstructor
 public class ProductIntro {
 
     @Id
@@ -23,42 +25,46 @@ public class ProductIntro {
 
     @OneToOne
     @JoinColumn(name = "id")
+    @Setter
     private Product product;
 
     private String mainTitle;
-    private String mainImage;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image mainImage;
 
     private String subTitle1;
     private String subDesc1;
-    private String subImage1;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image subImage1;
 
     private String subTitle2;
     private String subDesc2;
-    private String subImage2;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image subImage2;
 
     private String subTitle3;
     private String subDesc3;
-    private String subImage3;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Image subImage3;
 
-    public ProductIntro(Product product) {
-        this.product = product;
+    public ProductIntro() {
         this.mainTitle = "";
-        this.mainImage = "";
+        this.mainImage = null;
         this.subTitle1 = "";
         this.subDesc1 = "";
-        this.subImage1 = "";
+        this.subImage1 = null;
         this.subTitle2 = "";
         this.subDesc2 = "";
-        this.subImage2 = "";
+        this.subImage2 = null;
         this.subTitle3 = "";
         this.subDesc3 = "";
-        this.subImage3 = "";
+        this.subImage3 = null;
     }
 
     @Builder
-    public ProductIntro(Product product, String mainTitle, String mainImage, String subTitle1,
-            String subDesc1, String subImage1, String subTitle2, String subDesc2, String subImage2,
-            String subTitle3, String subDesc3, String subImage3) {
+    public ProductIntro(Product product, String mainTitle, Image mainImage, String subTitle1,
+            String subDesc1, Image subImage1, String subTitle2, String subDesc2, Image subImage2,
+            String subTitle3, String subDesc3, Image subImage3) {
         this.product = product;
         this.mainTitle = mainTitle;
         this.mainImage = mainImage;
@@ -73,17 +79,17 @@ public class ProductIntro {
         this.subImage3 = subImage3;
     }
 
-    public void update(ProductIntroRequest productIntroRequest) {
-        this.mainTitle = productIntroRequest.mainTitle();
-        this.mainImage = productIntroRequest.mainImage();
-        this.subTitle1 = productIntroRequest.subTitle1();
-        this.subDesc1 = productIntroRequest.subDesc1();
-        this.subImage1 = productIntroRequest.subImage1();
-        this.subTitle2 = productIntroRequest.subTitle2();
-        this.subDesc2 = productIntroRequest.subDesc2();
-        this.subImage2 = productIntroRequest.subImage2();
-        this.subTitle3 = productIntroRequest.subTitle3();
-        this.subDesc3 = productIntroRequest.subDesc3();
-        this.subImage3 = productIntroRequest.subImage3();
+    public void update(ProductIntroUpdateRequest productIntroUpdateRequest, Image mainImage, Image subImage1, Image subImage2, Image subImage3) {
+        this.mainTitle = productIntroUpdateRequest.mainTitle();
+        this.mainImage = mainImage;
+        this.subTitle1 = productIntroUpdateRequest.subTitle1();
+        this.subDesc1 = productIntroUpdateRequest.subDesc1();
+        this.subImage1 = subImage1;
+        this.subTitle2 = productIntroUpdateRequest.subTitle2();
+        this.subDesc2 = productIntroUpdateRequest.subDesc2();
+        this.subImage2 = subImage2;
+        this.subTitle3 = productIntroUpdateRequest.subTitle3();
+        this.subDesc3 = productIntroUpdateRequest.subDesc3();
+        this.subImage3 = subImage3;
     }
 }

@@ -103,7 +103,8 @@ public class Product {
             String imageUrl,
             Integer stock,
             Long price,
-            Store store
+            Store store,
+            ProductIntro productIntro
     ) {
         this.id = productId;
         this.categoryId = categoryId;
@@ -114,7 +115,7 @@ public class Product {
         this.stock = stock;
         this.price = price;
         this.store = store;
-        this.productIntro = new ProductIntro(this);
+        this.productIntro = productIntro;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
