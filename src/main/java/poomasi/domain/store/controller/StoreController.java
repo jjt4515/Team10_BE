@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,10 +27,9 @@ public class StoreController {
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_FARMER")
-    @GetMapping("")
-    public ResponseEntity<?> getStore() {
-        return ResponseEntity.ok(storeService.getStore());
+    @GetMapping("/{memberId}")
+    public ResponseEntity<?> getStore(@PathVariable Long memberId) {
+        return ResponseEntity.ok(storeService.getStore(memberId));
     }
 
     @Secured("ROLE_FARMER")

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
+import poomasi.domain.member.entity.Role;
+import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.dto.StoreResponse;
 import poomasi.domain.store.entity.Store;
@@ -20,19 +22,21 @@ import poomasi.global.error.BusinessException;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void addStore(StoreRegisterRequest storeRegisterRequest) {
         Member member = getMember();
         Store store = storeRegisterRequest.toEntity(member);
+        store = storeRepository.save(store);
         member.setStore(store);
-        storeRepository.save(store);
+        System.out.println(member.getStore().getId());
     }
 
-    public StoreResponse getStore() {
-        Member member = getMember();
-        Store store = getStore(member);
-        return StoreResponse.fromEntity(store);
+    public StoreResponse getStore(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new BusinessException(BusinessError.MEMBER_NOT_FOUND));
+
+        return StoreResponse.fromEntity(member.getStore());
     }
 
     private Store getStore(Member member) {
