@@ -1,6 +1,8 @@
 package poomasi.domain.auth.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import poomasi.domain.auth.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.filter.JwtAuthenticationFilter;
 import poomasi.domain.auth.security.handler.CustomSuccessHandler;
@@ -25,6 +30,9 @@ import poomasi.domain.auth.security.userdetail.OAuth2UserDetailServiceImpl;
 import poomasi.domain.auth.security.handler.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsServiceImpl;
 import poomasi.domain.auth.token.util.JwtUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 
 @AllArgsConstructor
@@ -38,6 +46,7 @@ public class SecurityConfig {
     private final MvcRequestMatcher.Builder mvc;
     private final CustomSuccessHandler customSuccessHandler;
     private final UserDetailsServiceImpl userDetailsService;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
@@ -60,8 +69,9 @@ public class SecurityConfig {
         //csrf 해제
         http.csrf(AbstractHttpConfigurer::disable);
 
-        //cors 해제
-        http.cors(AbstractHttpConfigurer::disable);
+        //cors 설정
+        http.cors(cors -> cors
+                .configurationSource(corsConfigurationSource));
 
         //세션 해제
         http.sessionManagement((session) -> session
