@@ -24,28 +24,28 @@ public class S3PresignedUrlServiceTest {
     @Autowired
     private AwsProperties awsProperties;
 
-    @BeforeEach
-    public void setUp() {
-        String accessKey = awsProperties.getAccess();
-        String secretKey = awsProperties.getSecret();
-        String region = awsProperties.getS3().getRegion();
-
-        // 자격 증명 설정
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
-                accessKey,
-                secretKey
-        );
-
-        // S3Presigner 인스턴스 생성
-        S3Presigner presigner = S3Presigner.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.of(region))
-                .build();
-
-        // S3PresignedUrlService 초기화
-        s3PresignedUrlService = new S3PresignedUrlService(presigner, new EncryptionUtil());
-    }
-
+//    @BeforeEach
+//    public void setUp() {
+//        String accessKey = awsProperties.getAccess();
+//        String secretKey = awsProperties.getSecret();
+//        String region = awsProperties.getS3().getRegion();
+//
+//        // 자격 증명 설정
+//        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
+//                accessKey,
+//                secretKey
+//        );
+//
+//        // S3Presigner 인스턴스 생성
+//        S3Presigner presigner = S3Presigner.builder()
+//                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+//                .region(Region.of(region))
+//                .build();
+//
+//        // S3PresignedUrlService 초기화
+//        s3PresignedUrlService = new S3PresignedUrlService(presigner, new EncryptionUtil());
+//    }
+//
 //    @Test
 //    public void testCreatePresignedGetUrl() {
 //        String objectKey = "object_key";
