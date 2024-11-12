@@ -9,9 +9,7 @@ public record StoreRegisterRequest(
         String address,
         String phone,
         @Comment("사업자 번호")
-        String businessNumber,
-        @Comment("배송비")
-        Integer shipingFee
+        String businessNumber
 ) {
 
     public Store toEntity(Member member) {
@@ -20,7 +18,6 @@ public record StoreRegisterRequest(
                 .address(address)
                 .phone(phone)
                 .businessNumber(businessNumber)
-                .shipingFee(shipingFee)
                 .owner(member)
                 .build();
     }

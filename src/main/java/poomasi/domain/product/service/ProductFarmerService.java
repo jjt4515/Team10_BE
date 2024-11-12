@@ -14,6 +14,8 @@ import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 

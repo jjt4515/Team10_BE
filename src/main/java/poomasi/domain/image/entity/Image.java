@@ -8,9 +8,9 @@ import poomasi.domain.image.dto.ImageRequest;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "image", uniqueConstraints = {
+@Table(name = "image")/*, )uniqueConstraints = {
         @UniqueConstraint(columnNames = {"type", "reference_id"})
-})
+})*/
 @Getter
 @Setter
 @NoArgsConstructor
