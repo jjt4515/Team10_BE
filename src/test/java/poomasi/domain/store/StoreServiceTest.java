@@ -74,7 +74,7 @@ class StoreServiceTest {
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
-        StoreResponse response = storeService.getStore();
+        StoreResponse response = storeService.getStore(testMember.getId());
 
         // then
         assertNotNull(response);
