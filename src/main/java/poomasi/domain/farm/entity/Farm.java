@@ -85,7 +85,7 @@ public class Farm {
     private OrderedFarm orderedFarm;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, LocalDateTime deletedAt) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -97,6 +97,7 @@ public class Farm {
         this.experiencePrice = experiencePrice;
         this.maxCapacity = maxCapacity;
         this.maxReservation = maxReservation;
+        this.deletedAt = deletedAt;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
@@ -119,5 +120,9 @@ public class Farm {
 
     public void updateMaxReservation(Integer maxReservation) {
         this.maxReservation = maxReservation;
+    }
+
+    public void delete() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
