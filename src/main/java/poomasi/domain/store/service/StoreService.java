@@ -31,7 +31,6 @@ public class StoreService {
         Store store = storeRegisterRequest.toEntity(member);
         store = storeRepository.save(store);
         member.setStore(store);
-        System.out.println(member.getStore().getId());
     }
 
     public StoreResponse getStore(Long memberId) {
