@@ -28,7 +28,9 @@ public record FarmRegisterRequest(
         @NotNull
         Long categoryId,
         @NotNull
-        String imageUrl
+        String imageUrl,
+        @NotNull
+        int price
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()
@@ -46,6 +48,7 @@ public record FarmRegisterRequest(
                 .phoneNumber(phoneNumber)
                 .mainImage(imageUrl)
                 .growEnv(growEnv)
+                .experiencePrice(price)
                 .build();
     }
 }
