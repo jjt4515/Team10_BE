@@ -15,6 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.store.dto.StoreRegisterRequest;
@@ -70,7 +71,7 @@ class StoreServiceTest {
     @Test
     void getStore_StoreExists_ReturnStoreResponse() {
         // given
-        Store store = new Store(1L, "test","test","test",testMember,"test","test");
+        Store store = new Store(1L, "test", "test", "test", testMember, "test");
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
