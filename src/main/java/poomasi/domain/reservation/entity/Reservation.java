@@ -1,10 +1,25 @@
 package poomasi.domain.reservation.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,9 +27,7 @@ import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
@@ -24,6 +37,7 @@ import java.time.LocalDateTime;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -73,9 +87,13 @@ public class Reservation {
     @Comment("예약 취소 일자")
     private LocalDateTime canceledAt;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    Review review;
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, int price) {
+    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
+            int memberCount, ReservationStatus status, String request, int price) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -84,6 +102,7 @@ public class Reservation {
         this.status = status;
         this.request = request;
         this.price = price;
+        this.review = null;
     }
 
     public ReservationResponse toResponse() {
@@ -96,6 +115,7 @@ public class Reservation {
                 .status(status)
                 .request(request)
                 .price(price)
+                .isReviewed(review != null)
                 .build();
     }
 

@@ -1,10 +1,21 @@
 package poomasi.domain.farm.entity;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,9 +25,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
-
-import java.time.LocalDateTime;
-
 import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;
 
@@ -26,6 +34,7 @@ import poomasi.domain.review.entity.Review;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE farm SET deleted_at=current_timestamp WHERE id = ?")
 public class Farm {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -86,8 +95,13 @@ public class Farm {
     @JoinColumn(name = "ordered_farm_id")
     private OrderedFarm orderedFarm;
 
+    private double averageRating;
+
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail,
+            Double latitude, Double longitude, String description, int experiencePrice,
+            Integer maxCapacity, Integer maxReservation, String businessNumber,
+            LocalDateTime deletedAt) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -101,6 +115,7 @@ public class Farm {
         this.maxReservation = maxReservation;
         this.businessNumber = businessNumber;
         this.deletedAt = deletedAt;
+        averageRating = 0.0f;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
@@ -127,5 +142,13 @@ public class Farm {
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void addReview(Review review) {
+        this.reviewList.add(review);
+        this.averageRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0f);
     }
 }
