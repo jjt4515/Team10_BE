@@ -11,7 +11,7 @@ public class MemberProfileOwnerValidator implements ImageOwnerValidator{
 
     @Override
     public boolean validateOwner(Long memberId, Long referenceId) {
-        return memberRepository.findById(memberId)
+        return memberRepository.findByIdAndDeletedAtIsNull(memberId)
                 .filter(member -> member.getMemberProfile().getId().equals(referenceId))
                 .isPresent();
     }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import poomasi.domain.farm.repository.FarmRepository;
 
-
 @Component
 @RequiredArgsConstructor
 public class FarmOwnerValidator implements ImageOwnerValidator {
@@ -12,7 +11,7 @@ public class FarmOwnerValidator implements ImageOwnerValidator {
 
     @Override
     public boolean validateOwner(Long memberId, Long referenceId) {
-        return farmRepository.findById(referenceId)
+        return farmRepository.findByIdAndDeletedAtIsNull(referenceId)
                 .filter(farm -> farm.getOwnerId().equals(memberId))
                 .isPresent();
     }
