@@ -26,9 +26,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.farm.dto.FarmUpdateRequest;
-
-import java.time.LocalDateTime;
+import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 
 import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;

@@ -1,4 +1,4 @@
-package poomasi.domain.farm.dto;
+package poomasi.domain.farm.dto.request;
 
 import poomasi.domain.farm.entity.Farm;
 
