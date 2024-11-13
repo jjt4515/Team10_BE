@@ -128,6 +128,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    // 계정 정지
+    @PutMapping("/suspend/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> suspendAccount(@PathVariable Long memberId) {
+        memberService.suspendAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 

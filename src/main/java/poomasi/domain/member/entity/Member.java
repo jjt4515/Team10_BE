@@ -125,6 +125,10 @@ public class Member {
         return store;
     }
 
+    public void setIsBanned(boolean isBanned){
+        memberProfile.setBanned(isBanned);
+    }
+
 
 
 }

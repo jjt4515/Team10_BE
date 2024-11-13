@@ -159,4 +159,11 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void suspendAccount(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.setIsBanned(true);
+        memberRepository.save(member);
+    }
+
 }
