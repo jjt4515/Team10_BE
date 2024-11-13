@@ -22,9 +22,9 @@ public record FarmRegisterRequest(
         @NotNull
         int experiencePrice,
         @NotNull
-        Integer maxCapacity,
+        Integer maxPeople,
         @NotNull
-        Integer maxReservation,
+        Integer maxTeam,
         @NotNull
         Long categoryId,
         @NotNull
@@ -42,8 +42,8 @@ public record FarmRegisterRequest(
                 .longitude(longitude)
                 .description(description)
                 .experiencePrice(experiencePrice)
-                .maxCapacity(maxCapacity)
-                .maxReservation(maxReservation)
+                .maxCapacity(maxPeople)
+                .maxReservation(maxTeam)
                 .categoryId(categoryId)
                 .phoneNumber(phoneNumber)
                 .mainImage(imageUrl)
