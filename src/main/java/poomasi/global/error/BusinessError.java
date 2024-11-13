@@ -73,7 +73,7 @@ public enum BusinessError {
     START_DATE_SHOULD_BE_BEFORE_END_DATE(HttpStatus.BAD_REQUEST, "시작 날짜는 종료 날짜보다 이전이어야 합니다."),
 
     // Image
-    IMAGE_LIMIT_EXCEED(HttpStatus.BAD_REQUEST, "사진은 최대 5장까지 등록 가능합니다."),
+    IMAGE_LIMIT_EXCEED(HttpStatus.BAD_REQUEST, "이미지를 더 등록할 수 없습니다."),
     IMAGE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 이미지가 존재합니다"),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "이미지를 찾을 수 없습니다."),
     IMAGE_OWNER_MISMATCH(HttpStatus.FORBIDDEN, "해당 이미지의 소유자가 아닙니다."),
