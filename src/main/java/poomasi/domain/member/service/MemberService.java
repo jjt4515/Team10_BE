@@ -21,8 +21,6 @@ import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.global.error.BusinessException;
 
-import java.util.Optional;
-
 import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
 import static poomasi.domain.member.entity.Role.ROLE_FARMER;
 import static poomasi.global.error.BusinessError.*;
