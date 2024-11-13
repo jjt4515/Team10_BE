@@ -28,4 +28,12 @@ public class BizProfileFarmerController {
 
     }
 
+    @PostMapping("/profile/approve")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<?> approveBizProfile(
+            @Valid BizProfileApproveRequest request
+    ) {
+        return ResponseEntity.ok(memberBizProfileFarmerService.approveBizProfile(request));
+    }
+
 }
