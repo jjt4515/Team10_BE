@@ -11,6 +11,7 @@ import poomasi.domain.product._intro.dto.ProductIntroResponse;
 import poomasi.domain.product._intro.repository.ProductIntroRepository;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.domain.product.service.ProductService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -18,8 +19,7 @@ import poomasi.global.error.BusinessException;
 @RequiredArgsConstructor
 public class ProductIntroService {
 
-    private final ProductIntroRepository productIntroRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
     private final ImageRepository imageRepository;
 
     public ProductIntroResponse getIntro(Long productId) {
@@ -43,8 +43,7 @@ public class ProductIntroService {
     }
 
     private Product getProduct(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+        return productService.findProductById(productId);
     }
 
     private Image getImage(Long imageId) {

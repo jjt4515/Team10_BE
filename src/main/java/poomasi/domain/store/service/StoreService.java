@@ -9,6 +9,7 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.entity.Role;
 import poomasi.domain.member.repository.MemberRepository;
+import poomasi.domain.member.service.MemberService;
 import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.dto.StoreResponse;
 import poomasi.domain.store.entity.Store;
@@ -22,7 +23,7 @@ import poomasi.global.error.BusinessException;
 public class StoreService {
 
     private final StoreRepository storeRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Transactional
     public void addStore(StoreRegisterRequest storeRegisterRequest) {
@@ -34,7 +35,7 @@ public class StoreService {
     }
 
     public StoreResponse getStore(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new BusinessException(BusinessError.MEMBER_NOT_FOUND));
+        Member member = memberService.findMemberById(memberId);
 
         return StoreResponse.fromEntity(member.getStore());
     }

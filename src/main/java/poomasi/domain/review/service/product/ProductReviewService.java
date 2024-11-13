@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.domain.product.service.ProductService;
 import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
 import poomasi.domain.review.entity.EntityType;
@@ -20,10 +21,10 @@ import poomasi.global.error.BusinessException;
 public class ProductReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     public List<ReviewResponse> getProductReview(Long productId) {
-        getProductByProductId(productId); //상품이 존재하는지 체크
+        getProduct(productId); //상품이 존재하는지 체크
 
         return reviewRepository.findByProductId(productId).stream()
                 .map(ReviewResponse::fromEntity).toList();
@@ -37,9 +38,8 @@ public class ProductReviewService {
         return pReview.getId();
     }
 
-    private Product getProductByProductId(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+    private Product getProduct(Long productId) {
+        return productService.findProductById(productId);
     }
 
 }
