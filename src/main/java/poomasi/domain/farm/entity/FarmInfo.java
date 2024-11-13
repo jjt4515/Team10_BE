@@ -3,10 +3,13 @@ package poomasi.domain.farm.entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
+@Table(name = "farm_info")
+@NoArgsConstructor
 public class FarmInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
