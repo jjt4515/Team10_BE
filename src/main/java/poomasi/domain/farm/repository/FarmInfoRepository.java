@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface FarmInfoRepository extends JpaRepository<FarmInfo, Long> {
     List<FarmInfo> findAllByFarmId(Long farmId);
+
+    void deleteAllByFarmId(Long farmId);
 }

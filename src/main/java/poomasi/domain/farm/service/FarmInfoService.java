@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FarmInfoService {
     private final FarmInfoRepository farmInfoRepository;
-    
+
     public Long saveFarmInfo(FarmInfo farmInfo) {
         return farmInfoRepository.save(farmInfo).getId();
     }
@@ -22,5 +22,13 @@ public class FarmInfoService {
 
     public List<FarmInfo> getFarmInfoByFarmId(Long farmId) {
         return farmInfoRepository.findAllByFarmId(farmId);
+    }
+
+    public void deleteFarmInfoById(Long farmInfoId) {
+        farmInfoRepository.deleteById(farmInfoId);
+    }
+
+    public void deleteFarmInfo(Long farmId) {
+        farmInfoRepository.deleteAllByFarmId(farmId);
     }
 }
