@@ -61,7 +61,7 @@ public class PaymentPortoneService implements PaymentService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    @Description("포트원 결제 직전 바로 받는 confirm 요청. 40초 대기")
+    @Description("포트원 결제 직전 바로 받는 confirm 요청. 40초 대기: 결제 전에 재고 확인")
     public void confirmBeforePayment(String impUid, String merchantUid) {
         if (paymentUtil.checkItemType(merchantUid).equals(ItemType.PRODUCT)) {
             confirmProductStock(impUid, merchantUid);
@@ -70,7 +70,23 @@ public class PaymentPortoneService implements PaymentService {
         }
     }
 
-    private void confirmProductStock(String impUid, String merchantUid) {
+
+    @Override
+    @Description("웹훅 처리 service -> 결제 정상적으로 성공됨을 보장: 결제 금액 확인")
+    public void handlePortOneProductWebhookEvent(PaymentWebHookRequest paymentWebHookRequest) {
+        isWebhookReceived.set(true);
+
+        String impUid = paymentWebHookRequest.impUid();
+        String merchantUid = paymentWebHookRequest.merchantUid();
+
+        if (paymentUtil.checkItemType(merchantUid).equals(ItemType.PRODUCT)) {
+            handleProductPayment(impUid, merchantUid);
+        } else {
+            handleFarmPayment(impUid, merchantUid);
+        }
+    }
+
+    private void handleProductPayment(String impUid, String merchantUid) {
         ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
         List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
         //수량 검증
@@ -112,50 +128,6 @@ public class PaymentPortoneService implements PaymentService {
         }, 40, TimeUnit.SECONDS);
     }
 
-    @Override
-    @Description("웹훅 처리 service -> 결제 정상적으로 성공됨을 보장")
-    public void handlePortOneProductWebhookEvent(PaymentWebHookRequest paymentWebHookRequest) {
-        isWebhookReceived.set(true);
-
-        String impUid = paymentWebHookRequest.impUid();
-        String merchantUid = paymentWebHookRequest.merchantUid();
-
-        if (paymentUtil.checkItemType(merchantUid).equals(ItemType.PRODUCT)) {
-            handleProductPayment(impUid, merchantUid);
-        } else {
-            handleFarmPayment(impUid, merchantUid);
-        }
-    }
-
-    private void handleProductPayment(String impUid, String merchantUid) {
-        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
-        List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
-        //수량 검증
-        for (OrderedProduct orderedProduct : orderedProductList) {
-            Product product = orderedProduct.getProduct();
-            Integer remainQuantity = product.getStock();
-            Integer orderQuantity = orderedProduct.getCount();
-
-            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
-            if (orderQuantity > remainQuantity) {
-                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
-            }
-        }
-
-        scheduler.schedule(() -> {
-            if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
-                if (paymentUtil.validatePaymentAmount(impUid, productOrder.getTotalAmount())) {
-                    productOrder.setPaymentStatus(PAYMENT_COMPLETE);
-                    productService.decreaseStock(productOrder); //재고 차감
-                } else {
-                    paymentUtil.cancelPaymentByImpUid(impUid);  //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
-                    productOrder.setPaymentStatus(PAYMENT_DECLINED);
-                    throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
-                }
-            }
-        }, 40, TimeUnit.SECONDS);
-    }
-
     private void handleFarmPayment(String impUid, String merchantUid) {
         Reservation reservation = reservationService.findByMerchantUid(merchantUid);
 
@@ -175,42 +147,28 @@ public class PaymentPortoneService implements PaymentService {
             reservationService.save(reservation);
             throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
         }
-
-        // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
-        scheduler.schedule(() -> {
-            if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
-//                if (paymentUtil.validatePaymentAmount(impUid, productOrder.getTotalAmount())) {
-//                    productOrder.setPaymentStatus(PAYMENT_COMPLETE);
-//                    productService.decreaseStock(productOrder); //재고 차감
-//                } else {
-//                    paymentUtil.cancelPaymentByImpUid(impUid);  //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
-//                    productOrder.setPaymentStatus(PAYMENT_DECLINED);
-//                    throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
-//                }
-            }
-        }, 40, TimeUnit.SECONDS);
     }
 
+    private void confirmProductStock(String impUid, String merchantUid) {
+        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
+        List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
+        //수량 검증
+        for (OrderedProduct orderedProduct : orderedProductList) {
+            Product product = orderedProduct.getProduct();
+            Integer remainQuantity = product.getStock();
+            Integer orderQuantity = orderedProduct.getCount();
+
+            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
+            if (orderQuantity > remainQuantity) {
+                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
+            }
+        }
+    }
 
     private void confirmFarmStock(String impUid, String merchantUid) {
-        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
+        Reservation reservation = reservationService.findByMerchantUid(merchantUid);
 
-        BigDecimal amountToBePaid = productOrder.getTotalAmount();
-
-        if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
-            try {
-                productService.decreaseStock(productOrder);
-                productOrder.setPaymentStatus(PAYMENT_COMPLETE);
-            } catch (BusinessException businessException) {
-                productOrder.setPaymentStatus(PAYMENT_INSUFFICIENT_QUANTITY);
-                throw new ApplicationException(PAYMENT_BAD_REQUEST);
-            }
-        } else {
-            //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
-            paymentUtil.cancelPaymentByImpUid(impUid);
-            productOrder.setPaymentStatus(PAYMENT_DECLINED);
-            throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
-        }
+        // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
     }
 
 

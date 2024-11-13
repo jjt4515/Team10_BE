@@ -110,10 +110,7 @@ public class PaymentUtil {
     public boolean validatePaymentAmount(String impUid, BigDecimal amountToBePaid) {
         IamportResponse<Payment> iamportResponse = getSingleTransaction(impUid); //내가 보냄
         BigDecimal amount = iamportResponse.getResponse().getAmount();
-        if (amountToBePaid.compareTo(amount) != 0) {
-            return false;
-        }
-        return true;
+        return amountToBePaid.equals(amount);
     }
 
     @Description("사전 결제를 위한 Prepare Data를 만드는 메서드")
