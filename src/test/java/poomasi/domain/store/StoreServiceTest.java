@@ -57,9 +57,6 @@ class StoreServiceTest {
     @Test
     void addStore_StoreAddedSuccessfully() {
         // given
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(testMember));
 
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         Store store = mock(Store.class);
@@ -90,9 +87,6 @@ class StoreServiceTest {
 
     @Test
     void updateStore_StoreExists_StoreUpdatedSuccessfully() {
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(testMember));
         // given
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         Store store = mock(Store.class);
@@ -108,10 +102,6 @@ class StoreServiceTest {
 
     @Test
     void updateStore_StoreDoesNotExist_ThrowsBusinessException() {
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(testMember));
-
         // given
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.empty());
