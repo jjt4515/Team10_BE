@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
+import poomasi.domain.farm.service.FarmService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
@@ -20,7 +21,7 @@ import poomasi.global.error.BusinessException;
 public class FarmReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final FarmRepository farmRepository;
+    private final FarmService farmService;
 
     public List<ReviewResponse> getFarmReview(Long farmId) {
         getFarmByFarmId(farmId); //상품이 존재하는지 체크
@@ -40,7 +41,6 @@ public class FarmReviewService {
     }
 
     private Farm getFarmByFarmId(Long farmId) {
-        return farmRepository.findById(farmId)
-                .orElseThrow(() -> new BusinessException(BusinessError.FARM_NOT_FOUND));
+        return farmService.getFarmByFarmId(farmId);
     }
 }

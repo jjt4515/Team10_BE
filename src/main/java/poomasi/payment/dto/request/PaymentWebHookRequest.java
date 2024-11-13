@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.dto.request;
+package poomasi.payment.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

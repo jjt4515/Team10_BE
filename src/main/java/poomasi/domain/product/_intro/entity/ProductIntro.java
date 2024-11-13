@@ -17,6 +17,7 @@ import poomasi.domain.product.entity.Product;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class ProductIntro {
 
     @Id
@@ -51,20 +52,6 @@ public class ProductIntro {
     @Setter
     private Image subImage3;
 
-    public ProductIntro() {
-        this.mainTitle = "";
-        this.mainImage = null;
-        this.subTitle1 = "";
-        this.subDesc1 = "";
-        this.subImage1 = null;
-        this.subTitle2 = "";
-        this.subDesc2 = "";
-        this.subImage2 = null;
-        this.subTitle3 = "";
-        this.subDesc3 = "";
-        this.subImage3 = null;
-    }
-
     @Builder
     public ProductIntro(Product product, String mainTitle, Image mainImage, String subTitle1,
             String subDesc1, Image subImage1, String subTitle2, String subDesc2, Image subImage2,
@@ -83,17 +70,23 @@ public class ProductIntro {
         this.subImage3 = subImage3;
     }
 
-    public void update(ProductIntroUpdateRequest productIntroUpdateRequest, Image mainImage, Image subImage1, Image subImage2, Image subImage3) {
+    public void update(ProductIntroUpdateRequest productIntroUpdateRequest) {
         this.mainTitle = productIntroUpdateRequest.mainTitle();
-        this.mainImage = mainImage;
+
         this.subTitle1 = productIntroUpdateRequest.subTitle1();
         this.subDesc1 = productIntroUpdateRequest.subDesc1();
-        this.subImage1 = subImage1;
+
         this.subTitle2 = productIntroUpdateRequest.subTitle2();
         this.subDesc2 = productIntroUpdateRequest.subDesc2();
-        this.subImage2 = subImage2;
+
         this.subTitle3 = productIntroUpdateRequest.subTitle3();
         this.subDesc3 = productIntroUpdateRequest.subDesc3();
+    }
+
+    public void updateImage(Image mainImage, Image subImage1, Image subImage2, Image subImage3){
+        this.mainImage = mainImage;
+        this.subImage1 = subImage1;
+        this.subImage2 = subImage2;
         this.subImage3 = subImage3;
     }
 

@@ -8,6 +8,7 @@ import poomasi.domain.image.repository.ImageRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.repository.CategoryRepository;
+import poomasi.domain.product._category.service.CategoryService;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
@@ -16,6 +17,7 @@ import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.store.repository.StoreRepository;
+import poomasi.domain.store.service.StoreService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -24,8 +26,8 @@ import poomasi.global.error.BusinessException;
 public class ProductFarmerService {
 
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final StoreRepository storeRepository;
+    private final CategoryService categoryService;
+    private final StoreService storeService;
     private final ImageRepository imageRepository;
 
     @Transactional
@@ -33,12 +35,12 @@ public class ProductFarmerService {
         Category category = getCategory(request.categoryId());
         Store store = member.getStore();
 
-        Image introMainImage = getImage(request.mainImageId());
-        Image introSubImage1 = getImage(request.subImage1Id());
-        Image introSubImage2 = getImage(request.subImage2Id());
-        Image introSubImage3 = getImage(request.subImage3Id());
+//        Image introMainImage = getImage(request.mainImageId());
+//        Image introSubImage1 = getImage(request.subImage1Id());
+//        Image introSubImage2 = getImage(request.subImage2Id());
+//        Image introSubImage3 = getImage(request.subImage3Id());
 
-        Product saveProduct = productRepository.save(request.toEntity(member,store, introMainImage,introSubImage1,introSubImage2,introSubImage3));
+        Product saveProduct = productRepository.save(request.toEntity(member,store));
 
         category.addProduct(saveProduct);
         store.addProduct(saveProduct);
@@ -56,7 +58,7 @@ public class ProductFarmerService {
     @Transactional
     public void modifyProduct(Member member, ProductRegisterRequest productRequest,
             Long productId) {
-        Product product = getProductByProductId(productId);
+        Product product = getProduct(productId);
         checkAuth(member, product);
 
         Long categoryId = product.getCategoryId();
@@ -72,7 +74,7 @@ public class ProductFarmerService {
 
     @Transactional
     public void deleteProduct(Member member, Long productId) {
-        Product product = getProductByProductId(productId);
+        Product product = getProduct(productId);
         checkAuth(member, product);
 
         Long categoryId = product.getCategoryId();
@@ -84,19 +86,18 @@ public class ProductFarmerService {
 
     @Transactional
     public void addQuantity(Member member, Long productId, UpdateProductQuantityRequest request) {
-        Product product = getProductByProductId(productId);
+        Product product = getProduct(productId);
         checkAuth(member, product);
         product.addStock(request.quantity());
     }
 
-    private Product getProductByProductId(Long productId) {
+    private Product getProduct(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+                .orElseThrow(()->new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
     }
 
     private Category getCategory(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new BusinessException(BusinessError.CATEGORY_NOT_FOUND));
+        return categoryService.getCategory(categoryId);
     }
 
     private void checkAuth(Member member, Product product) {

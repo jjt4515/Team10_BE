@@ -2,8 +2,6 @@ package poomasi.domain.order.entity._farm;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
-import org.hibernate.annotations.Comment;
-import poomasi.domain.order._payment.entity.Payment;
 import poomasi.domain.order.entity._abstract.AbstractOrder;
 
 import java.util.Date;
