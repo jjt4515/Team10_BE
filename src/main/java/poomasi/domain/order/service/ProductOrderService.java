@@ -35,6 +35,7 @@ import static poomasi.global.error.BusinessError.*;
 @RequiredArgsConstructor
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 public class ProductOrderService {
 
     private final ProductOrderRepository productOrderRepository;
@@ -43,7 +44,7 @@ public class ProductOrderService {
     private final OrderedProductRepository orderedProductRepository;
 
     @Transactional
-    public PaymentPreRegisterRequest productPreOrderRegister(ProductOrderRegisterRequest productOrderRegisterRequest){
+    public PaymentPreRegisterRequest productPreOrderRegister(ProductOrderRegisterRequest productOrderRegisterRequest) {
         Member member = getMember();
         Long memberId = member.getId();
         List<Cart> cartList = cartRepository.findByMemberIdAndSelected(memberId);
@@ -68,7 +69,7 @@ public class ProductOrderService {
 
         //cart에 있는 총 가격 계산하기
         BigDecimal totalPrice = BigDecimal.ZERO;
-        
+
         // cart 돌면서 productOrder details 추가
         for (Cart cart : cartList) {
             Long productId = cart.getProductId();
@@ -80,7 +81,7 @@ public class ProductOrderService {
 
             // 현재 남아있는 재고보다 더 많이 요청하면
             // pending 상태로 저장이 안 됨.
-            if(quantityInCart > productStock){
+            if (quantityInCart > productStock) {
                 throw new BusinessException(PRODUCT_STOCK_ZERO);
             }
 
@@ -114,8 +115,8 @@ public class ProductOrderService {
     }
 
     @Transactional
-    //TODO : 만들어야 합니다 ~
-    public PaymentPreRegisterRequest farmPreOrderRegister(){
+    // FIXME: 이거 지워야함!!
+    public PaymentPreRegisterRequest farmPreOrderRegister() {
         Member member = getMember();
         String merchantUid = "";
         BigDecimal totalPrice = BigDecimal.ZERO;
@@ -125,7 +126,7 @@ public class ProductOrderService {
 
 
     @Description("멤버 ID 기반으로 모든 order 다 들고 오는 메서드")
-    public List<OrderResponse> findAllOrdersByMemberId(){
+    public List<OrderResponse> findAllOrdersByMemberId() {
         Member member = getMember();
         Long memberId = member.getId();
         List<ProductOrder> productOrderList = productOrderRepository.findByMemberId(memberId);
@@ -137,10 +138,10 @@ public class ProductOrderService {
     }
 
     @Description("멤버 id 기반으로 특정 orderId 들고오는 메서드")
-    public OrderResponse findOrderByMemberId(Long orderId){
+    public OrderResponse findOrderByMemberId(Long orderId) {
         Member member = getMember();
         ProductOrder productOrder = productOrderRepository.findById(orderId)
-                .orElseThrow(()-> new BusinessException(ORDER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ORDER_NOT_FOUND));
 
         validateOrderOwnership(productOrder, member);
         return OrderResponse.fromEntity(productOrder);
@@ -148,21 +149,20 @@ public class ProductOrderService {
 
 
     @Description("orderId 기반으로 order details(주소, 상세주소, 배송 요청 사항 ..등) 들고오는 메서드")
-    public OrderDetailsResponse findOrderDetailsByOrderId(Long orderId){
+    public OrderDetailsResponse findOrderDetailsByOrderId(Long orderId) {
         ProductOrder productOrder = productOrderRepository.findById(orderId)
-                .orElseThrow(()-> new BusinessException(ORDER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ORDER_NOT_FOUND));
         ProductOrderDetails productOrderDetails = productOrder.getProductOrderDetails();
 
         return OrderDetailsResponse.fromEntity(productOrderDetails);
     }
 
 
-
     @Description("orderId에 해당하는 order product details 가져오는 메서드")
-    public List<OrderProductDetailsResponse> findAllOrderProductDetails(Long orderId){
+    public List<OrderProductDetailsResponse> findAllOrderProductDetails(Long orderId) {
         Member member = getMember();
         ProductOrder productOrder = productOrderRepository.findById(orderId)
-                .orElseThrow(()-> new BusinessException(ORDER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ORDER_NOT_FOUND));
         validateOrderOwnership(productOrder, member);
         return productOrder.getOrderedProducts()
                 .stream()
@@ -173,16 +173,16 @@ public class ProductOrderService {
 
 
     @Description("orderId에 해당하는 order product Details의 단건 조회")
-    public OrderProductDetailsResponse findOrderProductDetailsById(Long orderId, Long orderProductDetailsId){
+    public OrderProductDetailsResponse findOrderProductDetailsById(Long orderId, Long orderProductDetailsId) {
         Member member = getMember();
         OrderedProduct orderedProduct = orderedProductRepository.findById(orderProductDetailsId)
-                .orElseThrow(()-> new BusinessException(ORDER_PRODUCT_DETAILS_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ORDER_PRODUCT_DETAILS_NOT_FOUND));
         ProductOrder productOrder = orderedProduct.getProductOrder();
-        
+
         // productOrder product details의 주인 productOrder 검사 그리고 , orderId의 주인 member 검사
         validateOrderProductDetailsByOrderId(productOrder, orderId);
         validateOrderOwnership(productOrder, member);
-        
+
         return OrderProductDetailsResponse.fromEntity(orderedProduct);
     }
 
@@ -193,19 +193,19 @@ public class ProductOrderService {
             throw new BusinessException(ORDER_NOT_OWNED_EXCEPTION);
         }
     }
-    
+
     @Description("orderId에 해당하는 productOrder Product Details인지 조회하는 메서드")
     private void validateOrderProductDetailsByOrderId(ProductOrder productOrder, Long orderId) {
-        if(productOrder.getId()!=orderId){
+        if (productOrder.getId() != orderId) {
             throw new BusinessException(ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION);
         }
     }
 
 
     @Description("주문 상태를 변경하는 메서드")
-    private void changeOrderStatus(Long orderId, PaymentStatus paymentStatus){
+    private void changeOrderStatus(Long orderId, PaymentStatus paymentStatus) {
         ProductOrder productOrder = productOrderRepository.findById(orderId)
-                .orElseThrow(()-> new BusinessException(ORDER_NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(ORDER_NOT_FOUND));
         productOrder.setPaymentStatus(paymentStatus);
     }
 
@@ -219,6 +219,10 @@ public class ProductOrderService {
         return member;
     }
 
+    public ProductOrder findByMerchantUid(String merchantUid) {
+        return productOrderRepository.findByMerchantUid(merchantUid)
+                .orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
+    }
 }
 
 
