@@ -6,10 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import poomasi.global.error.ApplicationException;
+import poomasi.global.ocr.dto.request.NaverOcrImage;
 import poomasi.global.ocr.dto.request.NaverOcrRequest;
 import poomasi.global.ocr.dto.request.OcrRequest;
 import poomasi.global.ocr.dto.response.NaverOcrResponse;
 import poomasi.global.ocr.dto.response.OcrResponse;
+
+import java.util.List;
 
 import static poomasi.global.error.ApplicationError.OCR_SUPPORT_ERROR;
 
@@ -30,11 +33,9 @@ public class NaverOcrService implements OcrService {
 
     @Override
     public OcrResponse extractTextFromImage(OcrRequest request) {
-        if (!(request instanceof NaverOcrRequest)) {
+        if (!(request instanceof NaverOcrRequest ocrRequest)) {
             throw new ApplicationException(OCR_SUPPORT_ERROR);
         }
-
-        NaverOcrRequest ocrRequest = (NaverOcrRequest) request;
 
         return restClient.build()
                 .post()
@@ -45,5 +46,12 @@ public class NaverOcrService implements OcrService {
                 .retrieve()
                 .body(NaverOcrResponse.class);
 
+    }
+
+    @Override
+    public OcrRequest createRequest(String url) {
+        return NaverOcrRequest.builder()
+                .images(List.of(NaverOcrImage.builder().url(url).templateIds(List.of(Integer.parseInt(ocrTemplate))).build()))
+                .build();
     }
 }
