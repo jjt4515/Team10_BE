@@ -7,6 +7,8 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.entity.ReservationStatus;
 
+import java.math.BigDecimal;
+
 @Builder
 public record ReservationRequest(
         Long farmId,
@@ -23,7 +25,7 @@ public record ReservationRequest(
                 .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
-                .price(farm.getExperiencePrice() * memberCount)
+                .price(new BigDecimal(farm.getExperiencePrice() * memberCount))
                 .status(ReservationStatus.ACCEPTED)
                 .merchantUid(merchantUid)
                 .build();
