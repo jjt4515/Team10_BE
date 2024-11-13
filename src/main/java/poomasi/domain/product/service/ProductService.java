@@ -37,7 +37,6 @@ public class ProductService {
         return ProductResponse.fromEntity(findProductById(productId));
     }
 
-
     public Product findValidProductById(Long productId) {
         Product product = findProductById(productId);
         if (product.getStock() == 0) {
