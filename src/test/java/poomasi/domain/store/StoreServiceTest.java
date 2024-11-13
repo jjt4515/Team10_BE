@@ -67,7 +67,7 @@ class StoreServiceTest {
         when(request.toEntity(any(Member.class))).thenReturn(store);
 
         // when
-        storeService.addStore(request);
+        storeService.addStore(request,testMember);
 
         // then
         verify(storeRepository, times(1)).save(store);
@@ -100,7 +100,7 @@ class StoreServiceTest {
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
-        storeService.updateStore(request);
+        storeService.updateStore(request, testMember);
 
         // then
         verify(store, times(1)).updateStore(request);
@@ -117,7 +117,7 @@ class StoreServiceTest {
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.empty());
 
         // when & then
-        BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateStore(request));
+        BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateStore(request, testMember));
         assertEquals(BusinessError.STORE_NOT_FOUND, exception.getBusinessError());
     }
 

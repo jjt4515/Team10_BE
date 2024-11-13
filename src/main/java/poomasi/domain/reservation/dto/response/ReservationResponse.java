@@ -4,12 +4,20 @@ import java.time.LocalDate;
 import lombok.Builder;
 import poomasi.domain.reservation.entity.ReservationStatus;
 
-@Builder
-public record ReservationResponse(Long farmId, Long memberId, Long scheduleId,
-                                  LocalDate reservationDate,
-                                  int memberCount, ReservationStatus status, String request,
-                                  int price, boolean isReviewed
+import java.time.LocalDate;
 
+@Builder
+public record ReservationResponse(
+    Long farmId,
+    Long memberId,
+    Long scheduleId,
+    LocalDate reservationDate,
+    int memberCount,
+    ReservationStatus status,
+    String request,
+    int price,
+    String merchantUid,
+    boolean isReviewed
 ) {
 
 }

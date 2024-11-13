@@ -10,7 +10,7 @@ public enum BusinessError {
     // Product
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     PRODUCT_STOCK_ZERO(HttpStatus.BAD_REQUEST, "재고가 없습니다."),
-    STOCK_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "장바구나 수량이 남은 재고를 초과하였습니다"),
+    PRODUCT_STOCK_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "장바구나 수량이 남은 재고를 초과하였습니다"),
 
     // Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
@@ -91,12 +91,7 @@ public enum BusinessError {
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
-
-    // PAYMENT
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다."),
-    PAYMENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못 된 결제 요청입니다."),
-    CHECKSUM_EXCESSIVE_REFUND_AMOUNT(HttpStatus.BAD_REQUEST, "환불 요청 금액이 환불 가능한 금액보다 더 많습니다"),
+    STORE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 상점이 존재합니다."),
 
     // After sales
     SHIPPING_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "배송 준비 중이거나 배송 중인 주문입니다."),

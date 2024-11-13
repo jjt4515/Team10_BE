@@ -24,6 +24,7 @@ public class MemberProfile {
     private String phoneNumber;
 
     @Column(nullable = false)
+    @Setter
     @Builder.Default
     private boolean isBanned = false;
 

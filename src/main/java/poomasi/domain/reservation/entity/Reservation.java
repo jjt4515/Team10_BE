@@ -1,20 +1,6 @@
 package poomasi.domain.reservation.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +13,10 @@ import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import poomasi.domain.review.entity.Review;
 
 @Entity
@@ -37,7 +27,6 @@ import poomasi.domain.review.entity.Review;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -74,9 +63,12 @@ public class Reservation {
     @Column(nullable = false)
     private String request;
 
+    @Column(nullable = false)
+    private String merchantUid;
+
     @Comment("결제 예정 금액")
     @Column(nullable = false)
-    private int price;
+    private BigDecimal price;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -93,7 +85,7 @@ public class Reservation {
 
     @Builder
     public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
-            int memberCount, ReservationStatus status, String request, int price) {
+            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -103,6 +95,7 @@ public class Reservation {
         this.request = request;
         this.price = price;
         this.review = null;
+        this.merchantUid = merchantUid;
     }
 
     public ReservationResponse toResponse() {
@@ -114,8 +107,10 @@ public class Reservation {
                 .memberCount(memberCount)
                 .status(status)
                 .request(request)
-                .price(price)
+                .price(price.intValue())
                 .isReviewed(review != null)
+                .price(price.intValue())
+                .merchantUid(merchantUid)
                 .build();
     }
 
@@ -123,12 +118,18 @@ public class Reservation {
         return status == ReservationStatus.CANCELED;
     }
 
+    public boolean isNotCancelled() {
+        return !isCanceled();
+    }
+
+    public void completePayment() {
+        this.status = ReservationStatus.ACCEPTED;
+    }
+
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
     }
 
-    public boolean isNotCancelled() {
-        return !isCanceled();
-    }
+
 }
