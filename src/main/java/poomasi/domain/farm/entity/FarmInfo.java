@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLSelect;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Table(name = "farm_info")
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE farm_info SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLSelect(sql = "SELECT * FROM farm_info WHERE deleted_at IS NULL")
 public class FarmInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
