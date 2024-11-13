@@ -123,5 +123,7 @@ public class Member {
         memberProfile.setBanned(isBanned);
     }
 
-
+    public void setAddress(String defaultAddress, String addressDetail, Long coordinateX, Long coordinateY) {
+        memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
+    }
 }

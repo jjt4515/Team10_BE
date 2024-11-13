@@ -73,6 +73,7 @@ public class MemberService {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
         }
 
+        member.setAddress(null, null, null, null);
         member.setRole(ROLE_FARMER);
         memberRepository.save(member);
     }
