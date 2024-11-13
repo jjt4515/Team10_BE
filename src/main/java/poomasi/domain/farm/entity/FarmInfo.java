@@ -1,20 +1,19 @@
 package poomasi.domain.farm.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Comment;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLSelect;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "farm_info")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE farm_info SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 @SQLSelect(sql = "SELECT * FROM farm_info WHERE deleted_at IS NULL")
 public class FarmInfo {
@@ -44,7 +43,7 @@ public class FarmInfo {
 
     @Comment("생성일")
     @Column(nullable = false)
-    @ColumnDefault("CURRENT_TIMESTAMP")
+    @CurrentTimestamp
     LocalDateTime createdAt;
 
     @Comment("삭제 일시")

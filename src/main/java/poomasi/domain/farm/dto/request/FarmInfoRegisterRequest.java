@@ -7,7 +7,8 @@ public record FarmInfoRegisterRequest(
         @NotNull
         boolean isMain,
         String title,
-        String content
+        String content,
+        String imageUrl
 ) {
     public FarmInfo toEntity(Long id) {
         return FarmInfo.builder()
@@ -15,6 +16,7 @@ public record FarmInfoRegisterRequest(
                 .isMain(isMain)
                 .title(title)
                 .content(content)
+                .imageUrl(imageUrl)
                 .build();
     }
 }

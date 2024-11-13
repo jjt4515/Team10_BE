@@ -46,6 +46,8 @@ public class FarmFarmerService {
 
         if (request.isMain() && farmInfos.stream().anyMatch(FarmInfo::isMain)) {
             throw new BusinessException(FARM_INFO_MAIN_ALREADY_EXISTS);
+        } else if (!request.isMain() && farmInfos.stream().noneMatch(FarmInfo::isMain) && farmInfos.size() == MAX_FARM_INFO_COUNT - 1) {
+            throw new BusinessException(FARM_INFO_MAIN_REQUIRED);
         }
 
         return farmInfoService.saveFarmInfo(request.toEntity(farm.getId()));
