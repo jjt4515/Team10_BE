@@ -10,13 +10,17 @@ public enum BusinessError {
     // Product
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     PRODUCT_STOCK_ZERO(HttpStatus.BAD_REQUEST, "재고가 없습니다."),
-    STOCK_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "장바구나 수량이 남은 재고를 초과하였습니다"),
+    PRODUCT_STOCK_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "장바구나 수량이 남은 재고를 초과하였습니다"),
 
     // Category
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
 
     // Review
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    REVIEW_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "이미 작성한 리뷰가 있습니다"),
+    ORDER_NOT_DELIVERED(HttpStatus.BAD_REQUEST, "아직 배송이 완료되지 않았습니다."),
+    RESERVATION_NOT_DONE(HttpStatus.BAD_REQUEST, "예약이 확정되지 않았습니다"),
+    DATE_BEFORE_RESERVATION(HttpStatus.BAD_REQUEST, "체험 다음 날부터 리뷰를 작성할 수 있습니다."),
 
     // Member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원이 존재하지 않습니다."),
@@ -87,12 +91,7 @@ public enum BusinessError {
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
-
-    // PAYMENT
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "사전 결제 금액과 사후 결제 금액이 일치하지 않습니다."),
-    PAYMENT_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못 된 결제 요청입니다."),
-    CHECKSUM_EXCESSIVE_REFUND_AMOUNT(HttpStatus.BAD_REQUEST, "환불 요청 금액이 환불 가능한 금액보다 더 많습니다"),
+    STORE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 상점이 존재합니다."),
 
     // After sales
     SHIPPING_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "배송 준비 중이거나 배송 중인 주문입니다."),
@@ -102,7 +101,7 @@ public enum BusinessError {
     REFUND_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "환불 가능한 수량을 초과한 요청입니다."),
     PURCHASE_ALREADY_CONFIRMED(HttpStatus.BAD_REQUEST, "이미 구매 확정이 된 상태입니다."),
     REFUND_NOT_ALLOWED_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "배송 대기 전 상태에서는 환불을 요청할 수 없습니다."),
-    REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND , "찾을 수 없는 환불 요청입니다."),
+    REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 환불 요청입니다."),
     REFUND_AFTER_SALES_REQUEST_INVALID_OWNER(HttpStatus.BAD_REQUEST, "판매자의 환불 요청이 아닙니다."),
 
     //Product intro
@@ -111,4 +110,5 @@ public enum BusinessError {
     private final HttpStatus httpStatus;
 
     private final String message;
+
 }

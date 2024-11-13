@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,8 +14,10 @@ import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
@@ -60,9 +63,12 @@ public class Reservation {
     @Column(nullable = false)
     private String request;
 
+    @Column(nullable = false)
+    private String merchantUid;
+
     @Comment("결제 예정 금액")
     @Column(nullable = false)
-    private int price;
+    private BigDecimal price;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -73,9 +79,13 @@ public class Reservation {
     @Comment("예약 취소 일자")
     private LocalDateTime canceledAt;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    Review review;
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, int price) {
+    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
+            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -84,6 +94,8 @@ public class Reservation {
         this.status = status;
         this.request = request;
         this.price = price;
+        this.review = null;
+        this.merchantUid = merchantUid;
     }
 
     public ReservationResponse toResponse() {
@@ -95,7 +107,10 @@ public class Reservation {
                 .memberCount(memberCount)
                 .status(status)
                 .request(request)
-                .price(price)
+                .price(price.intValue())
+                .isReviewed(review != null)
+                .price(price.intValue())
+                .merchantUid(merchantUid)
                 .build();
     }
 
@@ -103,12 +118,18 @@ public class Reservation {
         return status == ReservationStatus.CANCELED;
     }
 
+    public boolean isNotCancelled() {
+        return !isCanceled();
+    }
+
+    public void completePayment() {
+        this.status = ReservationStatus.ACCEPTED;
+    }
+
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
     }
 
-    public boolean isNotCancelled() {
-        return !isCanceled();
-    }
+
 }

@@ -52,9 +52,6 @@ public class S3PresignedUrlService {
         String date = now.format(DATE_FORMATTER);
         String encodedTime = encryptionUtil.encodeTime(now).substring(0, 10);
 
-        // jpg 말고 다른 형식 파일 들어오는 경우에 대해서도 따로 처리 필요
-        // 사진 갯수 5개로 제한하기
-
         String uniqueIdentifier = UUID.randomUUID().toString();
         String keyName = String.format("%s/%s/%s_%s.jpg", keyPrefix, date, uniqueIdentifier, encodedTime);
 
@@ -79,5 +76,3 @@ public class S3PresignedUrlService {
         return new PresignedPutUrlResponse(presignedRequest.url().toExternalForm(), keyName, objectUrl);
     }
 }
-
-// reference: https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/example_s3_Scenario_PresignedUrl_section.html

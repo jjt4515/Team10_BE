@@ -147,4 +147,23 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void deleteAccount(Member member) {
+        memberRepository.delete(member);
+    }
+
+    @Transactional
+    public void restoreAccount(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.setDeletedAt(null);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void suspendAccount(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.setIsBanned(true);
+        memberRepository.save(member);
+    }
+
 }

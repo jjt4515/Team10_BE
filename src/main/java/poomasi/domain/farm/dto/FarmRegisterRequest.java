@@ -13,7 +13,7 @@ public record FarmRegisterRequest(
         int experiencePrice,
         Integer maxCapacity,
         Integer maxReservation,
-        String businessNumber
+        Long categoryId
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()
@@ -27,7 +27,8 @@ public record FarmRegisterRequest(
                 .experiencePrice(experiencePrice)
                 .maxCapacity(maxCapacity)
                 .maxReservation(maxReservation)
-                .businessNumber(businessNumber)
+                .categoryId(categoryId)
+                .phoneNumber(phoneNumber)
                 .build();
     }
 }

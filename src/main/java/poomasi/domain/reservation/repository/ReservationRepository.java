@@ -7,6 +7,7 @@ import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.reservation.entity.Reservation;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -17,4 +18,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByFarmIdAndScheduleId(Long farm_id, FarmSchedule scheduleId);
 
     List<Reservation> findAllByFarmIn(List<Farm> farms);
+
+    Optional<Reservation> findByMerchantUid(String merchantUid);
 }
