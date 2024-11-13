@@ -21,8 +21,6 @@ import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.global.error.BusinessException;
 
-import java.util.Optional;
-
 import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
 import static poomasi.domain.member.entity.Role.ROLE_FARMER;
 import static poomasi.global.error.BusinessError.*;
@@ -146,6 +144,25 @@ public class MemberService {
 
         profile.setAddress(request.defaultAddress(), request.addressDetail(), request.coordinateX(), request.coordinateY());
 
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void deleteAccount(Member member) {
+        memberRepository.delete(member);
+    }
+
+    @Transactional
+    public void restoreAccount(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.setDeletedAt(null);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void suspendAccount(Long memberId) {
+        Member member = findMemberById(memberId);
+        member.setIsBanned(true);
         memberRepository.save(member);
     }
 

@@ -110,4 +110,33 @@ public class MemberController {
         memberService.updateAddress(member, addressUpdateRequest);
         return ResponseEntity.ok().build();
     }
+
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+        memberService.deleteAccount(member);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 계정 복구
+    @PutMapping("/restore/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> restoreAccount(@PathVariable Long memberId) {
+        memberService.restoreAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 계정 정지
+    @PutMapping("/suspend/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> suspendAccount(@PathVariable Long memberId) {
+        memberService.suspendAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+
+
+
 }
