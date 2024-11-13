@@ -1,19 +1,32 @@
 package poomasi.domain.farm.dto;
 
+import jakarta.validation.constraints.NotNull;
 import poomasi.domain.farm.entity.Farm;
 
 public record FarmRegisterRequest(
+        @NotNull
         String name,
+        @NotNull
         String address,
         String addressDetail,
+        @NotNull
         Double latitude,
+        @NotNull
         Double longitude,
+        @NotNull
         String phoneNumber,
+
         String description,
+        @NotNull
         int experiencePrice,
+        @NotNull
         Integer maxCapacity,
+        @NotNull
         Integer maxReservation,
-        Long categoryId
+        @NotNull
+        Long categoryId,
+        @NotNull
+        String imageUrl
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()
@@ -29,6 +42,7 @@ public record FarmRegisterRequest(
                 .maxReservation(maxReservation)
                 .categoryId(categoryId)
                 .phoneNumber(phoneNumber)
+                .mainImage(imageUrl)
                 .build();
     }
 }

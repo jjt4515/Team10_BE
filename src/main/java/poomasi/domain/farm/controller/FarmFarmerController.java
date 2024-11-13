@@ -25,7 +25,7 @@ public class FarmFarmerController {
     @PostMapping("")
     public ResponseEntity<?> registerFarm(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FarmRegisterRequest request) {
+            @Valid @RequestBody FarmRegisterRequest request) {
         Member member = userDetails.getMember();
         return ResponseEntity.ok(farmFarmerService.registerFarm(member, request));
 

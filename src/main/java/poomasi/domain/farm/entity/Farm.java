@@ -43,10 +43,11 @@ public class Farm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Comment("농장 소유자 ID")
-    @Column(name = "owner_id")
+    @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 
     @Comment("사업자 등록 번호")
@@ -56,32 +57,42 @@ public class Farm {
     private String description;
 
     @Comment("도로명 주소")
+    @Column(nullable = false)
     private String address;
 
     @Comment("상세 주소")
     private String addressDetail;
 
     @Comment("위도")
+    @Column(nullable = false)
     private Double latitude;
 
     @Comment("경도")
+    @Column(nullable = false)
     private Double longitude;
+
+    @Comment("농장 대표 이미지")
+    @Column(nullable = false)
+    private String mainImage;
 
     @Comment("농장 상태")
     @Enumerated(EnumType.STRING)
     private FarmStatus status = FarmStatus.OPEN;
 
     @Comment("카테고리 ID")
-    @Column(name = "category_id")
+    @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
     @Comment("체험 비용")
+    @Column(nullable = false)
     private int experiencePrice;
 
     @Comment("팀 최대 인원")
+    @Column(nullable = false)
     private Integer maxCapacity;
 
     @Comment("동일 시간대 최대 예약 가능 팀 수")
+    @Column(nullable = false)
     private Integer maxReservation;
 
     @Comment("삭제 일시")
@@ -109,7 +120,7 @@ public class Farm {
     private double averageRating;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber, String mainImage) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -126,6 +137,7 @@ public class Farm {
         this.categoryId = categoryId;
         this.phoneNumber = phoneNumber;
         averageRating = 0.0f;
+        this.mainImage = mainImage;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
