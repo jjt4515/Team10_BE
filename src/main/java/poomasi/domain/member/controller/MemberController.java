@@ -110,16 +110,4 @@ public class MemberController {
         memberService.updateAddress(member, addressUpdateRequest);
         return ResponseEntity.ok().build();
     }
-
-    // 회원 탈퇴, 복구, 금지
-    // s3스케줄러 구현하긴해야함
-
-    // 이미지 validator 타입 추가
-
-    // 이미지 업로드 실패할시 처리
-
-
-
-
-
 }
