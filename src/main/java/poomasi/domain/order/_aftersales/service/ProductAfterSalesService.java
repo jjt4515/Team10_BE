@@ -23,7 +23,7 @@ import poomasi.domain.order._aftersales.entity._product.ProductAfterSalesStatus;
 import poomasi.domain.order._aftersales.entity._product.ProductRefundDetail;
 import poomasi.domain.order._aftersales.repository.ProductAfterSalesDetailRepository;
 import poomasi.domain.order._aftersales.repository.ProductRefundDetailRepository;
-import poomasi.domain.order._payment.util.PaymentUtil;
+import poomasi.payment.util.PaymentUtil;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.entity._product.OrderedProductStatus;

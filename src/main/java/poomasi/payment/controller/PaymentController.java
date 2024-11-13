@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.controller;
+package poomasi.payment.controller;
 
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import jdk.jfr.Description;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import poomasi.domain.order._payment.dto.request.PaymentPreRegisterRequest;
-import poomasi.domain.order._payment.dto.request.PaymentWebHookRequest;
-import poomasi.domain.order._payment.service.ProductPaymentService;
+import poomasi.payment.service.ProductPaymentService;
+import poomasi.payment.dto.request.PaymentPreRegisterRequest;
+import poomasi.payment.dto.request.PaymentWebHookRequest;
 
 import java.io.IOException;
 

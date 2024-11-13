@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.util;
+package poomasi.payment.util;
 
 
 import com.siot.IamportRestClient.IamportClient;
@@ -8,12 +8,9 @@ import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import jdk.jfr.Description;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.global.error.BusinessError;
-import poomasi.global.error.BusinessException;
 
 import java.io.IOException;
 import java.math.BigDecimal;

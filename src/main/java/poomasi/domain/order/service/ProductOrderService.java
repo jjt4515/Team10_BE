@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.order._payment.dto.request.PaymentPreRegisterRequest;
+import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.domain.order.dto.request.ProductOrderRegisterRequest;
 import poomasi.domain.order.dto.response.OrderDetailsResponse;
 import poomasi.domain.order.dto.response.OrderProductDetailsResponse;

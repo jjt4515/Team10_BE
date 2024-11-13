@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.service;
+package poomasi.payment.service;
 
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import jdk.jfr.Description;
@@ -12,13 +12,13 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.order._payment.dto.request.PaymentPreRegisterRequest;
-import poomasi.domain.order._payment.dto.request.PaymentWebHookRequest;
-import poomasi.domain.order._payment.dto.response.PaymentPreRegisterResponse;
-import poomasi.domain.order._payment.dto.response.PaymentResponse;
-import poomasi.domain.order._payment.entity.Payment;
-import poomasi.domain.order._payment.repository.PaymentRepository;
-import poomasi.domain.order._payment.util.PaymentUtil;
+import poomasi.payment.dto.request.PaymentPreRegisterRequest;
+import poomasi.payment.dto.request.PaymentWebHookRequest;
+import poomasi.payment.dto.response.PaymentPreRegisterResponse;
+import poomasi.payment.dto.response.PaymentResponse;
+import poomasi.payment.entity.Payment;
+import poomasi.payment.repository.PaymentRepository;
+import poomasi.payment.util.PaymentUtil;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.service.ProductOrderService;

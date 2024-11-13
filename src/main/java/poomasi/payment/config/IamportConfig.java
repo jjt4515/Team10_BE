@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.config;
+package poomasi.payment.config;
 
 
 import com.siot.IamportRestClient.IamportClient;
