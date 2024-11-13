@@ -1,0 +1,174 @@
+package poomasi.payment.service;
+
+import jdk.jfr.Description;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.member.entity.Member;
+import poomasi.domain.order.entity._product.OrderedProduct;
+import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.service.ProductOrderService;
+import poomasi.domain.product.entity.Product;
+import poomasi.domain.product.service.ProductService;
+import poomasi.global.error.ApplicationException;
+import poomasi.global.error.BusinessException;
+import poomasi.global.error.PaymentConfirmError;
+import poomasi.global.error.PaymentConfirmException;
+import poomasi.payment.dto.request.PaymentPreRegisterRequest;
+import poomasi.payment.dto.request.PaymentWebHookRequest;
+import poomasi.payment.dto.response.PaymentPreRegisterResponse;
+import poomasi.payment.dto.response.PaymentResponse;
+import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.Payment;
+import poomasi.payment.repository.PaymentRepository;
+import poomasi.payment.util.PaymentUtil;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static poomasi.domain.order.entity.PaymentStatus.*;
+import static poomasi.global.error.ApplicationError.*;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PaymentPortoneService implements PaymentService {
+
+    @Autowired
+    private final PaymentRepository paymentRepository;
+    private final ProductService productService;
+    private final ProductOrderService productOrderService;
+    private final PaymentUtil paymentUtil;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final AtomicBoolean isWebhookReceived = new AtomicBoolean(false); // 웹훅 수신 여부 체크
+    //private final ThreadLocal<AtomicBoolean> isWebhookReceived = ThreadLocal.withInitial(AtomicBoolean::new); -> thread local로 제어
+
+    @Override
+    @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
+    public PaymentPreRegisterResponse prepaymentRegister(PaymentPreRegisterRequest paymentPreRegisterRequest) {
+
+        String merchantUid = paymentPreRegisterRequest.merchantUid();
+        BigDecimal amount = paymentPreRegisterRequest.amount();
+
+        paymentUtil.sendPrepareData(merchantUid, amount);
+        return PaymentPreRegisterResponse.from(paymentPreRegisterRequest.merchantUid());
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Description("포트원 결제 직전 바로 받는 confirm 요청. 40초 대기")
+    public void confirmBeforePayment(String impUid, String merchantUid) {
+        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
+        List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
+        //수량 검증
+        for (OrderedProduct orderedProduct : orderedProductList) {
+            Product product = orderedProduct.getProduct();
+            Integer remainQuantity = product.getStock();
+            Integer orderQuantity = orderedProduct.getCount();
+
+            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
+            if (orderQuantity > remainQuantity) {
+                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
+            }
+        }
+
+        //결제 되어야 할 금액
+        BigDecimal amountToBePaid = productOrder.getTotalAmount();
+
+        /*
+         * 1. 200ok 보내기
+         * 2. 타이머 세팅 후
+         * 타이머 타임 아웃 되면(웹훅을 받지 못하면) 결제 단건 api 호출
+         * 만약 웹훅을 받으면 받은 데이터에서 getImpUid후, 결제 단건 호출 및 타이머 초기화
+         * */
+
+        //재고 검증 완료 -> 200 OK 보내야 함 + 웹훅 수신 여부에 따라 분기
+        scheduler.schedule(() -> {
+            if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
+                if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
+                    productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+                    productService.decreaseStock(productOrder); //재고 차감
+                } else {
+                    paymentUtil.cancelPaymentByImpUid(impUid);  //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+                    productOrder.setPaymentStatus(PAYMENT_DECLINED);
+                    throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+                }
+            }
+        }, 40, TimeUnit.SECONDS);
+
+    }
+
+    @Override
+    @Description("웹훅 처리 service -> 결제 정상적으로 성공됨을 보장")
+    public void handlePortOneProductWebhookEvent(PaymentWebHookRequest paymentWebHookRequest) {
+        isWebhookReceived.set(true);
+
+        String impUid = paymentWebHookRequest.impUid();
+        String merchantUid = paymentWebHookRequest.merchantUid();
+
+        if (paymentUtil.checkItemType(merchantUid).equals(ItemType.PRODUCT)) {
+            handleProductPayment(impUid, merchantUid);
+        } else {
+            handleFarmPayment(impUid, merchantUid);
+        }
+    }
+
+    private void handleProductPayment(String impUid, String merchantUid) {
+        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
+
+        BigDecimal amountToBePaid = productOrder.getTotalAmount();
+
+        //결제 되어야 할 금액과 결제 된 금액이 같다면
+        if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
+            try {
+                productService.decreaseStock(productOrder);
+                productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+            } catch (BusinessException businessException) {
+                productOrder.setPaymentStatus(PAYMENT_INSUFFICIENT_QUANTITY);
+                throw new ApplicationException(PAYMENT_BAD_REQUEST);
+            }
+        } else {
+            //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+            paymentUtil.cancelPaymentByImpUid(impUid);
+            productOrder.setPaymentStatus(PAYMENT_DECLINED);
+            throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+        }
+    }
+
+    private void handleFarmPayment(String impUid, String merchantUid) {
+    }
+
+
+    public PaymentResponse getPayment(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new ApplicationException(PAYMENT_NOT_FOUND));
+        return PaymentResponse.fromEntity(payment);
+    }
+
+    @Description("orderID로 결제 방법 찾는 메서드")
+    public PaymentResponse getPaymentByOrderId(Long orderId) {
+        Member member = getMember();
+        Payment payment = paymentRepository.findById(orderId).orElseThrow(() -> new ApplicationException(PAYMENT_NOT_FOUND));
+        return PaymentResponse.fromEntity(payment);
+    }
+
+    private Member getMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object impl = authentication.getPrincipal();
+        Member member = ((UserDetailsImpl) impl).getMember();
+        return member;
+    }
+
+}
+
+
