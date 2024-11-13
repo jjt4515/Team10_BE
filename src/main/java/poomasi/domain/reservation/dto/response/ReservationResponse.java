@@ -7,7 +7,8 @@ import java.time.LocalDate;
 
 @Builder
 public record ReservationResponse(Long farmId, Long memberId, Long scheduleId, LocalDate reservationDate,
-                                  int memberCount, ReservationStatus status, String request, int price
+                                  int memberCount, ReservationStatus status, String request, int price,
+                                  String merchantUid
 
 ) {
 }
