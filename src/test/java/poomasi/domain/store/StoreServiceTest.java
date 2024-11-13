@@ -57,6 +57,7 @@ class StoreServiceTest {
     @Test
     void addStore_StoreAddedSuccessfully() {
         // given
+
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         Store store = mock(Store.class);
 
@@ -101,7 +102,6 @@ class StoreServiceTest {
 
     @Test
     void updateStore_StoreDoesNotExist_ThrowsBusinessException() {
-
         // given
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.empty());
