@@ -30,11 +30,9 @@ public class FarmInfo {
     String imageUrl;
 
     @Comment(value = "제목")
-    @Column(nullable = false)
     String title;
 
     @Comment("설명")
-    @Column(nullable = false)
     String content;
 
     @Comment("메인 이미지 여부")
@@ -60,5 +58,10 @@ public class FarmInfo {
 
     public boolean isValid() {
         return imageUrl != null && content != null && deletedAt == null && title != null;
+    }
+
+    public boolean hasContent() {
+        return content != null && !content.isBlank() && !content.isEmpty() &&
+                title != null && !title.isBlank() && !title.isEmpty();
     }
 }
