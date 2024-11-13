@@ -165,8 +165,4 @@ public class JwtUtil {
             return true;
         }
     }
-
-    public long getAccessTokenExpiration() {
-        return ACCESS_TOKEN_EXPIRATION_TIME;
-    }
 }
