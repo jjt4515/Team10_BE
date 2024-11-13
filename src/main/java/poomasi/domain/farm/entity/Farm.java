@@ -13,9 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +27,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.farm.dto.FarmUpdateRequest;
+
+import java.time.LocalDateTime;
+
 import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;
 
@@ -34,7 +39,6 @@ import poomasi.domain.review.entity.Review;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE farm SET deleted_at=current_timestamp WHERE id = ?")
 public class Farm {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -67,6 +71,10 @@ public class Farm {
     @Enumerated(EnumType.STRING)
     private FarmStatus status = FarmStatus.OPEN;
 
+    @Comment("카테고리 ID")
+    @Column(name = "category_id")
+    private Long categoryId;
+
     @Comment("체험 비용")
     private int experiencePrice;
 
@@ -87,6 +95,9 @@ public class Farm {
     @UpdateTimestamp
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     private List<Review> reviewList = new ArrayList<>();
@@ -98,10 +109,7 @@ public class Farm {
     private double averageRating;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail,
-            Double latitude, Double longitude, String description, int experiencePrice,
-            Integer maxCapacity, Integer maxReservation, String businessNumber,
-            LocalDateTime deletedAt) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -115,6 +123,8 @@ public class Farm {
         this.maxReservation = maxReservation;
         this.businessNumber = businessNumber;
         this.deletedAt = deletedAt;
+        this.categoryId = categoryId;
+        this.phoneNumber = phoneNumber;
         averageRating = 0.0f;
     }
 

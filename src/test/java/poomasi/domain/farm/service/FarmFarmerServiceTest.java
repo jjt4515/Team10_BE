@@ -14,6 +14,7 @@ import poomasi.domain.farm.repository.FarmRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+import poomasi.payment.entity.ItemType;
 
 import java.util.Optional;
 
@@ -48,7 +49,7 @@ class FarmFarmerServiceTest {
 
             given(farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(member.getId())).willReturn(Optional.of(existingFarm));
 
-            FarmRegisterRequest request = new FarmRegisterRequest("New Farm", "Address", "Detail", 1.0, 1.0, "010-1234-5678", "Description", 10000, 10, 5, "1234-1234");
+            FarmRegisterRequest request = new FarmRegisterRequest("New Farm", "Address", "Detail", 1.0, 1.0, "010-1234-5678", "Description", 10000, 10, 5, 1L);
 
             // when & then
             assertThatThrownBy(() -> farmFarmerService.registerFarm(member, request))
