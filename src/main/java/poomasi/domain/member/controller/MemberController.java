@@ -111,13 +111,14 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    // 회원 탈퇴, 복구, 금지
-    // s3스케줄러 구현하긴해야함
-
-    // 이미지 validator 타입 추가
-
-    // 이미지 업로드 실패할시 처리
-
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+        memberService.deleteAccount(member);
+        return ResponseEntity.noContent().build();
+    }
 
 
 

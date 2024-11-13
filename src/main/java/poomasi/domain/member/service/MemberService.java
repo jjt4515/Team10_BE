@@ -149,4 +149,9 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public void deleteAccount(Member member) {
+        memberRepository.delete(member);
+    }
+
 }
