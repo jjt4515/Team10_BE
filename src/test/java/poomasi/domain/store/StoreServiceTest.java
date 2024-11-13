@@ -70,7 +70,7 @@ class StoreServiceTest {
     @Test
     void getStore_StoreExists_ReturnStoreResponse() {
         // given
-        Store store = new Store(1L, "test","test","test",testMember,"test","test");
+        Store store = new Store(1L, "name","address","phone",testMember,"registrationNumber");
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
