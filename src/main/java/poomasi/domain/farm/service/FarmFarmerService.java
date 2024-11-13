@@ -27,13 +27,17 @@ public class FarmFarmerService {
     }
 
     public Long updateFarm(Long farmerId, FarmUpdateRequest request) {
-        Farm farm = this.getFarmByFarmId(request.farmId());
-
+        Farm farm = getFarmByFarmerId(farmerId);
+        
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
 
         return farmRepository.save(request.toEntity(farm)).getId();
+    }
+
+    public Farm getFarmByFarmerId(Long farmerId) {
+        return farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(farmerId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
     }
 
     private Farm getFarmByFarmId(Long farmId) {
