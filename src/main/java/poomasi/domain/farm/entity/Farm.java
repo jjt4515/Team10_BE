@@ -13,9 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -68,6 +70,10 @@ public class Farm {
     @Comment("농장 상태")
     @Enumerated(EnumType.STRING)
     private FarmStatus status = FarmStatus.OPEN;
+
+    @Comment("카테고리 ID")
+    @Column(name = "category_id")
+    private Long categoryId;
 
     @Comment("체험 비용")
     private int experiencePrice;
