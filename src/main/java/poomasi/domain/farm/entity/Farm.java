@@ -1,10 +1,21 @@
 package poomasi.domain.farm.entity;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,9 +72,6 @@ public class Farm {
     @Comment("체험 비용")
     private int experiencePrice;
 
-    @Comment("농장 아이템 종류")
-    private Long categoryId;
-
     @Comment("팀 최대 인원")
     private Integer maxCapacity;
 
@@ -92,6 +100,8 @@ public class Farm {
     @JoinColumn(name = "ordered_farm_id")
     private OrderedFarm orderedFarm;
 
+    private double averageRating;
+
     @Builder
     public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber) {
         this.id = id;
@@ -109,6 +119,7 @@ public class Farm {
         this.deletedAt = deletedAt;
         this.categoryId = categoryId;
         this.phoneNumber = phoneNumber;
+        averageRating = 0.0f;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
@@ -135,5 +146,13 @@ public class Farm {
 
     public void delete() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void addReview(Review review) {
+        this.reviewList.add(review);
+        this.averageRating = reviewList.stream()
+                .mapToDouble(Review::getRating)
+                .average()
+                .orElse(0.0f);
     }
 }
