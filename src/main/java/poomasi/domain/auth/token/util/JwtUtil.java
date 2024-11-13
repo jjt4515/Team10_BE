@@ -46,20 +46,6 @@ public class JwtUtil {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
-    public String generateTokenInFilter(String email, String role , String tokenType, Long memberId){
-        Map<String, Object> claims = this.createClaimsInFilter(email, role, tokenType);
-        String memberIdString = memberId.toString();
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(memberIdString)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
     private Map<String, Object> createClaimsInFilter(String email, String role, String tokenType) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
