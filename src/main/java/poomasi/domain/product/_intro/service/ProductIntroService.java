@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.repository.ImageRepository;
+import poomasi.domain.image.service.ImageService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._intro.dto.ProductIntroUpdateRequest;
 import poomasi.domain.product._intro.dto.ProductIntroResponse;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product._intro.repository.ProductIntroRepository;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
@@ -20,7 +22,7 @@ public class ProductIntroService {
 
     private final ProductIntroRepository productIntroRepository;
     private final ProductRepository productRepository;
-    private final ImageRepository imageRepository;
+    private final ImageService imageService;
 
     public ProductIntroResponse getIntro(Long productId) {
         Product product = getProduct(productId);
@@ -50,7 +52,15 @@ public class ProductIntroService {
     private Image getImage(Long imageId) {
         if(imageId == null)
             return null;
-        return imageRepository.findById(imageId)
-                .orElseThrow(() -> new BusinessException(BusinessError.IMAGE_NOT_FOUND));
+        return imageService.getImageById(imageId);
+    }
+
+    public ProductIntro getIntroByIntroId(Long productIntroId) {
+        return productIntroRepository.findById(productIntroId)
+                .orElseThrow(() -> new BusinessException(BusinessError.INTRO_NOT_FOUND));
+    }
+
+    public void saveExistedProductIntro(ProductIntro productIntro){
+        productIntroRepository.save(productIntro);
     }
 }

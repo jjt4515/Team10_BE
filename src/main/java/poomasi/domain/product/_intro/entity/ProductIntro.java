@@ -30,21 +30,25 @@ public class ProductIntro {
 
     private String mainTitle;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image mainImage;
 
     private String subTitle1;
     private String subDesc1;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage1;
 
     private String subTitle2;
     private String subDesc2;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage2;
 
     private String subTitle3;
     private String subDesc3;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage3;
 
     public ProductIntro() {
