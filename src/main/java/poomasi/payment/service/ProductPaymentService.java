@@ -56,20 +56,18 @@ public class ProductPaymentService {
 
 
     @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
-    public PaymentPreRegisterResponse portonePrePaymentRegister(PaymentPreRegisterRequest paymentPreRegisterRequest) throws IOException, IamportResponseException {
+    public PaymentPreRegisterResponse portonePrePaymentRegister(PaymentPreRegisterRequest paymentPreRegisterRequest) {
 
         String merchantUid = paymentPreRegisterRequest.merchantUid();
         BigDecimal amount = paymentPreRegisterRequest.amount();
 
         paymentUtil.sendPrepareData(merchantUid, amount);
-        return PaymentPreRegisterResponse.from(
-                paymentPreRegisterRequest.merchantUid()
-        );
+        return PaymentPreRegisterResponse.from(paymentPreRegisterRequest.merchantUid());
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Description("포트원 결제 직전 바로 받는 confirm 요청. 40초 대기")
-    public void confirmBeforePayment(String impUid, String merchantUid) throws IOException, IamportResponseException {
+    public void confirmBeforePayment(String impUid, String merchantUid) {
         ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
         List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
         //수량 검증
@@ -144,22 +142,19 @@ public class ProductPaymentService {
 
 
     public PaymentResponse getPayment(Long paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
         return PaymentResponse.fromEntity(payment);
     }
 
     @Description("orderID로 결제 방법 찾는 메서드")
     public PaymentResponse getPaymentByOrderId(Long orderId) {
         Member member = getMember();
-        Payment payment = paymentRepository.findById(orderId)
-                .orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
+        Payment payment = paymentRepository.findById(orderId).orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
         return PaymentResponse.fromEntity(payment);
     }
 
     private Member getMember() {
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object impl = authentication.getPrincipal();
         Member member = ((UserDetailsImpl) impl).getMember();
         return member;
