@@ -13,12 +13,14 @@ public class ImageOwnerValidatorFactory {
     public ImageOwnerValidatorFactory(FarmOwnerValidator farmOwnerValidator,
                                       ProductOwnerValidator productOwnerValidator,
                                       ReviewOwnerValidator reviewOwnerValidator,
-                                      MemberProfileOwnerValidator memberProfileOwnerValidator) {
+                                      MemberProfileOwnerValidator memberProfileOwnerValidator,
+                                      ProductIntroOwnerValidator productIntroOwnerValidator) {
         validators.put(ImageType.FARM, farmOwnerValidator);
         validators.put(ImageType.PRODUCT, productOwnerValidator);
         validators.put(ImageType.FARM_REVIEW, reviewOwnerValidator);
         validators.put(ImageType.PRODUCT_REVIEW, reviewOwnerValidator);
         validators.put(ImageType.MEMBER_PROFILE, memberProfileOwnerValidator);
+        validators.put(ImageType.PRODUCT_INTRO, productIntroOwnerValidator);
     }
 
     public ImageOwnerValidator getValidator(ImageType type) {

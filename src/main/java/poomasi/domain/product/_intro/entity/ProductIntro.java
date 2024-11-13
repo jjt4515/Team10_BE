@@ -92,4 +92,8 @@ public class ProductIntro {
         this.subDesc3 = productIntroUpdateRequest.subDesc3();
         this.subImage3 = subImage3;
     }
+
+    public Long getFarmerId() {
+        return product.getFarmerId();
+    }
 }
