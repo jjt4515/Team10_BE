@@ -46,14 +46,6 @@ public class JwtUtil {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    private Map<String, Object> createClaimsInFilter(String email, String role, String tokenType) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
-        claims.put("role", role);
-        claims.put("tokenType" , tokenType);
-        return claims;
-    }
-
     public Boolean validateTokenInFilter(String token){
 
         log.info("jwt util에서 토큰 검증을 진행합니다 . .");
@@ -68,15 +60,6 @@ public class JwtUtil {
         }
 
     }
-
-    public String getRoleFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "role", String.class);
-    }
-
-    public String getEmailFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "email", String.class);
-    }
-
 
     public String generateAccessTokenById(final Long memberId) {
         Map<String, Object> claims = createClaims(memberId);
@@ -116,6 +99,10 @@ public class JwtUtil {
     // 토큰 이용해서 추출
     public Long getIdFromToken(final String token) {
         return getClaimFromToken(token, "id", Long.class);
+    }
+
+    public String getEmailFromToken(final String token) {
+        return getClaimFromToken(token, "email", String.class);
     }
 
     public Date getExpirationDateFromToken(final String token) {

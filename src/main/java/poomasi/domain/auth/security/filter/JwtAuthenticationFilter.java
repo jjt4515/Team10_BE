@@ -75,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         log.info("토큰 검증 완료");
-        String username = jwtUtil.getEmailFromTokenInFilter(accessToken);
+        String username = jwtUtil.getEmailFromToken(accessToken);
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
         // (ID, password, auth)
