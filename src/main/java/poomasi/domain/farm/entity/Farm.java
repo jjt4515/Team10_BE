@@ -61,6 +61,13 @@ public class Farm {
     @Comment("체험 비용")
     private int experiencePrice;
 
+    @Comment("농장 작물 유형")
+    @Enumerated(EnumType.STRING)
+    private FarmItemType itemType;
+
+    @Comment("농작 작물 유형")
+    String farmItem;
+
     @Comment("팀 최대 인원")
     private Integer maxCapacity;
 
@@ -78,6 +85,9 @@ public class Farm {
     @UpdateTimestamp
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     private List<Review> reviewList = new ArrayList<>();
@@ -87,7 +97,7 @@ public class Farm {
     private OrderedFarm orderedFarm;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, FarmItemType itemType, String farmItem, String phoneNumber) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -101,6 +111,9 @@ public class Farm {
         this.maxReservation = maxReservation;
         this.businessNumber = businessNumber;
         this.deletedAt = deletedAt;
+        this.itemType = itemType;
+        this.farmItem = farmItem;
+        this.phoneNumber = phoneNumber;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {
