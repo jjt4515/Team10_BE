@@ -57,6 +57,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
+    @Setter
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 

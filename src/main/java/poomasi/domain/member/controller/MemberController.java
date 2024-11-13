@@ -120,6 +120,14 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
+    // 계정 복구
+    @PutMapping("/restore/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> restoreAccount(@PathVariable Long memberId) {
+        memberService.restoreAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 
