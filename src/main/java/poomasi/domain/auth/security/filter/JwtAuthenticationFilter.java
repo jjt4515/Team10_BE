@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 유효성 검사
-        if(!jwtUtil.validateTokenInFilter(accessToken)) {
+        if(!jwtUtil.validateAccessToken(accessToken)) {
             log.warn("JWT 필터 - [인증 실패] - 위조된 토큰입니다.");
             PrintWriter writer = response.getWriter();
             writer.print("위조된 토큰입니다.");
@@ -75,7 +75,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         log.info("토큰 검증 완료");
-        String username = jwtUtil.getEmailFromTokenInFilter(accessToken);
+        String username = jwtUtil.getEmailFromToken(accessToken);
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
         // (ID, password, auth)

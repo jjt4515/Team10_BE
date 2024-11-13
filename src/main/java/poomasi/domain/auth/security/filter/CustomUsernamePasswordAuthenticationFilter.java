@@ -37,8 +37,8 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
         log.info("email - password 기반으로 인증을 시도 합니다 : CustomUsernamePasswordAuthenticationFilter");
         ObjectMapper loginRequestMapper = new ObjectMapper();
-        String email = null;
-        String password = null;
+        String email;
+        String password;
 
         try {
             BufferedReader reader = request.getReader();
@@ -59,12 +59,10 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Description("로그인 성공 시, accessToken과 refreshToken 발급")
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         UserDetailsImpl customUserDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String username = customUserDetails.getUsername();
-        String role = customUserDetails.getAuthority();
         Long memberId = customUserDetails.getMember().getId();
 
-        String accessToken = jwtUtil.generateTokenInFilter(username, role, "access", memberId);
-        String refreshToken = jwtUtil.generateTokenInFilter(username, role, "refresh", memberId);
+        String accessToken = jwtUtil.generateAccessTokenById(memberId);
+        String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
         log.info("usename password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
         response.setHeader("access", accessToken);
