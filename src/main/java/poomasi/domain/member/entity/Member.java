@@ -1,19 +1,18 @@
 package poomasi.domain.member.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
-import poomasi.global.error.BusinessError;
-import poomasi.global.error.BusinessException;
-import java.util.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -67,8 +66,9 @@ public class Member {
     @Column(nullable = true)
     private String farmerTierCode;
 
+    @Getter
     @Setter
-    @OneToOne(mappedBy="owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Store store;
 
     public Member(String name, String email, String password, LoginType loginType, Role role) {
@@ -103,12 +103,6 @@ public class Member {
         return role == Role.ROLE_ADMIN;
     }
 
-    public Store getStore() {
-        if(store == null)
-            throw new BusinessException(BusinessError.STORE_NOT_FOUND);
-        return store;
-    }
-
     public MemberProfile getOrCreateProfile() {
         if (this.memberProfile == null) {
             this.memberProfile = new MemberProfile();
@@ -123,7 +117,6 @@ public class Member {
         }
         return store;
     }
-
 
 
 }

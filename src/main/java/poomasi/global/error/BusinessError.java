@@ -87,6 +87,7 @@ public enum BusinessError {
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
+    STORE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 상점이 존재합니다."),
 
     // PAYMENT
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제를 찾을 수 없습니다."),
@@ -102,7 +103,7 @@ public enum BusinessError {
     REFUND_QUANTITY_EXCEEDED(HttpStatus.BAD_REQUEST, "환불 가능한 수량을 초과한 요청입니다."),
     PURCHASE_ALREADY_CONFIRMED(HttpStatus.BAD_REQUEST, "이미 구매 확정이 된 상태입니다."),
     REFUND_NOT_ALLOWED_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "배송 대기 전 상태에서는 환불을 요청할 수 없습니다."),
-    REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND , "찾을 수 없는 환불 요청입니다."),
+    REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 환불 요청입니다."),
     REFUND_AFTER_SALES_REQUEST_INVALID_OWNER(HttpStatus.BAD_REQUEST, "판매자의 환불 요청이 아닙니다."),
 
     //Product intro
