@@ -1,6 +1,7 @@
 package poomasi.domain.farm.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.Comment;
 
@@ -26,4 +27,12 @@ public class FarmInfo {
     @Comment("메인 이미지 여부")
     @Column(nullable = false)
     boolean isMain;
+
+    @Builder
+    public FarmInfo(Long farmId, String imageUrl, String description, boolean isMain) {
+        this.farmId = farmId;
+        this.imageUrl = imageUrl;
+        this.description = description;
+        this.isMain = isMain;
+    }
 }
