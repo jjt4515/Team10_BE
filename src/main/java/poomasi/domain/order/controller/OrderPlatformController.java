@@ -15,13 +15,13 @@ import poomasi.payment.service.PaymentService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/order")
+@RequestMapping("/api/order")
 public class OrderPlatformController {
     private final PaymentService paymentService;
     private final ProductOrderService productOrderService;
 
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/product/pre-order")
+    @PostMapping("/pre-order")
     @Description("product 사전 주문 등록")
     public ResponseEntity<?> createProductPreOrder(@RequestBody ProductOrderRegisterRequest productOrderRegisterRequest) {
         PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.productPreOrderRegister(productOrderRegisterRequest);

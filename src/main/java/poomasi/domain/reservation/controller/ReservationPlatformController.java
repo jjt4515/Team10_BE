@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 public class ReservationPlatformController {
     private final ReservationPlatformService reservationPlatformService;
 
-    @PostMapping("/create")
+    @PostMapping("/pre-reservation")
     @Secured("ROLE_CUSTOMER")
     @Description("FARM 사전 주문")
     public ResponseEntity<?> createReservation(

@@ -19,15 +19,6 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @Description("사전 결제 api")
-    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/pre-payment")
-    public ResponseEntity<?> postPrepare(PaymentPreRegisterRequest paymentPreRegisterRequest) {
-        return ResponseEntity.ok(
-                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
-        );
-    }
-
     @Description("결제 바로 직전 포트원에서 보내는 confirm 요청" + " 결제를 진행하려면 HTTP Status 200 응답, 그렇지 않으면 500 응답 보내기")
     @PostMapping("/confirm/")
     public ResponseEntity<?> confirmProductStock(@RequestParam String merchantUid, @RequestParam String impUid) {
