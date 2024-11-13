@@ -118,6 +118,8 @@ jobs:
             AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
             IMP_API_KEY=${{ secrets.IMP_API_KEY }}
             IMP_SECRET_KEY=${{ secrets.IMP_SECRET_KEY }}
+            KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+            KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
           cache-from: type=gha
           cache-to: type=gha,mode=min,ignore-error=true
 
