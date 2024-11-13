@@ -61,12 +61,8 @@ public class Farm {
     @Comment("체험 비용")
     private int experiencePrice;
 
-    @Comment("농장 작물 유형")
-    @Enumerated(EnumType.STRING)
-    private FarmItemType itemType;
-
-    @Comment("농작 작물 유형")
-    String farmItem;
+    @Comment("농장 아이템 종류")
+    private Long categoryId;
 
     @Comment("팀 최대 인원")
     private Integer maxCapacity;
@@ -97,7 +93,7 @@ public class Farm {
     private OrderedFarm orderedFarm;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, FarmItemType itemType, String farmItem, String phoneNumber) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -111,8 +107,7 @@ public class Farm {
         this.maxReservation = maxReservation;
         this.businessNumber = businessNumber;
         this.deletedAt = deletedAt;
-        this.itemType = itemType;
-        this.farmItem = farmItem;
+        this.categoryId = categoryId;
         this.phoneNumber = phoneNumber;
     }
 
