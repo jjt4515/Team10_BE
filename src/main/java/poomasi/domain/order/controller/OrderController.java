@@ -29,24 +29,14 @@ public class OrderController {
 
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
     @PostMapping("/product/pre-order")
-    @Description("product 사전 결제")
+    @Description("product 사전 주문 등록")
     public ResponseEntity<?> createProductPreOrder(@RequestBody ProductOrderRegisterRequest productOrderRegisterRequest) throws IOException, IamportResponseException {
         PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.productPreOrderRegister(productOrderRegisterRequest);
         return ResponseEntity.ok(
                 productPaymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
         );
     }
-
-    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/farm/pre-order")
-    @Description("farm 사전 결제")
-    public ResponseEntity<?> createFarmPreOrder() throws IOException, IamportResponseException {
-        PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.farmPreOrderRegister();
-        return ResponseEntity.ok(
-                productPaymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
-        );
-    }
-
+    
     @Description("멤버의 결제 완료가 된 단건 주문 조회. 특정 건만 조회")
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getAllOrdersByMember(@PathVariable Long orderId) {

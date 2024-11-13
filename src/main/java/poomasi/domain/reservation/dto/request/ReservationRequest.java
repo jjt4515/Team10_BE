@@ -15,7 +15,7 @@ public record ReservationRequest(
         int memberCount,
         String request
 ) {
-    public Reservation toEntity(Member member, Farm farm, FarmSchedule farmSchedule) {
+    public Reservation toEntity(Member member, Farm farm, FarmSchedule farmSchedule, String merchantUid) {
         return Reservation.builder()
                 .member(member)
                 .farm(farm)
@@ -25,6 +25,7 @@ public record ReservationRequest(
                 .request(request)
                 .price(farm.getExperiencePrice() * memberCount)
                 .status(ReservationStatus.ACCEPTED)
+                .merchantUid(merchantUid)
                 .build();
     }
 }

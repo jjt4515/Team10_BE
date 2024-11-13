@@ -60,6 +60,9 @@ public class Reservation {
     @Column(nullable = false)
     private String request;
 
+    @Column(nullable = false)
+    private String merchantUid;
+
     @Comment("결제 예정 금액")
     @Column(nullable = false)
     private int price;
@@ -75,7 +78,7 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, int price) {
+    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, int price, String merchantUid) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -84,6 +87,7 @@ public class Reservation {
         this.status = status;
         this.request = request;
         this.price = price;
+        this.merchantUid = merchantUid;
     }
 
     public ReservationResponse toResponse() {
@@ -96,6 +100,7 @@ public class Reservation {
                 .status(status)
                 .request(request)
                 .price(price)
+                .merchantUid(merchantUid)
                 .build();
     }
 

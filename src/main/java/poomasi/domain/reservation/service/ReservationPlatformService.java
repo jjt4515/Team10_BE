@@ -13,6 +13,11 @@ import poomasi.domain.reservation.dto.response.ReservationResponse;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+import poomasi.payment.entity.ItemType;
+import poomasi.payment.util.PaymentUtil;
+
+import java.io.IOException;
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class ReservationPlatformService {
     private final ReservationService reservationService;
     private final FarmService farmService;
     private final FarmScheduleService farmScheduleService;
+    private final PaymentUtil paymentUtil;
 
     private final int RESERVATION_CANCELLATION_PERIOD = 3;
 
@@ -40,7 +46,12 @@ public class ReservationPlatformService {
         if (request.memberCount() > farm.getMaxCapacity()) {
             throw new BusinessException(BusinessError.RESERVATION_MEMBER_EXCEED);
         }
-        Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule));
+
+
+        // 3. 사전 결제 생성
+        String merchantUid = paymentUtil.createMerchantUid(ItemType.PRODUCT);
+        Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule, merchantUid));
+        paymentUtil.sendPrepareData(merchantUid, new BigDecimal(reservation.getPrice()));
 
         return reservation.toResponse();
     }

@@ -114,17 +114,6 @@ public class ProductOrderService {
         return new PaymentPreRegisterRequest(merchantUid, totalPrice);
     }
 
-    @Transactional
-    // FIXME: 이거 지워야함!!
-    public PaymentPreRegisterRequest farmPreOrderRegister() {
-        Member member = getMember();
-        String merchantUid = "";
-        BigDecimal totalPrice = BigDecimal.ZERO;
-
-        return new PaymentPreRegisterRequest(merchantUid, totalPrice);
-    }
-
-
     @Description("멤버 ID 기반으로 모든 order 다 들고 오는 메서드")
     public List<OrderResponse> findAllOrdersByMemberId() {
         Member member = getMember();
