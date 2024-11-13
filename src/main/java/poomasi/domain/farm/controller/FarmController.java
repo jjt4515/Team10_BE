@@ -2,6 +2,7 @@ package poomasi.domain.farm.controller;
 
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
