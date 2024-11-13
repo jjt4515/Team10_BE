@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +17,7 @@ import poomasi.domain.reservation.dto.response.ReservationResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
@@ -77,9 +79,13 @@ public class Reservation {
     @Comment("예약 취소 일자")
     private LocalDateTime canceledAt;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    Review review;
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
+    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
+            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -88,6 +94,7 @@ public class Reservation {
         this.status = status;
         this.request = request;
         this.price = price;
+        this.review = null;
         this.merchantUid = merchantUid;
     }
 
@@ -100,6 +107,8 @@ public class Reservation {
                 .memberCount(memberCount)
                 .status(status)
                 .request(request)
+                .price(price.intValue())
+                .isReviewed(review != null)
                 .price(price.intValue())
                 .merchantUid(merchantUid)
                 .build();

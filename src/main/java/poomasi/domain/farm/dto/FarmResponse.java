@@ -11,8 +11,10 @@ public record FarmResponse(
         Double latitude,
         Double longitude,
         String description,
-        int experiencePrice
+        int experiencePrice,
+        double averageRating
 ) {
+
     public static FarmResponse fromEntity(Farm farm) {
         return new FarmResponse(
                 farm.getId(),
@@ -22,7 +24,8 @@ public record FarmResponse(
                 farm.getLatitude(),
                 farm.getLongitude(),
                 farm.getDescription(),
-                farm.getExperiencePrice()
+                farm.getExperiencePrice(),
+                farm.getAverageRating()
         );
     }
 }
