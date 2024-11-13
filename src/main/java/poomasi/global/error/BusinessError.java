@@ -87,6 +87,7 @@ public enum BusinessError {
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
+    STORE_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 상점이 존재합니다."),
 
     // After sales
     SHIPPING_ALREADY_IN_PROGRESS(HttpStatus.BAD_REQUEST, "배송 준비 중이거나 배송 중인 주문입니다."),

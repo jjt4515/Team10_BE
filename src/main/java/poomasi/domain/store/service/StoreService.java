@@ -1,14 +1,9 @@
 package poomasi.domain.store.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.entity.Role;
-import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.member.service.MemberService;
 import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.dto.StoreResponse;
@@ -26,17 +21,18 @@ public class StoreService {
     private final MemberService memberService;
 
     @Transactional
-    public void addStore(StoreRegisterRequest storeRegisterRequest) {
-        Member member = getMember();
+    public void addStore(StoreRegisterRequest storeRegisterRequest, Member member) {
+        if (member.getStore() != null) {
+            throw new BusinessException(BusinessError.STORE_ALREADY_EXISTS);
+        }
+
         Store store = storeRegisterRequest.toEntity(member);
         store = storeRepository.save(store);
         member.setStore(store);
-        System.out.println(member.getStore().getId());
     }
 
     public StoreResponse getStore(Long memberId) {
         Member member = memberService.findMemberById(memberId);
-
         return StoreResponse.fromEntity(member.getStore());
     }
 
@@ -45,16 +41,8 @@ public class StoreService {
                 .orElseThrow(() -> new BusinessException(BusinessError.STORE_NOT_FOUND));
     }
 
-    private Member getMember() {
-        Authentication authentication = SecurityContextHolder
-                .getContext().getAuthentication();
-        Object impl = authentication.getPrincipal();
-        return ((UserDetailsImpl) impl).getMember();
-    }
-
     @Transactional
-    public void updateStore(StoreRegisterRequest storeRegisterRequest) {
-        Member member = getMember();
+    public void updateStore(StoreRegisterRequest storeRegisterRequest, Member member) {
         Store store = getStore(member);
         store.updateStore(storeRegisterRequest);
     }
