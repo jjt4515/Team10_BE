@@ -16,9 +16,6 @@ import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.ItemType;
 import poomasi.payment.util.PaymentUtil;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -51,7 +48,7 @@ public class ReservationPlatformService {
         // 3. 사전 결제 생성
         String merchantUid = paymentUtil.createMerchantUid(ItemType.PRODUCT);
         Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule, merchantUid));
-        paymentUtil.sendPrepareData(merchantUid, new BigDecimal(reservation.getPrice()));
+        paymentUtil.sendPrepareData(merchantUid, reservation.getPrice());
 
         return reservation.toResponse();
     }

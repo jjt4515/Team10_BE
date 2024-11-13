@@ -3,19 +3,16 @@ package poomasi.payment.service;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.member.entity.Member;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.service.ProductOrderService;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.service.ProductService;
+import poomasi.domain.reservation.entity.Reservation;
+import poomasi.domain.reservation.service.ReservationService;
 import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
 import poomasi.global.error.PaymentConfirmError;
@@ -23,10 +20,7 @@ import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.dto.response.PaymentPreRegisterResponse;
-import poomasi.payment.dto.response.PaymentResponse;
 import poomasi.payment.entity.ItemType;
-import poomasi.payment.entity.Payment;
-import poomasi.payment.repository.PaymentRepository;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
@@ -37,18 +31,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static poomasi.domain.order.entity.PaymentStatus.*;
-import static poomasi.global.error.ApplicationError.*;
+import static poomasi.global.error.ApplicationError.PAYMENT_AMOUNT_MISMATCH;
+import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentPortoneService implements PaymentService {
-
-    @Autowired
-    private final PaymentRepository paymentRepository;
+    private final PaymentUtil paymentUtil;
     private final ProductService productService;
     private final ProductOrderService productOrderService;
-    private final PaymentUtil paymentUtil;
+    private final ReservationService reservationService;
+
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final AtomicBoolean isWebhookReceived = new AtomicBoolean(false); // 웹훅 수신 여부 체크
@@ -69,6 +63,14 @@ public class PaymentPortoneService implements PaymentService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Description("포트원 결제 직전 바로 받는 confirm 요청. 40초 대기")
     public void confirmBeforePayment(String impUid, String merchantUid) {
+        if (paymentUtil.checkItemType(merchantUid).equals(ItemType.PRODUCT)) {
+            confirmProductStock(impUid, merchantUid);
+        } else {
+            confirmFarmStock(impUid, merchantUid);
+        }
+    }
+
+    private void confirmProductStock(String impUid, String merchantUid) {
         ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
         List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
         //수량 검증
@@ -94,6 +96,8 @@ public class PaymentPortoneService implements PaymentService {
          * */
 
         //재고 검증 완료 -> 200 OK 보내야 함 + 웹훅 수신 여부에 따라 분기
+
+        // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
         scheduler.schedule(() -> {
             if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
                 if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
@@ -106,7 +110,6 @@ public class PaymentPortoneService implements PaymentService {
                 }
             }
         }, 40, TimeUnit.SECONDS);
-
     }
 
     @Override
@@ -126,10 +129,74 @@ public class PaymentPortoneService implements PaymentService {
 
     private void handleProductPayment(String impUid, String merchantUid) {
         ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
+        List<OrderedProduct> orderedProductList = productOrder.getOrderedProducts();
+        //수량 검증
+        for (OrderedProduct orderedProduct : orderedProductList) {
+            Product product = orderedProduct.getProduct();
+            Integer remainQuantity = product.getStock();
+            Integer orderQuantity = orderedProduct.getCount();
+
+            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
+            if (orderQuantity > remainQuantity) {
+                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
+            }
+        }
+
+        scheduler.schedule(() -> {
+            if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
+                if (paymentUtil.validatePaymentAmount(impUid, productOrder.getTotalAmount())) {
+                    productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+                    productService.decreaseStock(productOrder); //재고 차감
+                } else {
+                    paymentUtil.cancelPaymentByImpUid(impUid);  //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+                    productOrder.setPaymentStatus(PAYMENT_DECLINED);
+                    throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+                }
+            }
+        }, 40, TimeUnit.SECONDS);
+    }
+
+    private void handleFarmPayment(String impUid, String merchantUid) {
+        Reservation reservation = reservationService.findByMerchantUid(merchantUid);
+
+        BigDecimal amountToBePaid = reservation.getPrice();
+
+        if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
+            try {
+                reservation.completePayment();
+                reservationService.save(reservation);
+            } catch (BusinessException businessException) {
+                throw new ApplicationException(PAYMENT_BAD_REQUEST);
+            }
+        } else {
+            //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+            paymentUtil.cancelPaymentByImpUid(impUid);
+            reservation.cancel();
+            reservationService.save(reservation);
+            throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+        }
+
+        // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
+        scheduler.schedule(() -> {
+            if (!isWebhookReceived.get()) { // 웹훅 수신 못 받으면 다시 보내기
+//                if (paymentUtil.validatePaymentAmount(impUid, productOrder.getTotalAmount())) {
+//                    productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+//                    productService.decreaseStock(productOrder); //재고 차감
+//                } else {
+//                    paymentUtil.cancelPaymentByImpUid(impUid);  //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+//                    productOrder.setPaymentStatus(PAYMENT_DECLINED);
+//                    throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+//                }
+            }
+        }, 40, TimeUnit.SECONDS);
+    }
+
+
+    private void confirmFarmStock(String impUid, String merchantUid) {
+        ProductOrder productOrder = productOrderService.findByMerchantUid(merchantUid);
 
         BigDecimal amountToBePaid = productOrder.getTotalAmount();
 
-        //결제 되어야 할 금액과 결제 된 금액이 같다면
         if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
             try {
                 productService.decreaseStock(productOrder);
@@ -146,28 +213,6 @@ public class PaymentPortoneService implements PaymentService {
         }
     }
 
-    private void handleFarmPayment(String impUid, String merchantUid) {
-    }
-
-
-    public PaymentResponse getPayment(Long paymentId) {
-        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new ApplicationException(PAYMENT_NOT_FOUND));
-        return PaymentResponse.fromEntity(payment);
-    }
-
-    @Description("orderID로 결제 방법 찾는 메서드")
-    public PaymentResponse getPaymentByOrderId(Long orderId) {
-        Member member = getMember();
-        Payment payment = paymentRepository.findById(orderId).orElseThrow(() -> new ApplicationException(PAYMENT_NOT_FOUND));
-        return PaymentResponse.fromEntity(payment);
-    }
-
-    private Member getMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object impl = authentication.getPrincipal();
-        Member member = ((UserDetailsImpl) impl).getMember();
-        return member;
-    }
 
 }
 
