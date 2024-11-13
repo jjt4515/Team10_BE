@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.member._biz.entity.MemberBizProfile;
 import poomasi.domain.member._biz.repository.MemberBizProfileRepository;
+import poomasi.global.error.BusinessError;
+import poomasi.global.error.BusinessException;
 
 import java.util.Optional;
 
@@ -16,6 +18,9 @@ public class MemberBizProfileService {
         return memberBizProfileRepository.save(memberBizProfile);
     }
 
-    public Optional<MemberBizProfile> findByMemberId(Long memberId) {
+    public MemberBizProfile findByMemberId(Long memberId) {
+        return memberBizProfileRepository.findByMemberId(memberId).orElseThrow(
+                () -> new BusinessException(BusinessError.MEMBER_BIZ_PROFILE_NOT_FOUND)
+        );
     }
 }

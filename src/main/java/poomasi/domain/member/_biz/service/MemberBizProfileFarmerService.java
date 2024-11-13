@@ -36,13 +36,8 @@ public class MemberBizProfileFarmerService {
     }
 
     public Long approveBizProfile(BizProfileApproveRequest request) {
-        MemberBizProfile bizProfile = getBizProfile(request.memberId());
+        MemberBizProfile bizProfile = memberBizProfileService.findByMemberId(request.memberId());
         bizProfile.setNeedsAdminApproval(false);
         return memberBizProfileService.save(bizProfile).getId();
-    }
-
-    public MemberBizProfile getBizProfile(Long memberId) {
-        return memberBizProfileService.findByMemberId(memberId)
-                .orElseThrow(() -> new BusinessException(BusinessError.MEMBER_BIZ_PROFILE_NOT_FOUND));
     }
 }
