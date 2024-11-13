@@ -2,12 +2,17 @@ package poomasi.domain.farm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import poomasi.domain.farm.dto.FarmRegisterRequest;
-import poomasi.domain.farm.dto.FarmUpdateRequest;
+import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
+import poomasi.domain.farm.dto.request.FarmRegisterRequest;
+import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.entity.Farm;
+import poomasi.domain.farm.entity.FarmInfo;
 import poomasi.domain.farm.repository.FarmRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
+import java.util.Objects;
 
 import static poomasi.global.error.BusinessError.*;
 
@@ -15,6 +20,9 @@ import static poomasi.global.error.BusinessError.*;
 @RequiredArgsConstructor
 public class FarmFarmerService {
     private final FarmRepository farmRepository;
+    private final FarmInfoService farmInfoService;
+
+    private final int MAX_FARM_INFO_COUNT = 4;
 
     public Long registerFarm(Member member, FarmRegisterRequest request) {
 
@@ -23,12 +31,29 @@ public class FarmFarmerService {
         });
 
         return farmRepository.save(request.toEntity(member.getId())).getId();
+    }
 
+    public Long registerFarmInfo(Member member, FarmInfoRegisterRequest request) {
+        Farm farm = getFarmByFarmerId(member.getId());
+
+        List<FarmInfo> farmInfos = farmInfoService.getFarmInfoByFarmId(farm.getId()).stream()
+                .filter(FarmInfo::isValid)
+                .toList();
+
+        if (farmInfos.size() >= MAX_FARM_INFO_COUNT) {
+            throw new BusinessException(FARM_INFO_LIMIT_EXCEEDED);
+        }
+
+        if (request.isMain() && farmInfos.stream().anyMatch(FarmInfo::isMain)) {
+            throw new BusinessException(FARM_INFO_MAIN_ALREADY_EXISTS);
+        }
+
+        return farmInfoService.saveFarmInfo(request.toEntity(farm.getId()));
     }
 
     public Long updateFarm(Long farmerId, FarmUpdateRequest request) {
         Farm farm = getFarmByFarmerId(farmerId);
-        
+
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }

@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.service.FarmFarmerService;
@@ -28,6 +29,16 @@ public class FarmFarmerController {
             @Valid @RequestBody FarmRegisterRequest request) {
         Member member = userDetails.getMember();
         return ResponseEntity.ok(farmFarmerService.registerFarm(member, request));
+
+    }
+
+    @Secured("ROLE_FARMER")
+    @PostMapping("/info")
+    public ResponseEntity<?> registerFarmInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody FarmInfoRegisterRequest request) {
+        Member member = userDetails.getMember();
+        return ResponseEntity.ok(farmFarmerService.registerFarmInfo(member, request));
 
     }
 

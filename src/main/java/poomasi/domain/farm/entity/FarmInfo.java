@@ -4,12 +4,17 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.SQLDelete;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Table(name = "farm_info")
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE farm_info SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
 public class FarmInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,19 +28,36 @@ public class FarmInfo {
     @Column(nullable = false)
     String imageUrl;
 
+    @Comment(value = "제목")
+    @Column(nullable = false)
+    String title;
+
     @Comment("설명")
     @Column(nullable = false)
-    String description;
+    String content;
 
     @Comment("메인 이미지 여부")
     @Column(nullable = false)
     boolean isMain;
 
+    @Comment("생성일")
+    @Column(nullable = false)
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    LocalDateTime createdAt;
+
+    @Comment("삭제 일시")
+    LocalDateTime deletedAt;
+
     @Builder
-    public FarmInfo(Long farmId, String imageUrl, String description, boolean isMain) {
+    public FarmInfo(Long farmId, String imageUrl, String title, String content, boolean isMain) {
         this.farmId = farmId;
         this.imageUrl = imageUrl;
-        this.description = description;
+        this.title = title;
+        this.content = content;
         this.isMain = isMain;
+    }
+
+    public boolean isValid() {
+        return imageUrl != null && content != null && deletedAt == null && title != null;
     }
 }
