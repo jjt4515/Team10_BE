@@ -4,13 +4,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.member._biz.dto.request.BizProfileCreateRequest;
 import poomasi.domain.member.entity.Member;
+import poomasi.global.error.ApplicationException;
+import poomasi.global.ocr.OcrService;
+import poomasi.global.ocr.dto.response.NaverOcrResponse;
+import poomasi.global.ocr.dto.response.OcrResponse;
+
+import java.util.Objects;
+
+import static poomasi.global.error.ApplicationError.OCR_RESULT_FAILURE;
 
 @Service
 @RequiredArgsConstructor
 public class MemberBizProfileFarmerService {
     private final MemberBizProfileService memberBizProfileService;
+    private final OcrService ocrService;
 
     public Long updateBizProfile(Member member, BizProfileCreateRequest request) {
+        OcrResponse ocrResponse = ocrService.extractTextFromImage(ocrService.createRequest(request.imageUrl()));
+
+        if (ocrResponse instanceof NaverOcrResponse naverOcrResponse) {
+            if (naverOcrResponse.getImages().isEmpty() || Objects.equals(naverOcrResponse.getImages().get(0).getInferResult(), "FAILURE")) {
+                throw new ApplicationException(OCR_RESULT_FAILURE);
+            }
+        }
 
         return memberBizProfileService.save(request.toEntity(member.getId())).getId();
     }

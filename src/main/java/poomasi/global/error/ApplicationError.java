@@ -16,7 +16,8 @@ public enum ApplicationError {
     PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT("환불 요청 금액이 환불 가능한 금액보다 더 많습니다"),
 
     // OCR
-    OCR_SUPPORT_ERROR("지원하지 않는 OCR 서비스입니다.");
+    OCR_SUPPORT_ERROR("지원하지 않는 OCR 서비스입니다."),
+    OCR_RESULT_FAILURE("OCR 요청이 올바르지 않습니다.");
 
 
     private final String message;

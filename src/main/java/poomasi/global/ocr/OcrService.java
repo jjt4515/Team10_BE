@@ -5,4 +5,6 @@ import poomasi.global.ocr.dto.response.OcrResponse;
 
 public interface OcrService {
     OcrResponse extractTextFromImage(OcrRequest request);
+
+    OcrRequest createRequest(String url);
 }
