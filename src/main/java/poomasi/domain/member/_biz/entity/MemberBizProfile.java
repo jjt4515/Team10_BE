@@ -2,10 +2,7 @@ package poomasi.domain.member._biz.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 
 
@@ -31,15 +28,22 @@ public class MemberBizProfile {
     @Column(nullable = false)
     private String bizRegImage;
 
+    @Setter
+    @Comment("관리자 승인 필요 여부")
+    @Column(nullable = false)
+    private boolean needsAdminApproval;
+
     @Comment("회원 ID")
     @Column(nullable = false)
     private Long memberId;
 
     @Builder
-    public MemberBizProfile(String bizNumber, String bizName, String bizRegImage, Long memberId) {
+    public MemberBizProfile(String bizNumber, String bizName, String bizRegImage, Long memberId, boolean needsAdminApproval) {
         this.bizNumber = bizNumber;
         this.bizName = bizName;
         this.bizRegImage = bizRegImage;
         this.memberId = memberId;
+        this.needsAdminApproval = needsAdminApproval;
     }
+
 }

@@ -3,6 +3,7 @@ package poomasi.domain.member._biz.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.member._biz.dto.request.BizProfileCreateRequest;
+import poomasi.domain.member._biz.entity.MemberBizProfile;
 import poomasi.domain.member.entity.Member;
 import poomasi.global.error.ApplicationException;
 import poomasi.global.ocr.OcrService;
@@ -21,13 +22,13 @@ public class MemberBizProfileFarmerService {
 
     public Long updateBizProfile(Member member, BizProfileCreateRequest request) {
         OcrResponse ocrResponse = ocrService.extractTextFromImage(ocrService.createRequest(request.imageUrl()));
+        MemberBizProfile bizProfile = request.toEntity(member.getId(), false);
 
         if (ocrResponse instanceof NaverOcrResponse naverOcrResponse) {
             if (naverOcrResponse.getImages().isEmpty() || Objects.equals(naverOcrResponse.getImages().get(0).getInferResult(), "FAILURE")) {
-                throw new ApplicationException(OCR_RESULT_FAILURE);
+                bizProfile.setNeedsAdminApproval(true);
             }
         }
-
-        return memberBizProfileService.save(request.toEntity(member.getId())).getId();
+        return memberBizProfileService.save(bizProfile).getId();
     }
 }

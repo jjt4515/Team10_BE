@@ -16,12 +16,13 @@ public record BizProfileCreateRequest(
         String imageUrl
 
 ) {
-    public MemberBizProfile toEntity(Long id) {
+    public MemberBizProfile toEntity(Long id, boolean needsAdminApproval) {
         return MemberBizProfile.builder()
                 .bizName(name)
                 .bizNumber(number)
                 .bizRegImage(imageUrl)
                 .memberId(id)
+                .needsAdminApproval(needsAdminApproval)
                 .build();
     }
 }
