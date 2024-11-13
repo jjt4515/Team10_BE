@@ -1,6 +1,7 @@
 package poomasi.domain.image.linker;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.product._intro.entity.ProductIntro;
@@ -26,6 +27,7 @@ public class ProductIntroImageLinker implements ImageLinker {
         return type == ImageType.PRODUCT_INTRO;
     }
 
+    @Transactional
     @Override
     public void link(Long referenceId, Image savedImage) {
         ProductIntro productIntro = productIntroService.getIntroByIntroId(referenceId);

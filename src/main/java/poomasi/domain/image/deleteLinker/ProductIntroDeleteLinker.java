@@ -1,6 +1,7 @@
 package poomasi.domain.image.deleteLinker;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.product._intro.entity.ProductIntro;
@@ -23,21 +24,19 @@ public class ProductIntroDeleteLinker implements ImageDeleteLinker {
         return type == ImageType.PRODUCT_INTRO;
     }
 
+    @Transactional
     @Override
     public void handleImageDeletion(Image image) {
         ProductIntro productIntro = productIntroService.getIntroByIntroId(image.getReferenceId());
 
-        if (productIntro.getMainImage() == image) {
-            productIntro.setMainImage(null);
-        }
-
-        List<Image> subImages = Arrays.asList(productIntro.getSubImage1(), productIntro.getSubImage2(), productIntro.getSubImage3());
-        for (int i = 0; i < subImages.size(); i++) {
-            if (subImages.get(i) == image) {
+        List<Image> images = Arrays.asList(productIntro.getMainImage(), productIntro.getSubImage1(), productIntro.getSubImage2(), productIntro.getSubImage3());
+        for (int i = 0; i < images.size(); i++) {
+            if (images.get(i) == image) {
                 switch (i) {
-                    case 0 -> productIntro.setSubImage1(null);
-                    case 1 -> productIntro.setSubImage2(null);
-                    case 2 -> productIntro.setSubImage3(null);
+                    case 0 -> productIntro.setMainImage(null);
+                    case 1 -> productIntro.setSubImage1(null);
+                    case 2 -> productIntro.setSubImage2(null);
+                    case 3 -> productIntro.setSubImage3(null);
                 }
             }
         }
