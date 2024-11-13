@@ -46,21 +46,6 @@ public class JwtUtil {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public Boolean validateTokenInFilter(String token){
-
-        log.info("jwt util에서 토큰 검증을 진행합니다 . .");
-
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            log.info("jwt util에서 토큰 검증 하다가 exception 터졌습니다.");
-            log.info(e.getMessage());
-            return false;
-        }
-
-    }
-
     public String generateAccessTokenById(final Long memberId) {
         Map<String, Object> claims = createClaims(memberId);
         claims.put("type", ACCESS);
@@ -149,7 +134,7 @@ public class JwtUtil {
         return true;
     }
 
-    public Boolean validateToken(final String token) {
+    private Boolean validateToken(final String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)

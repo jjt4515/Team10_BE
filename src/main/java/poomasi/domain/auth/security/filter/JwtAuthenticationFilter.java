@@ -66,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 유효성 검사
-        if(!jwtUtil.validateTokenInFilter(accessToken)) {
+        if(!jwtUtil.validateAccessToken(accessToken)) {
             log.warn("JWT 필터 - [인증 실패] - 위조된 토큰입니다.");
             PrintWriter writer = response.getWriter();
             writer.print("위조된 토큰입니다.");
