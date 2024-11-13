@@ -20,7 +20,6 @@ import poomasi.global.error.BusinessException;
 public class ProductIntroService {
 
     private final ProductService productService;
-    private final ImageRepository imageRepository;
 
     public ProductIntroResponse getIntro(Long productId) {
         Product product = getProduct(productId);
@@ -34,22 +33,16 @@ public class ProductIntroService {
             throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
         }
 
-        Image mainImage = getImage(productIntroUpdateRequest.mainImageId());
-        Image subImage1 = getImage(productIntroUpdateRequest.subImage1Id());
-        Image subImage2 = getImage(productIntroUpdateRequest.subImage2Id());
-        Image subImage3 = getImage(productIntroUpdateRequest.subImage3Id());
+//        Image mainImage = getImage(productIntroUpdateRequest.mainImageId());
+//        Image subImage1 = getImage(productIntroUpdateRequest.subImage1Id());
+//        Image subImage2 = getImage(productIntroUpdateRequest.subImage2Id());
+//        Image subImage3 = getImage(productIntroUpdateRequest.subImage3Id());
 
-        product.getProductIntro().update(productIntroUpdateRequest,mainImage,subImage1,subImage2,subImage3);
+        product.getProductIntro().update(productIntroUpdateRequest);
     }
 
     private Product getProduct(Long productId) {
         return productService.findProductById(productId);
     }
 
-    private Image getImage(Long imageId) {
-        if(imageId == null)
-            return null;
-        return imageRepository.findById(imageId)
-                .orElseThrow(() -> new BusinessException(BusinessError.IMAGE_NOT_FOUND));
-    }
 }
