@@ -15,13 +15,14 @@ public class CookieClearingLogoutHandler implements LogoutHandler {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                cookie.setValue(null);
-                cookie.setMaxAge(0);  // 쿠키 제거
-                cookie.setPath("/");  // 적용할 경로 설정
-                response.addCookie(cookie);
+                if ("accesstoken".equals(cookie.getName()) || "refreshtoken".equals(cookie.getName())) {
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                }
             }
-            log.info("Cookies cleared");
+            log.info("[logout handler] - accesstoken과 refreshtoken 쿠키 제거");
         }
-        log.info("[logout handler] - cookie 제거");
     }
 }
