@@ -1,5 +1,6 @@
 package poomasi.domain.farm.controller;
 
+import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import poomasi.domain.farm.service.FarmPlatformService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/farm")
+@Description("인증이 필요 없는 Farm 메소드")
 public class FarmController {
     private final FarmPlatformService farmPlatformService;
 

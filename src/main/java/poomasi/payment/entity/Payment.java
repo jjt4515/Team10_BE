@@ -1,14 +1,12 @@
-package poomasi.domain.order._payment.entity;
+package poomasi.payment.entity;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
 import lombok.Getter;
 import poomasi.domain.order.entity.PaymentStatus;
-import poomasi.domain.order.entity._farm.FarmOrder;
 import poomasi.domain.order.entity._product.ProductOrder;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Entity
 @Getter

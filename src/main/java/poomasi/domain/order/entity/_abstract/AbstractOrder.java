@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.order._payment.entity.Payment;
+import poomasi.payment.entity.Payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
