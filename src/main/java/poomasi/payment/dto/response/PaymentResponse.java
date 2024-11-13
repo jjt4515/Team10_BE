@@ -1,7 +1,7 @@
-package poomasi.domain.order._payment.dto.response;
+package poomasi.payment.dto.response;
 
-import poomasi.domain.order._payment.entity.Payment;
-import poomasi.domain.order._payment.entity.PaymentMethod;
+import poomasi.payment.entity.Payment;
+import poomasi.payment.entity.PaymentMethod;
 
 import java.math.BigDecimal;
 

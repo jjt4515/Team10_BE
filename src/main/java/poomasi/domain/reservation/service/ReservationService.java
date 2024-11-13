@@ -57,4 +57,12 @@ public class ReservationService {
     public List<Reservation> getReservationByFarmIds(List<Farm> farms) {
         return reservationRepository.findAllByFarmIn(farms);
     }
+
+    public Reservation findByMerchantUid(String merchantUid) {
+        return reservationRepository.findByMerchantUid(merchantUid).orElseThrow(() -> new BusinessException(BusinessError.RESERVATION_NOT_FOUND));
+    }
+
+    public Reservation save(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
 }

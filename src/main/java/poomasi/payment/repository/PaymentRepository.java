@@ -1,10 +1,8 @@
-package poomasi.domain.order._payment.repository;
+package poomasi.payment.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import poomasi.domain.order._payment.entity.Payment;
-
-import java.util.List;
+import poomasi.payment.entity.Payment;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {

@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.entity;
+package poomasi.payment.entity;
 
 public enum PaymentMethod {
     KAKAO_PAY,

@@ -16,6 +16,7 @@ import poomasi.domain.product._cart.entity.Cart;
 import poomasi.domain.product._cart.repository.CartRepository;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.domain.product.service.ProductService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -24,7 +25,7 @@ import poomasi.global.error.BusinessException;
 public class CartService {
 
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Transactional
     public Long addCart(CartRegisterRequest cartRequest) {
@@ -87,8 +88,7 @@ public class CartService {
     }
 
     private Product getProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+        return productService.findProductById(productId);
     }
 
     public List<CartResponse> getCart() {

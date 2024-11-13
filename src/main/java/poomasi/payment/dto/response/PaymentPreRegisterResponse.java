@@ -1,4 +1,4 @@
-package poomasi.domain.order._payment.dto.response;
+package poomasi.payment.dto.response;
 
 public record PaymentPreRegisterResponse(String merchantUid) {
 

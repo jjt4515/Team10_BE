@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 import java.util.Optional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
+import poomasi.domain.member.service.MemberService;
 import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.dto.StoreResponse;
 import poomasi.domain.store.entity.Store;
@@ -38,6 +39,9 @@ class StoreServiceTest {
     private SecurityContext securityContext;
 
     @Mock
+    private MemberService memberService;
+
+    @Mock
     private Authentication authentication;
 
     private Member testMember;
@@ -45,23 +49,22 @@ class StoreServiceTest {
     @BeforeEach
     void setUp() {
         // 테스트 멤버와 Authentication 설정
-        testMember = Member.builder().build();
-
-        SecurityContextHolder.setContext(securityContext);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(testMember));
+        testMember = Member.builder()
+                .id(1L)
+                .build();
     }
 
     @Test
     void addStore_StoreAddedSuccessfully() {
         // given
+
         StoreRegisterRequest request = mock(StoreRegisterRequest.class);
         Store store = mock(Store.class);
 
         when(request.toEntity(any(Member.class))).thenReturn(store);
 
         // when
-        storeService.addStore(request);
+        storeService.addStore(request,testMember);
 
         // then
         verify(storeRepository, times(1)).save(store);
@@ -70,15 +73,16 @@ class StoreServiceTest {
     @Test
     void getStore_StoreExists_ReturnStoreResponse() {
         // given
-        Store store = new Store(1L, "test","test","test",testMember,"test","test");
-        when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
+        Store store = new Store(1L, "test","test","test",testMember,"test");
+        testMember.setStore(store);
+        when(memberService.findMemberById(testMember.getId())).thenReturn(testMember);
 
         // when
         StoreResponse response = storeService.getStore(testMember.getId());
 
         // then
         assertNotNull(response);
-        verify(storeRepository, times(1)).findByOwnerId(testMember.getId());
+        verify(memberService, times(1)).findMemberById(testMember.getId());
     }
 
     @Test
@@ -90,7 +94,7 @@ class StoreServiceTest {
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.of(store));
 
         // when
-        storeService.updateStore(request);
+        storeService.updateStore(request, testMember);
 
         // then
         verify(store, times(1)).updateStore(request);
@@ -103,7 +107,7 @@ class StoreServiceTest {
         when(storeRepository.findByOwnerId(testMember.getId())).thenReturn(Optional.empty());
 
         // when & then
-        BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateStore(request));
+        BusinessException exception = assertThrows(BusinessException.class, () -> storeService.updateStore(request, testMember));
         assertEquals(BusinessError.STORE_NOT_FOUND, exception.getBusinessError());
     }
 
