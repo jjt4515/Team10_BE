@@ -4,10 +4,8 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import poomasi.payment.service.PaymentService;
-import poomasi.payment.dto.request.PaymentPreRegisterRequest;
+import poomasi.payment.service.PaymentPortoneService;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 
 import java.io.IOException;
@@ -17,7 +15,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final PaymentPortoneService paymentService;
 
     @Description("결제 바로 직전 포트원에서 보내는 confirm 요청" + " 결제를 진행하려면 HTTP Status 200 응답, 그렇지 않으면 500 응답 보내기")
     @PostMapping("/confirm/")

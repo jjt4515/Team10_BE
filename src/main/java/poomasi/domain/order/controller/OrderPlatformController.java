@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.order.dto.request.ProductOrderRegisterRequest;
 import poomasi.domain.order.service.ProductOrderService;
 import poomasi.payment.dto.request.PaymentPreRegisterRequest;
-import poomasi.payment.service.PaymentService;
+import poomasi.payment.service.PaymentPortoneService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/order")
 public class OrderPlatformController {
-    private final PaymentService paymentService;
+    private final PaymentPortoneService paymentService;
     private final ProductOrderService productOrderService;
 
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
@@ -26,7 +26,7 @@ public class OrderPlatformController {
     public ResponseEntity<?> createProductPreOrder(@RequestBody ProductOrderRegisterRequest productOrderRegisterRequest) {
         PaymentPreRegisterRequest paymentPreRegisterRequest = productOrderService.productPreOrderRegister(productOrderRegisterRequest);
         return ResponseEntity.ok(
-                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
+                paymentService.prepaymentRegister(paymentPreRegisterRequest)
         );
     }
 }

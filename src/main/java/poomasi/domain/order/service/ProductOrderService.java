@@ -9,27 +9,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.domain.order.dto.request.ProductOrderRegisterRequest;
 import poomasi.domain.order.dto.response.OrderDetailsResponse;
 import poomasi.domain.order.dto.response.OrderProductDetailsResponse;
 import poomasi.domain.order.dto.response.OrderResponse;
+import poomasi.domain.order.entity.PaymentStatus;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.entity._product.ProductOrderDetails;
-import poomasi.domain.order.entity.PaymentStatus;
 import poomasi.domain.order.repository.OrderedProductRepository;
 import poomasi.domain.order.repository.ProductOrderRepository;
 import poomasi.domain.product._cart.entity.Cart;
 import poomasi.domain.product._cart.repository.CartRepository;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
+import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static poomasi.global.error.ApplicationError.PAYMENT_NOT_FOUND;
 import static poomasi.global.error.BusinessError.*;
 
 @RequiredArgsConstructor
@@ -210,7 +212,7 @@ public class ProductOrderService {
 
     public ProductOrder findByMerchantUid(String merchantUid) {
         return productOrderRepository.findByMerchantUid(merchantUid)
-                .orElseThrow(() -> new BusinessException(PAYMENT_NOT_FOUND));
+                .orElseThrow(() -> new ApplicationException(PAYMENT_NOT_FOUND));
     }
 }
 

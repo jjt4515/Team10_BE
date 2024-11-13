@@ -23,19 +23,22 @@ import poomasi.domain.order._aftersales.entity._product.ProductAfterSalesStatus;
 import poomasi.domain.order._aftersales.entity._product.ProductRefundDetail;
 import poomasi.domain.order._aftersales.repository.ProductAfterSalesDetailRepository;
 import poomasi.domain.order._aftersales.repository.ProductRefundDetailRepository;
-import poomasi.payment.util.PaymentUtil;
 import poomasi.domain.order.entity._product.OrderedProduct;
-import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.entity._product.OrderedProductStatus;
+import poomasi.domain.order.entity._product.ProductOrder;
 import poomasi.domain.order.entity._product.ProductOrderDetails;
 import poomasi.domain.order.repository.OrderedProductRepository;
+import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
+import poomasi.payment.util.PaymentUtil;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 
 import static poomasi.domain.order._aftersales.entity._product.ProductAfterSalesStatus.CANCEL;
-import static poomasi.domain.order.entity._product.OrderedProductStatus.*;
+import static poomasi.domain.order.entity._product.OrderedProductStatus.DELIVERED;
+import static poomasi.domain.order.entity._product.OrderedProductStatus.PENDING_SELLER_APPROVAL;
+import static poomasi.global.error.ApplicationError.PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT;
 import static poomasi.global.error.BusinessError.*;
 
 @Service
@@ -86,7 +89,7 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
 
         //취소하려는 금액이 남은 환불 가능한 금액보다 크다면
         if(finalCancelAmount.compareTo(checkSum) > 0){
-            throw new BusinessException(CHECKSUM_EXCESSIVE_REFUND_AMOUNT);
+            throw new ApplicationException(PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT);
         }
 
         //취소 요청 후, 주문 취소 상태로 변경
@@ -202,7 +205,7 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
 
         //취소하려는 금액이 남은 환불 가능한 금액보다 크다면
         if(finalRefundAmount.compareTo(checkSum) > 0){
-            throw new BusinessException(CHECKSUM_EXCESSIVE_REFUND_AMOUNT);
+            throw new ApplicationException(PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT);
         }
 
         //취소/환불/교환 가능 수량 변경
