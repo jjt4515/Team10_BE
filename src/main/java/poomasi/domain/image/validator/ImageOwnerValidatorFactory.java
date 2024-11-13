@@ -3,27 +3,21 @@ package poomasi.domain.image.validator;
 import org.springframework.stereotype.Component;
 import poomasi.domain.image.entity.ImageType;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.List;
 
 @Component
 public class ImageOwnerValidatorFactory {
-    private final Map<ImageType, ImageOwnerValidator> validators = new EnumMap<>(ImageType.class);
 
-    public ImageOwnerValidatorFactory(FarmOwnerValidator farmOwnerValidator,
-                                      ProductOwnerValidator productOwnerValidator,
-                                      ReviewOwnerValidator reviewOwnerValidator,
-                                      MemberProfileOwnerValidator memberProfileOwnerValidator,
-                                      ProductIntroOwnerValidator productIntroOwnerValidator) {
-        validators.put(ImageType.FARM, farmOwnerValidator);
-        validators.put(ImageType.PRODUCT, productOwnerValidator);
-        validators.put(ImageType.FARM_REVIEW, reviewOwnerValidator);
-        validators.put(ImageType.PRODUCT_REVIEW, reviewOwnerValidator);
-        validators.put(ImageType.MEMBER_PROFILE, memberProfileOwnerValidator);
-        validators.put(ImageType.PRODUCT_INTRO, productIntroOwnerValidator);
+    private final List<ImageOwnerValidator> validators;
+
+    public ImageOwnerValidatorFactory(List<ImageOwnerValidator> validators) {
+        this.validators = validators;
     }
 
     public ImageOwnerValidator getValidator(ImageType type) {
-        return validators.get(type);
+        return validators.stream()
+                .filter(validator -> validator.supports(type))
+                .findFirst()
+                .orElse(null);
     }
 }
