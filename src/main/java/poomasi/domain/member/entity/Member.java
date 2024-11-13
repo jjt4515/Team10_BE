@@ -56,6 +56,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
+    @Setter
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -116,6 +117,10 @@ public class Member {
             this.store.setOwner(this);
         }
         return store;
+    }
+
+    public void setIsBanned(boolean isBanned){
+        memberProfile.setBanned(isBanned);
     }
 
 
