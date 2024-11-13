@@ -75,6 +75,10 @@ public class Farm {
     @Column(nullable = false)
     private String mainImage;
 
+    @Comment("재배 환경")
+    @Column(nullable = false)
+    private String growEnv;
+
     @Comment("농장 상태")
     @Enumerated(EnumType.STRING)
     private FarmStatus status = FarmStatus.OPEN;
@@ -120,7 +124,7 @@ public class Farm {
     private double averageRating;
 
     @Builder
-    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber, String mainImage) {
+    public Farm(Long id, String name, Long ownerId, String address, String addressDetail, Double latitude, Double longitude, String description, int experiencePrice, Integer maxCapacity, Integer maxReservation, String businessNumber, LocalDateTime deletedAt, Long categoryId, String phoneNumber, String mainImage, String growEnv) {
         this.id = id;
         this.name = name;
         this.ownerId = ownerId;
@@ -138,6 +142,7 @@ public class Farm {
         this.phoneNumber = phoneNumber;
         averageRating = 0.0f;
         this.mainImage = mainImage;
+        this.growEnv = growEnv;
     }
 
     public Farm updateFarm(FarmUpdateRequest farmUpdateRequest) {

@@ -8,6 +8,8 @@ public record FarmRegisterRequest(
         String name,
         @NotNull
         String address,
+        @NotNull
+        String growEnv,
         String addressDetail,
         @NotNull
         Double latitude,
@@ -43,6 +45,7 @@ public record FarmRegisterRequest(
                 .categoryId(categoryId)
                 .phoneNumber(phoneNumber)
                 .mainImage(imageUrl)
+                .growEnv(growEnv)
                 .build();
     }
 }
