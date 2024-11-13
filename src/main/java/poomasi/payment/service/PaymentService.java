@@ -42,7 +42,7 @@ import static poomasi.global.error.BusinessError.*;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductPaymentService {
+public class PaymentService {
 
     @Autowired
     private final PaymentRepository paymentRepository;

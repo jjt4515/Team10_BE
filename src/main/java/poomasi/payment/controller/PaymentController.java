@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import poomasi.payment.service.ProductPaymentService;
+import poomasi.payment.service.PaymentService;
 import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 
@@ -17,21 +17,21 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final ProductPaymentService productPaymentService;
+    private final PaymentService paymentService;
 
     @Description("사전 결제 api")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
     @PostMapping("/pre-payment")
     public ResponseEntity<?> postPrepare(PaymentPreRegisterRequest paymentPreRegisterRequest) {
         return ResponseEntity.ok(
-                productPaymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
+                paymentService.portonePrePaymentRegister(paymentPreRegisterRequest)
         );
     }
 
     @Description("결제 바로 직전 포트원에서 보내는 confirm 요청" + " 결제를 진행하려면 HTTP Status 200 응답, 그렇지 않으면 500 응답 보내기")
     @PostMapping("/confirm/")
     public ResponseEntity<?> confirmProductStock(@RequestParam String merchantUid, @RequestParam String impUid) {
-        productPaymentService.confirmBeforePayment(merchantUid, impUid);
+        paymentService.confirmBeforePayment(merchantUid, impUid);
         return ResponseEntity.ok().build();
     }
 
@@ -39,7 +39,7 @@ public class PaymentController {
     @Description("포트원 웹훅 수신 api")
     @PostMapping("/portone-webhook")
     public void handleIamportWebhook(@RequestBody PaymentWebHookRequest paymentWebHookRequest) throws IamportResponseException, IOException {
-        productPaymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
+        paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
 
 
