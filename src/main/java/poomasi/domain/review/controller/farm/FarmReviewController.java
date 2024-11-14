@@ -28,14 +28,14 @@ public class FarmReviewController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/api/farm/{farmId}/reviews")
+    @PostMapping("/api/farm/{reservationId}/reviews")
     public ResponseEntity<?> registerProductReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long farmId,
+            @PathVariable Long reservationId,
             @RequestBody ReviewRequest reviewRequest) {
         Member member = userDetails.getMember();
         Long reviewId = farmReviewService.registerFarmReview(
-                member, farmId, reviewRequest);
+                member, reservationId, reviewRequest);
         return new ResponseEntity<>(reviewId, HttpStatus.CREATED);
     }
 }

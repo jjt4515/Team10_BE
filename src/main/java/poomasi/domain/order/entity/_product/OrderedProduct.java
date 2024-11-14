@@ -1,17 +1,29 @@
 package poomasi.domain.order.entity._product;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import poomasi.domain.order._aftersales.entity._product.ProductAfterSalesDetail;
 import poomasi.domain.product.entity.Product;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
+import poomasi.domain.review.entity.Review;
 
 @Entity
 @Table(name = "ordered_products")
@@ -49,9 +61,9 @@ public class OrderedProduct implements Serializable {
 
     @Description("구매 당시 1개당 가격")
     private BigDecimal price;
-    
+
     @Description("구매 수량")
-    @Column(name="count")
+    @Column(name = "count")
     private Integer count;
 
     @Description("송장 번호")
@@ -73,20 +85,26 @@ public class OrderedProduct implements Serializable {
 
     @Description("flag가 설정되어 있으면 배송비 환불하지 않아도 된다")
     private boolean isCanceled = false;
-    
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    Review review;
+
     // 웹훅 받아서 조회해야 함.
     // findByInvoiceNumber 후 
     // web hook controller 만들어서
     // 배송 상태 적절히 변경해야 함
 
     @Builder
-    public OrderedProduct(Product product, ProductOrder productOrder, String productDescription, String productName, BigDecimal price, Integer count) {
+    public OrderedProduct(Product product, ProductOrder productOrder, String productDescription,
+            String productName, BigDecimal price, Integer count) {
         this.product = product;
         this.productOrder = productOrder;
         this.productDescription = productDescription;
         this.productName = productName;
         this.price = price;
         this.count = count;
+        this.review = null;
     }
 
     public void setInvoiceNumber(String invoiceNumber) {
@@ -102,7 +120,7 @@ public class OrderedProduct implements Serializable {
         productAfterSalesDetail.setOrderedProduct(this);
     }
 
-    public Long getOrderId(){
+    public Long getOrderId() {
         return this.productOrder.getId();
     }
 
@@ -122,12 +140,12 @@ public class OrderedProduct implements Serializable {
         return this.orderedProductStatus;
     }
 
-    public String getStoreAddress(){
+    public String getStoreAddress() {
         //return this.store.getStoreAddress()
         return "TODO : store의 address를 참조해야 함";
     }
 
-    public String getStoreAddressDetail(){
+    public String getStoreAddressDetail() {
         //return this.store.getStoreAddressDetail()
         return "TODO: store의 address detail을 참조해야 함";
     }

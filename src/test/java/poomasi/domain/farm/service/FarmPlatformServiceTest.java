@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import poomasi.domain.farm.dto.FarmResponse;
+import poomasi.domain.farm.dto.response.FarmResponse;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;

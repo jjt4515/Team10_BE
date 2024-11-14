@@ -1,8 +1,7 @@
 package poomasi.domain.order.dto.response;
 
-import poomasi.domain.order.entity._product.OrderedProduct;
-
 import java.math.BigDecimal;
+import poomasi.domain.order.entity._product.OrderedProduct;
 
 public record OrderProductDetailsResponse(
         Long orderId,
@@ -11,8 +10,10 @@ public record OrderProductDetailsResponse(
         String productName,
         Integer count,
         BigDecimal price, //총 결제 금액
-        String invoiceNumber
-        ) {
+        String invoiceNumber,
+        boolean isReviewed
+) {
+
     public static OrderProductDetailsResponse fromEntity(OrderedProduct orderedProduct) {
         return new OrderProductDetailsResponse(
                 orderedProduct.getOrderId(),
@@ -21,7 +22,8 @@ public record OrderProductDetailsResponse(
                 orderedProduct.getProductName(),
                 orderedProduct.getCount(),
                 orderedProduct.getPrice(),
-                orderedProduct.getInvoiceNumber()
+                orderedProduct.getInvoiceNumber(),
+                orderedProduct.getReview() != null
         );
     }
 

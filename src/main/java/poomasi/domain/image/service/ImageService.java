@@ -30,7 +30,8 @@ import static poomasi.global.error.BusinessError.*;
 public class ImageService {
 
     private static final int DEFAULT_IMAGE_LIMIT = 5;
-    private static final int IMAGE_ONE_LIMIT = 1;
+    private static final int MEMBER_PROFILE_IMAGE_LIMIT = 1;
+    private static final int PRODUCT_INTRO_IMAGE_LIMIT = 4;
 
     private final ImageRepository imageRepository;
     private final MemberService memberService;
@@ -88,14 +89,21 @@ public class ImageService {
     }
 
     private void validateImageLimit(ImageRequest imageRequest) {
-        int imageLimit = DEFAULT_IMAGE_LIMIT;
-        if (imageRequest.type() == ImageType.MEMBER_PROFILE || imageRequest.type() == ImageType.PRODUCT) {
-            imageLimit = IMAGE_ONE_LIMIT; // 멤버 프로필, 상품 이미지는 한 장으로 제한
-        }
+        int imageLimit = determineImageLimit(imageRequest.type());
 
         if (imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(imageRequest.type(), imageRequest.referenceId()) >= imageLimit) {
             throw new BusinessException(IMAGE_LIMIT_EXCEED);
         }
+    }
+
+    private int determineImageLimit(ImageType imageType) {
+        if (imageType == ImageType.MEMBER_PROFILE) {
+            return MEMBER_PROFILE_IMAGE_LIMIT;
+        }
+        if (imageType == ImageType.PRODUCT_INTRO) {
+            return PRODUCT_INTRO_IMAGE_LIMIT;
+        }
+        return DEFAULT_IMAGE_LIMIT;
     }
 
     // 여러 이미지 저장

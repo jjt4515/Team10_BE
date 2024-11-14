@@ -1,5 +1,6 @@
 package poomasi.domain.auth.token.reissue.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class ReissueTokenController {
 
     @PostMapping("/api/reissue")
     public ResponseEntity<ReissueResponse> reissue(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                                   @RequestBody ReissueRequest reissueRequest){
+                                                   @Valid @RequestBody ReissueRequest reissueRequest){
 
         String accessToken = authorizationHeader.replace("Bearer ", "");
 

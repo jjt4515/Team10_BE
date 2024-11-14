@@ -46,52 +46,6 @@ public class JwtUtil {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
-    public String generateTokenInFilter(String email, String role , String tokenType, Long memberId){
-        Map<String, Object> claims = this.createClaimsInFilter(email, role, tokenType);
-        String memberIdString = memberId.toString();
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(memberIdString)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    private Map<String, Object> createClaimsInFilter(String email, String role, String tokenType) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
-        claims.put("role", role);
-        claims.put("tokenType" , tokenType);
-        return claims;
-    }
-
-    public Boolean validateTokenInFilter(String token){
-
-        log.info("jwt util에서 토큰 검증을 진행합니다 . .");
-
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            log.info("jwt util에서 토큰 검증 하다가 exception 터졌습니다.");
-            log.info(e.getMessage());
-            return false;
-        }
-
-    }
-
-    public String getRoleFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "role", String.class);
-    }
-
-    public String getEmailFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "email", String.class);
-    }
-
-
     public String generateAccessTokenById(final Long memberId) {
         Map<String, Object> claims = createClaims(memberId);
         claims.put("type", ACCESS);
@@ -130,6 +84,10 @@ public class JwtUtil {
     // 토큰 이용해서 추출
     public Long getIdFromToken(final String token) {
         return getClaimFromToken(token, "id", Long.class);
+    }
+
+    public String getEmailFromToken(final String token) {
+        return getClaimFromToken(token, "email", String.class);
     }
 
     public Date getExpirationDateFromToken(final String token) {
@@ -176,7 +134,7 @@ public class JwtUtil {
         return true;
     }
 
-    public Boolean validateToken(final String token) {
+    private Boolean validateToken(final String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -206,9 +164,5 @@ public class JwtUtil {
         } catch (ExpiredJwtException e) {
             return true;
         }
-    }
-
-    public long getAccessTokenExpiration() {
-        return ACCESS_TOKEN_EXPIRATION_TIME;
     }
 }

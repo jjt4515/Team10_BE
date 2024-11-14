@@ -1,5 +1,6 @@
 package poomasi.domain.member.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,18 +20,18 @@ import poomasi.domain.member.dto.request.SignupRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/member")
+@RequestMapping("/api/member")
 public class MemberController {
 
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignUpResponse> signUp(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(memberService
                 .signUp(signupRequest));
     }
 
-    @PutMapping("/toFarmer")
+    @PutMapping("/to-farmer")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
@@ -78,7 +79,7 @@ public class MemberController {
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<MemberResponse> updateCustomer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CustomerUpdateRequest customerUpdateRequest) {
+            @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
@@ -91,7 +92,7 @@ public class MemberController {
     @Secured("ROLE_FARMER")
     public ResponseEntity<FarmerResponse> updateFarmer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
+            @Valid @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateFarmer(member, farmerUpdateRequest);
@@ -111,15 +112,30 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    // 회원 탈퇴, 복구, 금지
-    // s3스케줄러 구현하긴해야함
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+        memberService.deleteAccount(member);
+        return ResponseEntity.noContent().build();
+    }
 
-    // 이미지 validator 타입 추가
+    // 계정 복구
+    @PutMapping("/restore/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> restoreAccount(@PathVariable Long memberId) {
+        memberService.restoreAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
 
-    // 이미지 업로드 실패할시 처리
-
-
-
+    // 계정 정지
+    @PutMapping("/suspend/{memberId}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> suspendAccount(@PathVariable Long memberId) {
+        memberService.suspendAccount(memberId);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
