@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.SignUpResponse;
+import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessError;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static poomasi.domain.member.entity.Role.ROLE_CUSTOMER;
 
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
@@ -35,7 +37,8 @@ class MemberServiceTest {
     private MemberService memberService;
 
     @Test
-    void 회원가입_성공() {
+    @DisplayName("이메일 중복 시 회원가입 성공 테스트")
+    void signUp_success() {
         // given
         SignupRequest signupRequest = new SignupRequest("testName", "test@example.com", "testPassword");
         Member mockMember = mock(Member.class);
@@ -51,7 +54,8 @@ class MemberServiceTest {
     }
 
     @Test
-    void 회원가입_실패_이메일_중복() {
+    @DisplayName("이메일 중복 시 회원가입 실패 테스트")
+    void signUp_DuplicationMember() {
         // given
         SignupRequest signupRequest = new SignupRequest("testName", "test@example.com", "testPassword");
         given(memberRepository.findByEmailAndDeletedAtIsNull(anyString())).willReturn(Optional.of(mock(Member.class)));
@@ -65,9 +69,18 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("")
     void GetMemberById_성공() {
         // given
         Long memberId = 1L;
+        Member member = Member.builder()
+                .id(memberId)
+                .email("test@example.com")
+                .password("password")
+                .role(ROLE_CUSTOMER)
+                .loginType(LoginType.LOCAL)
+                .build();
+
         when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.of(member));
 
         // when
