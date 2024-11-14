@@ -74,7 +74,7 @@ public class MemberController {
         return ResponseEntity.ok(memberSummaryResponse);
     }
 
-    @PutMapping("/customer/update")
+    @PutMapping("/update/customer")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<MemberResponse> updateCustomer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -87,7 +87,7 @@ public class MemberController {
         return ResponseEntity.ok(memberResponse);
     }
 
-    @PutMapping("/farmer/update")
+    @PutMapping("/update/farmer")
     @Secured("ROLE_FARMER")
     public ResponseEntity<FarmerResponse> updateFarmer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -100,7 +100,7 @@ public class MemberController {
         return ResponseEntity.ok(memberResponse);
     }
 
-    @PutMapping("/customer/update/address")
+    @PutMapping("/update/customer/address")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<Void> updateAddress(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
