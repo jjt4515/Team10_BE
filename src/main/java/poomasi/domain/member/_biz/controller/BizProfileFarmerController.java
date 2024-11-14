@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
@@ -22,7 +23,7 @@ public class BizProfileFarmerController {
     @Secured("ROLE_FARMER")
     public ResponseEntity<?> saveBizProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid BizProfileCreateRequest request
+            @Valid @RequestBody BizProfileCreateRequest request
     ) {
         return ResponseEntity.ok(memberBizProfileFarmerService.updateBizProfile(userDetails.getMember(), request));
 
@@ -31,7 +32,7 @@ public class BizProfileFarmerController {
     @PostMapping("/profile/approve")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<?> approveBizProfile(
-            @Valid BizProfileApproveRequest request
+            @Valid @RequestBody BizProfileApproveRequest request
     ) {
         return ResponseEntity.ok(memberBizProfileFarmerService.approveBizProfile(request));
     }
