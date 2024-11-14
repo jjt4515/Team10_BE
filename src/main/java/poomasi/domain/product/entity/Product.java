@@ -22,7 +22,7 @@ import poomasi.domain.review.entity.Review;
 @Entity
 @Getter
 @NoArgsConstructor
-//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
+//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE farmId = ?")
 public class Product {
 
     @Id

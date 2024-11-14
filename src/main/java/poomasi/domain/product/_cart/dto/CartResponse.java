@@ -6,9 +6,7 @@ public record CartResponse(
         Long cartId,
         String productName,
         BigDecimal productPrice,
-        Integer productCount,
-        Boolean isSelected,
-        String farmName
+        String storeName
 ) {
 
 }

@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.*;
+import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,7 @@ public class FarmInfo {
     String title;
 
     @Comment("설명")
+    @Column(nullable = true)
     String content;
 
     @Comment("메인 이미지 여부")
@@ -63,5 +65,11 @@ public class FarmInfo {
     public boolean hasContent() {
         return content != null && !content.isBlank() && !content.isEmpty() &&
                 title != null && !title.isBlank() && !title.isEmpty();
+    }
+
+    public void update(FarmInfoUpdateRequest request) {
+        this.imageUrl = request.imageUrl();
+        this.title = request.title();
+        this.content = request.content();
     }
 }

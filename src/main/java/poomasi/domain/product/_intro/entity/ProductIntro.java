@@ -25,7 +25,7 @@ public class ProductIntro {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "farmId")
     @Setter
     private Product product;
 

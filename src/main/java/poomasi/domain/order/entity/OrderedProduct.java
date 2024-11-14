@@ -4,6 +4,8 @@ package poomasi.domain.order.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -70,7 +72,8 @@ public class OrderedProduct implements Serializable {
     @Column(name = "invoice_number", nullable = true)
     private String invoiceNumber;
 
-    private OrderedProductStatus orderedProductStatus = OrderedProductStatus.PENDING_SELLER_APPROVAL;
+    @Enumerated(EnumType.STRING)
+    private OrderedProductStatus orderedProductStatus;
 
     @Description("TODO : product의 delivery fee를 참조해야 한다.")
     private BigDecimal deliveryFee;
@@ -96,8 +99,8 @@ public class OrderedProduct implements Serializable {
     // 배송 상태 적절히 변경해야 함
 
     @Builder
-    public OrderedProduct(Product product, ProductOrder productOrder, String productDescription,
-            String productName, BigDecimal price, Integer count) {
+    public OrderedProduct(Product product, ProductOrder productOrder, OrderedProductStatus orderedProductStatus, String productDescription,
+            BigDecimal deliveryFee, String productName, BigDecimal price, Integer count) {
         this.product = product;
         this.productOrder = productOrder;
         this.productDescription = productDescription;
@@ -105,6 +108,8 @@ public class OrderedProduct implements Serializable {
         this.price = price;
         this.count = count;
         this.review = null;
+        this.orderedProductStatus = orderedProductStatus;
+        this.deliveryFee = deliveryFee;
     }
 
     public void setInvoiceNumber(String invoiceNumber) {
