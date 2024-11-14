@@ -8,6 +8,6 @@ import poomasi.domain.store.entity.Store;
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
-    //@Query("select  s from Store s where s.owner.id = :id")
+    //@Query("select  s from Store s where s.owner.farmId = :farmId")
     Optional<Store> findByOwnerId(Long id);
 }
