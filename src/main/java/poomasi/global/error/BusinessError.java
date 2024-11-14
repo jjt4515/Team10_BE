@@ -96,6 +96,7 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
     ORDERED_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 주문입니다."),
+    COUNT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "주문 가능 최대 개수 보다 많이 요청했습니다."),
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
