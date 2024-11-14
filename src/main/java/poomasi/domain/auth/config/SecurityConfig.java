@@ -25,6 +25,7 @@ import poomasi.domain.auth.security.handler.OAuth2FailureHandler;
 import poomasi.domain.auth.security.handler.OAuth2SuccessHandler;
 import poomasi.domain.auth.security.userdetail.OAuth2UserDetailServiceImpl;
 import poomasi.domain.auth.security.userdetail.UserDetailsServiceImpl;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
 import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
 import poomasi.domain.auth.token.util.JwtUtil;
 import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
@@ -43,7 +44,7 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final UserDetailsServiceImpl userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
-    private final BlacklistJpaService blacklistService;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
     private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Autowired
@@ -136,11 +137,11 @@ public class SecurityConfig {
         http.addFilterAt(customUsernameFilter, UsernamePasswordAuthenticationFilter.class);
 
         //jwt filter
-        http.addFilterAfter(new JwtAuthenticationFilter(jwtUtil, userDetailsService, blacklistService),
+        http.addFilterAfter(new JwtAuthenticationFilter(jwtUtil, userDetailsService, accessTokenBlacklistService),
                 OAuth2LoginAuthenticationFilter.class);
 
         //logout filter
-        JwtLogoutFilter customLogoutFilter = new JwtLogoutFilter(jwtUtil, blacklistService, refreshTokenWhitelistService);
+        JwtLogoutFilter customLogoutFilter = new JwtLogoutFilter(jwtUtil, accessTokenBlacklistService, refreshTokenWhitelistService);
         http.addFilterAfter(customLogoutFilter, JwtAuthenticationFilter.class);
 
         return http.build();
