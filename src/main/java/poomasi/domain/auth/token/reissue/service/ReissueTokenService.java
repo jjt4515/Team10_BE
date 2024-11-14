@@ -18,19 +18,14 @@ public class ReissueTokenService {
     private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     // 토큰 재발급
-    public ReissueResponse reissueToken(String accessToken, ReissueRequest reissueRequest) {
-        Long memberId = jwtUtil.getIdFromToken(accessToken);
+    public ReissueResponse reissueToken(ReissueRequest reissueRequest) {
 
         String refreshToken = reissueRequest.refreshToken();
         Long requestMemberId = jwtUtil.getIdFromToken(refreshToken);
 
-        if (!requestMemberId.equals(memberId)) {
-            throw new BusinessException(REFRESH_TOKEN_NOT_VALID);
-        }
+        checkRefreshToken(refreshToken, requestMemberId);
 
-        checkRefreshToken(refreshToken, memberId);
-
-        return getTokenResponse(memberId);
+        return getTokenResponse(requestMemberId);
     }
 
     public ReissueResponse getTokenResponse(Long memberId) {
