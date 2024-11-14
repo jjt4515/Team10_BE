@@ -10,6 +10,7 @@ import poomasi.domain.farm._schedule.repository.FarmScheduleRepository;
 import poomasi.global.error.BusinessException;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static poomasi.global.error.BusinessError.*;
@@ -54,5 +55,9 @@ public class FarmScheduleService {
         return farmScheduleRepository.findById(id).orElseThrow(
                 () -> new BusinessException(FARM_SCHEDULE_NOT_FOUND)
         );
+    }
+
+    public List<FarmSchedule> getFarmScheduleByFarmId(Long farmId) {
+        return farmScheduleRepository.findByFarmId(farmId);
     }
 }
