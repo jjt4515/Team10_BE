@@ -23,15 +23,14 @@ spring:
       host: ${REDIS_HOST}
 
   security:
+    redirect_url: http://localhost:3000
     oauth2:
       client:
         registration:
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
-            scope: account_email
-            # - profile_nickname
-            # - account_email
+            scope: account_email, profile_nickname
             client-name: Kakao
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_post
