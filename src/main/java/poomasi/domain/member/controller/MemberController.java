@@ -39,7 +39,7 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/toCustomer/{memberId}")
+    @PutMapping("/to-customer/{memberId}")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> convertToCustomer(@PathVariable Long memberId) {
         memberService.convertToCustomer(memberId);
