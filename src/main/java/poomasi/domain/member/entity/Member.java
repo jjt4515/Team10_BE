@@ -26,7 +26,7 @@ public class Member {
     private Long id;
 
     @Setter
-    @Column(nullable = true, length = 50)
+    @Column(length = 50)
     private String name;
 
     @Setter

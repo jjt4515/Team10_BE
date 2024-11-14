@@ -1,19 +1,36 @@
-package poomasi.domain.farm.dto;
+package poomasi.domain.farm.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import poomasi.domain.farm.entity.Farm;
 
 public record FarmRegisterRequest(
+        @NotNull
         String name,
+        @NotNull
         String address,
+        @NotNull
+        String growEnv,
         String addressDetail,
+        @NotNull
         Double latitude,
+        @NotNull
         Double longitude,
+        @NotNull
         String phoneNumber,
+
         String description,
+        @NotNull
         int experiencePrice,
-        Integer maxCapacity,
-        Integer maxReservation,
-        Long categoryId
+        @NotNull
+        Integer maxPeople,
+        @NotNull
+        Integer maxTeam,
+        @NotNull
+        Long categoryId,
+        @NotNull
+        String imageUrl,
+        @NotNull
+        int price
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()
@@ -25,10 +42,13 @@ public record FarmRegisterRequest(
                 .longitude(longitude)
                 .description(description)
                 .experiencePrice(experiencePrice)
-                .maxCapacity(maxCapacity)
-                .maxReservation(maxReservation)
+                .maxCapacity(maxPeople)
+                .maxReservation(maxTeam)
                 .categoryId(categoryId)
                 .phoneNumber(phoneNumber)
+                .mainImage(imageUrl)
+                .growEnv(growEnv)
+                .experiencePrice(price)
                 .build();
     }
 }

@@ -1,10 +1,8 @@
-package poomasi.domain.farm.dto;
+package poomasi.domain.farm.dto.request;
 
-import jakarta.validation.constraints.NotNull;
 import poomasi.domain.farm.entity.Farm;
 
 public record FarmUpdateRequest(
-        @NotNull(message = "Farm ID는 필수 값입니다.") Long farmId,
         String name,
         String description,
         String address,
