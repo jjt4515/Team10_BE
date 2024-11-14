@@ -120,6 +120,9 @@ jobs:
             IMP_SECRET_KEY=${{ secrets.IMP_SECRET_KEY }}
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
             KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+            NAVER_OCR_SECRET=${{ secrets.NAVER_OCR_SECRET }}
+            NAVER_OCR_INVOKE=${{ secrets.NAVER_OCR_INVOKE }}
+            NAVER_OCR_TEMPLATE=${{ secrets.NAVER_OCR_TEMPLATE }}
           cache-from: type=gha
           cache-to: type=gha,mode=min,ignore-error=true
 
