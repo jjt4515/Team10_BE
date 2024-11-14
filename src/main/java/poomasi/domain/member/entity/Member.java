@@ -121,6 +121,7 @@ public class Member {
     }
 
     public void setAddress(String defaultAddress, String addressDetail, Long coordinateX, Long coordinateY) {
+        MemberProfile memberProfile = getOrCreateProfile();
         memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
     }
 }
