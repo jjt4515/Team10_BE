@@ -13,7 +13,7 @@ import static poomasi.global.error.BusinessError.REFRESH_TOKEN_NOT_FOUND;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class RefreshTokenService {
+public class RefreshTokenStorageService {
 
     private final TokenStorageService tokenStorageService;
 
