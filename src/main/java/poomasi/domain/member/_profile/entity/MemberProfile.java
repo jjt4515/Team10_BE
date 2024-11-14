@@ -47,10 +47,10 @@ public class MemberProfile {
     @Column(nullable = true, length = 255)
     private String addressDetail;
 
-    @Column(nullable=true, length=255)
+    @Column(nullable = true, length = 255)
     private Long coordinateX;
 
-    @Column(nullable=true, length=255)
+    @Column(nullable = true, length = 255)
     private Long coordinateY;
 
     @PrePersist
