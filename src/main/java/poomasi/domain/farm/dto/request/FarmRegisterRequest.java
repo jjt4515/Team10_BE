@@ -34,6 +34,9 @@ public record FarmRegisterRequest(
         @NotNull
         int price,
 
+        @NotNull
+        String businessNumber,
+
         FarmInfoAggregateRequest info
 ) {
     public Farm toEntity(Long memberId) {
@@ -53,6 +56,7 @@ public record FarmRegisterRequest(
                 .mainImage(imageUrl)
                 .growEnv(growEnv)
                 .experiencePrice(price)
+                .businessNumber(businessNumber)
                 .build();
     }
 }
