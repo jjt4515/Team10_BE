@@ -7,7 +7,7 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.wishlist.dto.WishListDeleteRequest;
 import poomasi.domain.wishlist.dto.WishListResponse;
 import poomasi.domain.wishlist.dto.request.WishListAddRequest;
-import poomasi.domain.wishlist.entity.WishList;
+import poomasi.global.common.ServiceType;
 
 import java.util.List;
 
@@ -18,17 +18,17 @@ public class WishListPlatformService {
 
     @Transactional
     public void addWishList(Member member, WishListAddRequest request) {
-        wishListService.addWishList(request);
+        wishListService.addWishList(member, request);
     }
 
     @Transactional
     public void deleteWishList(Member member, WishListDeleteRequest request) {
-        wishListService.deleteWishList(request);
+        wishListService.deleteWishList(member, request);
     }
 
     @Transactional(readOnly = true)
-    public List<WishListResponse> findWishListByMemberId(Long memberId) {
-        return wishListService.findWishListByMemberId(memberId).stream()
+    public List<WishListResponse> findWishListByMemberIdAndServiceType(Long memberId, ServiceType type) {
+        return wishListService.findWishListByMemberIdAndServiceType(memberId, type).stream()
                 .map(WishListResponse::fromEntity)
                 .toList();
     }
