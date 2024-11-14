@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import poomasi.global.error.BusinessException;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import static poomasi.global.error.BusinessError.REFRESH_TOKEN_NOT_FOUND;
 
@@ -25,10 +26,15 @@ public class RefreshTokenWhitelistService {
         tokenWhitelistService.setValues(refreshToken, memberId.toString(), Duration.ofSeconds(REFRESH_TOKEN_EXPIRE_TIME));
     }
 
-    public Long getRefreshToken(final String refreshToken, Long memberId) {
-        String result = tokenWhitelistService.getValues(refreshToken, memberId.toString())
-                .orElseThrow(() -> new BusinessException(REFRESH_TOKEN_NOT_FOUND));
-        return Long.parseLong(result);
+    public Optional<Long> getMemberIdByRefreshToken(final String refreshToken, Long memberId) {
+        Optional<String> memberIdInWhitelist = tokenWhitelistService.getValues(refreshToken, memberId.toString());
+        return memberIdInWhitelist.map(id -> {
+            try {
+                return Long.valueOf(id);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        });
     }
 
     @Transactional
