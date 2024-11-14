@@ -105,6 +105,9 @@ public class ProductOrderService {
                 throw new BusinessException(PRODUCT_STOCK_ZERO);
             }
 
+            if(product.getOrderLimit() < quantityInCart)
+                throw new BusinessException(BusinessError.COUNT_LIMIT_EXCEEDED);
+
             String productDescription = product.getDescription();
             String productName = product.getName();
             BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf((long) quantityInCart));

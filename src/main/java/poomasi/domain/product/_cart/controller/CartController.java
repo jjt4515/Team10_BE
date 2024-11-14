@@ -20,7 +20,7 @@ import poomasi.domain.product._cart.service.CartService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/cart")
+@RequestMapping("/api/carts")
 public class CartController {
 
     private final CartService cartService;

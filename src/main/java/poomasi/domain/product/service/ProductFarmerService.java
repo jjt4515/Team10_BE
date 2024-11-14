@@ -35,11 +35,6 @@ public class ProductFarmerService {
         Category category = getCategory(request.categoryId());
         Store store = member.getStore();
 
-//        Image introMainImage = getImage(request.mainImageId());
-//        Image introSubImage1 = getImage(request.subImage1Id());
-//        Image introSubImage2 = getImage(request.subImage2Id());
-//        Image introSubImage3 = getImage(request.subImage3Id());
-
         Product saveProduct = productRepository.save(request.toEntity(member,store));
 
         category.addProduct(saveProduct);
