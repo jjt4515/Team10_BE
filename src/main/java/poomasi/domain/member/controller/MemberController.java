@@ -112,7 +112,7 @@ public class MemberController {
     }
 
     // 회원 탈퇴
-    @PutMapping("/delete")
+    @DeleteMapping("/delete")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
