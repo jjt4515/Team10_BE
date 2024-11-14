@@ -133,8 +133,8 @@ class MemberCustomerServiceTest {
         memberCustomerService.updateAddress(member, addressUpdateRequest);
 
         // then
-        assertEquals("Default Address", profile.getDefaultAddress());
-        assertEquals("Detail Address", profile.getAddressDetail());
+        assertEquals("defaultAddress", profile.getDefaultAddress());
+        assertEquals("addressDetail", profile.getAddressDetail());
         assertEquals(10.0, profile.getCoordinateX());
         assertEquals(20.0, profile.getCoordinateY());
         verify(memberRepository, times(1)).save(member);
