@@ -103,7 +103,7 @@ class MemberServiceTest {
     @DisplayName("회원 정보 없을 때 조회 실패 테스트")
     void getMemberById_memberNotFound() {
         // given
-        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(java.util.Optional.empty());
+        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> memberService.getMemberById(memberId))
@@ -145,7 +145,7 @@ class MemberServiceTest {
     void restoreAccount_success() {
         // given
         member.setDeletedAt(java.time.LocalDateTime.now());
-        when(memberRepository.findByIdAndDeletedAtIsNotNull(memberId)).thenReturn(java.util.Optional.of(member));
+        when(memberRepository.findByIdAndDeletedAtIsNotNull(memberId)).thenReturn(Optional.of(member));
 
         // when
         memberService.restoreAccount(memberId);
@@ -158,6 +158,8 @@ class MemberServiceTest {
     @DisplayName("회원 정지 테스트")
     @Test
     void suspendAccount_success() {
+        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.of(member));
+
         // when
         memberService.suspendAccount(memberId);
 

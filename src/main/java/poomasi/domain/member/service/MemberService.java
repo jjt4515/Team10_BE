@@ -98,7 +98,8 @@ public class MemberService {
     @Transactional
     public void suspendAccount(Long memberId) {
         Member member = findMemberById(memberId);
-        member.setIsBanned(true);
+        MemberProfile profile = member.getOrCreateProfile();
+        profile.setBanned(true);
         memberRepository.save(member);
     }
 

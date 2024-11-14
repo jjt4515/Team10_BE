@@ -120,10 +120,6 @@ public class Member {
         return store;
     }
 
-    public void setIsBanned(boolean isBanned){
-        memberProfile.setBanned(isBanned);
-    }
-
     public void setAddress(String defaultAddress, String addressDetail, Long coordinateX, Long coordinateY) {
         memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
     }
