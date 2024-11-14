@@ -47,7 +47,21 @@ class FarmFarmerServiceTest {
 
             given(farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(member.getId())).willReturn(Optional.of(existingFarm));
 
-            FarmRegisterRequest request = new FarmRegisterRequest("New Farm", "Address", "Detail", "010-1234-5678", 1.0, 1.0, "010-123-123", "10000", 10, 10, 10, 1L, "10", 10);
+            FarmRegisterRequest request = FarmRegisterRequest
+                    .builder()
+                    .name("New Farm")
+                    .address("Address")
+                    .addressDetail("Detail")
+                    .phoneNumber("010-1234-5678")
+                    .latitude(1.0)
+                    .longitude(1.0)
+                    .phoneNumber("010-123-123")
+                    .experiencePrice(10000)
+                    .maxPeople(10)
+                    .maxTeam(10)
+                    .categoryId(1L)
+                    .imageUrl("10")
+                    .price(10).build();
 
             // when & then
             assertThatThrownBy(() -> farmFarmerService.registerFarm(member, request))
