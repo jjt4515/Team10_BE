@@ -9,6 +9,7 @@ import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.image.repository.ImageRepository;
+import poomasi.domain.image.validator.ImageOwnerValidator;
 import poomasi.domain.image.validator.ImageOwnerValidatorFactory;
 import poomasi.domain.image.linker.ImageLinkerFactory;
 import poomasi.domain.image.deleteLinker.ImageDeleteFactory;
@@ -96,80 +97,91 @@ class ImageServiceTest {
                 .hasFieldOrPropertyWithValue("businessError", BusinessError.IMAGE_LIMIT_EXCEED);
     }
 
-//    @Test
-//    void validateImageOwner_ShouldThrowException_WhenOwnerIsNotValid() {
-//        // Given
-//        Long memberId = 1L;
-//        ImageRequest imageRequest = new ImageRequest("key", "http://url.com", ImageType.MEMBER_PROFILE, 1L);
-//
-//        // Simulate owner validation failure.
-//        ImageOwnerValidator validator = mock(ImageOwnerValidator.class);
-//        when(validatorFactory.getValidator(any())).thenReturn(validator);
-//        when(validator.validateOwner(any(), any())).thenReturn(false);
-//
-//        // When / Then
-//        BusinessException exception = assertThrows(BusinessException.class, () ->
-//                imageService.saveImage(memberId, imageRequest)
-//        );
-//        assertEquals("Image owner mismatch", exception.getMessage());
-//    }
+    @Test
+    @DisplayName("이미지 소유자 검증 실패 테스트")
+    void validateImageOwner_IMAGE_OWNER_MISMATCH() {
+        // Given
+        Long memberId = 1L;
+        ImageRequest imageRequest = new ImageRequest("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
 
-//    @Test
-//    void deleteImage_ShouldDeleteImage_WhenValidImage() {
-//        // Given
-//        Long memberId = 1L;
-//        Long imageId = 1L;
-//        Image image = new Image("key", "http://url.com", ImageType.MEMBER_PROFILE, 1L);
-//        ImageResponse imageResponse = new ImageResponse(1L, "key", "http://url.com", ImageType.MEMBER_PROFILE, 1L);
-//
-//        // Mock the repository to simulate image being found.
-//        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
-//                .thenReturn(Optional.of(image));  // Image exists
-//
-//        // When
-//        imageService.deleteImage(memberId, imageId);
-//
-//        // Then
-//        verify(imageRepository, times(1)).delete(any(Image.class));  // Verify delete is called
-//    }
-//
-//    @Test
-//    void deleteImage_ShouldThrowException_WhenImageNotFound() {
-//        // Given
-//        Long memberId = 1L;
-//        Long imageId = 1L;
-//
-//        // Mock the repository to simulate image not found.
-//        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
-//                .thenReturn(Optional.empty());  // Image not found
-//
-//        // When / Then
-//        BusinessException exception = assertThrows(BusinessException.class, () ->
-//                imageService.deleteImage(memberId, imageId)
-//        );
-//        assertEquals("Image not found", exception.getMessage());
-//    }
-//
-//    @Test
-//    void updateImage_ShouldUpdateImage_WhenValidData() {
-//        // Given
-//        Long memberId = 1L;
-//        Long imageId = 1L;
-//        ImageRequest imageRequest = new ImageRequest("newKey", "http://newurl.com", ImageType.MEMBER_PROFILE, 1L);
-//
-//        Image existingImage = new Image("key", "http://url.com", ImageType.MEMBER_PROFILE, 1L);
-//        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
-//                .thenReturn(Optional.of(existingImage));  // Simulate existing image
-//
-//        when(imageRepository.save(any(Image.class)))
-//                .thenReturn(existingImage);  // Simulate image being updated
-//
-//        // When
-//        ImageResponse imageResponse = imageService.updateImage(memberId, imageId, imageRequest);
-//
-//        // Then
-//        assertNotNull(imageResponse);
-//        assertEquals(imageRequest.objectKey(), imageResponse.objectKey());
-//        verify(imageRepository, times(1)).save(any(Image.class));  // Verify save is called
-//    }
+        Member member = mock(Member.class);
+        when(memberService.findMemberById(memberId)).thenReturn(member);
+        when(member.isAdmin()).thenReturn(false);
+
+        ImageOwnerValidator validator = mock(ImageOwnerValidator.class);
+        when(validatorFactory.getValidator(any())).thenReturn(validator);
+        when(validator.validateOwner(any(), any())).thenReturn(false);
+
+        // When & Then
+        assertThatThrownBy(() -> imageService.saveImage(memberId, imageRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("businessError", BusinessError.IMAGE_OWNER_MISMATCH);
+    }
+
+    @Test
+    @DisplayName("이미지 삭제 성공 테스트")
+    void deleteImage_success() {
+        // Given
+        Long memberId = 1L;
+        Long imageId = 1L;
+        Image image = new Image("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
+
+        Member member = mock(Member.class);
+        when(memberService.findMemberById(memberId)).thenReturn(member);
+        when(member.isAdmin()).thenReturn(false);
+
+        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
+                .thenReturn(Optional.of(image));
+
+        // When
+        imageService.deleteImage(memberId, imageId);
+
+        // Then
+        verify(imageRepository, times(1)).delete(any(Image.class));
+    }
+
+    @Test
+    @DisplayName("이미지 삭제 실패 테스트 - 이미지 없음")
+    void deleteImage_IMAGE_NOT_FOUND() {
+        // Given
+        Long memberId = 1L;
+        Long imageId = 1L;
+
+        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
+                .thenReturn(Optional.empty());
+
+        // When & Then
+        assertThatThrownBy(() -> imageService.deleteImage(memberId, imageId))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("businessError", BusinessError.IMAGE_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("이미지 업데이트 성공 테스트")
+    void updateImage_success() {
+        // Given
+        Long memberId = 1L;
+        Long imageId = 1L;
+        ImageRequest imageRequest = new ImageRequest("newKey", "newImageUrl", ImageType.MEMBER_PROFILE, 1L);
+
+        Member member = mock(Member.class);
+        when(memberService.findMemberById(memberId)).thenReturn(member);
+        when(member.isAdmin()).thenReturn(false);
+
+        Image existingImage = new Image("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
+        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
+                .thenReturn(Optional.of(existingImage));
+
+        when(imageRepository.save(any(Image.class)))
+                .thenReturn(existingImage);
+
+        // When
+        ImageResponse imageResponse = imageService.updateImage(memberId, imageId, imageRequest);
+
+        // Then
+        assertNotNull(imageResponse);
+        assertEquals(imageRequest.objectKey(), "newKey");
+        assertEquals(imageResponse.objectKey(), "key");
+        verify(imageRepository, times(1)).save(any(Image.class));
+    }
 }
