@@ -146,6 +146,7 @@ public class ImageService {
         Image image = Image.fromResponse(imageResponse);
 
         validateImageOwner(memberId, image.getType(), image.getReferenceId());
+        validateImageOwner(memberId, imageRequest.type(), imageRequest.referenceId());
 
         if (!image.getType().equals(imageRequest.type()) ||
                 !image.getReferenceId().equals(imageRequest.referenceId())) {

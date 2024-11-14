@@ -1,5 +1,7 @@
 package poomasi.domain.image.service;
 
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -183,5 +185,33 @@ class ImageServiceTest {
         assertEquals(imageRequest.objectKey(), "newKey");
         assertEquals(imageResponse.objectKey(), "key");
         verify(imageRepository, times(1)).save(any(Image.class));
+    }
+
+    @Test
+    @DisplayName("이미지 수정 실패 - 자신의 이미지가 아님")
+    void updateImage_IMAGE_OWNER_MISMATCH() {
+        // Given
+        Long memberId = 1L;
+        Long imageId = 1L;
+        ImageRequest imageRequest = new ImageRequest("newKey", "newImageUrl", ImageType.PRODUCT, 4L);
+
+        Member member = mock(Member.class);
+        when(memberService.findMemberById(memberId)).thenReturn(member);
+        when(member.isAdmin()).thenReturn(false);
+
+        ImageOwnerValidator validator = mock(ImageOwnerValidator.class);
+        when(validatorFactory.getValidator(any())).thenReturn(validator);
+        when(validator.validateOwner(any(), any())).thenReturn(false);
+
+        Image existingImage = new Image("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
+        when(imageRepository.findByIdAndDeletedAtIsNull(imageId))
+                .thenReturn(Optional.of(existingImage));
+
+        when(imageRepository.save(any(Image.class)))
+                .thenReturn(existingImage);
+
+        assertThatThrownBy(() -> imageService.updateImage(memberId, imageId, imageRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("businessError", BusinessError.IMAGE_OWNER_MISMATCH);
     }
 }
