@@ -6,6 +6,7 @@ import poomasi.domain.member._profile.entity.MemberProfile;
 import java.time.LocalDateTime;
 
 public record MemberProfileResponse(
+        Long id,
         String phoneNumber,
         String defaultAddress,
         String addressDetail,
@@ -18,6 +19,7 @@ public record MemberProfileResponse(
 
     public static MemberProfileResponse fromEntity(MemberProfile profile) {
         return new MemberProfileResponse(
+                profile.getId(),
                 profile.getPhoneNumber(),
                 profile.getDefaultAddress(),
                 profile.getAddressDetail(),
