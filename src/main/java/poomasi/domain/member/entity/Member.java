@@ -50,6 +50,7 @@ public class Member {
     @Column(nullable = true)
     private String provideId;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberProfile memberProfile;
 
@@ -120,7 +121,7 @@ public class Member {
         return store;
     }
 
-    public void setAddress(String defaultAddress, String addressDetail, Long coordinateX, Long coordinateY) {
+    public void setAddress(String defaultAddress, String addressDetail, Double coordinateX, Double coordinateY) {
         MemberProfile memberProfile = getOrCreateProfile();
         memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
     }

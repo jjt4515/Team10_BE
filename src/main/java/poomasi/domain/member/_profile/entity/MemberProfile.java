@@ -48,10 +48,10 @@ public class MemberProfile {
     private String addressDetail;
 
     @Column(nullable = true, length = 255)
-    private Long coordinateX;
+    private Double coordinateX;
 
     @Column(nullable = true, length = 255)
-    private Long coordinateY;
+    private Double coordinateY;
 
     @PrePersist
     public void prePersist() {
@@ -72,8 +72,8 @@ public class MemberProfile {
     public void setAddress(
             String defaultAddress,
             String addressDetail,
-            Long coordinateX,
-            Long coordinateY) {
+            Double coordinateX,
+            Double coordinateY) {
         if (defaultAddress != null) this.defaultAddress = defaultAddress;
         if (addressDetail != null) this.addressDetail = addressDetail;
         if (coordinateX != null) this.coordinateX = coordinateX;
