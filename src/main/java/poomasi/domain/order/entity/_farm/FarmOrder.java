@@ -33,7 +33,7 @@ public class FarmOrder extends AbstractOrder {
     */
 
     @Column(name = "merchant_uid")
-    @Description("서버 내부 주문 id(아임포트 id)")
+    @Description("서버 내부 주문 farmId(아임포트 farmId)")
     private String merchantUid = "f" + new Date().getTime();
 
 

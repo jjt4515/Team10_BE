@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import poomasi.domain.farm.dto.response.FarmDetailResponse;
+import poomasi.domain.farm.dto.response.FarmInfoAggregateResponse;
 import poomasi.domain.farm.dto.response.FarmInfoResponse;
 import poomasi.domain.farm.dto.response.FarmResponse;
 
@@ -19,9 +20,7 @@ public class FarmPlatformService {
     public FarmDetailResponse getFarmDetailByFarmId(Long farmId) {
         return FarmDetailResponse.builder()
                 .farmResponse(FarmResponse.fromEntity(farmService.getFarmByFarmId(farmId)))
-                .experienceResponses(farmInfoService.getFarmInfoByFarmId(farmId).stream()
-                        .map(FarmInfoResponse::fromEntity)
-                        .collect(Collectors.toList()))
+                .info(FarmInfoAggregateResponse.fromEntity(farmInfoService.getFarmInfoByFarmId(farmId)))
                 .build();
     }
 

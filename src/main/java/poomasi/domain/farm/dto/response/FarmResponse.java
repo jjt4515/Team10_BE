@@ -1,8 +1,9 @@
 package poomasi.domain.farm.dto.response;
 
+import lombok.Builder;
 import poomasi.domain.farm.entity.Farm;
 
-
+@Builder
 public record FarmResponse(
         Long id,
         String name,
@@ -16,16 +17,16 @@ public record FarmResponse(
 ) {
 
     public static FarmResponse fromEntity(Farm farm) {
-        return new FarmResponse(
-                farm.getId(),
-                farm.getName(),
-                farm.getAddress(),
-                farm.getAddressDetail(),
-                farm.getLatitude(),
-                farm.getLongitude(),
-                farm.getDescription(),
-                farm.getExperiencePrice(),
-                farm.getAverageRating()
-        );
+        return FarmResponse
+                .builder()
+                .name(farm.getName())
+                .address(farm.getAddress())
+                .addressDetail(farm.getAddressDetail())
+                .latitude(farm.getLatitude())
+                .longitude(farm.getLongitude())
+                .description(farm.getDescription())
+                .experiencePrice(farm.getExperiencePrice())
+                .averageRating(farm.getAverageRating())
+                .build();
     }
 }

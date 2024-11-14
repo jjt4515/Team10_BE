@@ -1,8 +1,10 @@
 package poomasi.domain.farm.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import poomasi.domain.farm.entity.Farm;
 
+@Builder
 public record FarmRegisterRequest(
         @NotNull
         String name,
@@ -30,7 +32,12 @@ public record FarmRegisterRequest(
         @NotNull
         String imageUrl,
         @NotNull
-        int price
+        int price,
+
+        @NotNull
+        String businessNumber,
+
+        FarmInfoAggregateRequest info
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()
@@ -49,6 +56,7 @@ public record FarmRegisterRequest(
                 .mainImage(imageUrl)
                 .growEnv(growEnv)
                 .experiencePrice(price)
+                .businessNumber(businessNumber)
                 .build();
     }
 }
