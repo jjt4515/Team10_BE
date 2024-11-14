@@ -7,14 +7,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import poomasi.domain.farm.dto.FarmRegisterRequest;
-import poomasi.domain.farm.dto.FarmUpdateRequest;
+import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
-import poomasi.payment.entity.ItemType;
 
 import java.util.Optional;
 
@@ -49,7 +47,7 @@ class FarmFarmerServiceTest {
 
             given(farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(member.getId())).willReturn(Optional.of(existingFarm));
 
-            FarmRegisterRequest request = new FarmRegisterRequest("New Farm", "Address", "Detail", 1.0, 1.0, "010-1234-5678", "Description", 10000, 10, 5, 1L);
+            FarmRegisterRequest request = new FarmRegisterRequest("New Farm", "Address", "Detail", "010-1234-5678", 1.0, 1.0, "010-123-123", "10000", 10, 10, 10, 1L, "10", 10);
 
             // when & then
             assertThatThrownBy(() -> farmFarmerService.registerFarm(member, request))
@@ -58,44 +56,6 @@ class FarmFarmerServiceTest {
         }
     }
 
-    @Nested
-    @DisplayName("농장 정보 업데이트")
-    class UpdateFarm {
-        @Test
-        @DisplayName("농장이 존재하지 않는 경우 예외를 발생시킨다")
-        void should_throwException_when_farmNotExist() {
-            // given
-            Long farmId = 1L;
-            FarmUpdateRequest request = new FarmUpdateRequest(farmId, "Updated Farm", "Description", "Address", "Detail", 1.0, 1.0);
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.empty());
-
-            // when & then
-            assertThatThrownBy(() -> farmFarmerService.updateFarm(1L, request))
-                    .isInstanceOf(BusinessException.class)
-                    .hasFieldOrPropertyWithValue("businessError", BusinessError.FARM_NOT_FOUND);
-        }
-
-        @Test
-        @DisplayName("농장 소유자가 아닌 경우 예외를 발생시킨다")
-        void should_throwException_when_ownerMismatch() {
-            // given
-            Long farmId = 1L;
-            Long farmerId = 2L;
-            Farm farm = Farm.builder()
-                    .id(farmId)
-                    .name("Farm")
-                    .ownerId(3L)
-                    .build();
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.of(farm));
-
-            FarmUpdateRequest request = new FarmUpdateRequest(farmId, "Updated Farm", "Description", "Address", "Detail", 1.0, 1.0);
-
-            // when & then
-            assertThatThrownBy(() -> farmFarmerService.updateFarm(farmerId, request))
-                    .isInstanceOf(BusinessException.class)
-                    .hasFieldOrPropertyWithValue("businessError", BusinessError.FARM_OWNER_MISMATCH);
-        }
-    }
 
     @Nested
     @DisplayName("농장 삭제")

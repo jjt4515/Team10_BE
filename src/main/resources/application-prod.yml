@@ -71,3 +71,10 @@ imp:
   api:
     key: ${IMP_API_KEY}
     secretKey: ${IMP_SECRET_KEY}
+
+
+naver:
+  ocr:
+    secret: ${NAVER_OCR_SECRET}
+    invoke: ${NAVER_OCR_INVOKE}
+    template: ${NAVER_OCR_TEMPLATE}
