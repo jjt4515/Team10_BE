@@ -45,6 +45,7 @@ public enum BusinessError {
     FARM_OWNER_MISMATCH(HttpStatus.FORBIDDEN, "해당 농장의 소유자가 아닙니다."),
     FARM_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 농장이 존재합니다."),
     FARM_NOT_OPEN(HttpStatus.BAD_REQUEST, "오픈되지 않은 농장입니다."),
+    FARM_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 농장입니다."),
 
     // FarmInfo
     FARM_INFO_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "농장 소개는 최대 3개까지 등록 가능합니다."),

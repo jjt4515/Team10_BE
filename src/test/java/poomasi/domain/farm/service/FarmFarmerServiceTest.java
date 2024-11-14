@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import poomasi.domain.farm.FarmTestHelper;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.repository.FarmRepository;
@@ -14,10 +15,12 @@ import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,9 +28,13 @@ class FarmFarmerServiceTest {
 
     @InjectMocks
     private FarmFarmerService farmFarmerService;
-
+    @Mock
+    private FarmInfoService farmInfoService;
+    @Mock
+    private FarmService farmService;
     @Mock
     private FarmRepository farmRepository;
+
 
     @Nested
     @DisplayName("농장 등록")
@@ -85,7 +92,7 @@ class FarmFarmerServiceTest {
                     .name("Farm")
                     .ownerId(3L)
                     .build();
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.of(farm));
+            given(farmService.getFarmByFarmId(farmId)).willReturn(farm);
 
             // when & then
             assertThatThrownBy(() -> farmFarmerService.deleteFarm(farmerId, farmId))
@@ -104,22 +111,26 @@ class FarmFarmerServiceTest {
                     .name("Farm")
                     .ownerId(farmerId)
                     .build();
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.of(farm));
+
+            given(farmService.getFarmByFarmId(farmId)).willReturn(farm);
 
             // when
             farmFarmerService.deleteFarm(farmerId, farmId);
 
             // then
-            verify(farmRepository).delete(farm);
+            verify(farmService).delete(farm);
+            verify(farmInfoService).deleteFarmInfo(farmId);
         }
 
         @Test
         @DisplayName("농장이 존재하지 않는 경우 예외를 발생시킨다")
         void should_throwException_when_farmNotExistOnDelete() {
             // given
-            Long farmId = 1L;
+            Long farmId = 3L;
             Long farmerId = 1L;
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.empty());
+
+            // farmService에서 농장이 없을 때 null을 반환하도록 설정
+            given(farmService.getFarmByFarmId(farmId)).willReturn(null);
 
             // when & then
             assertThatThrownBy(() -> farmFarmerService.deleteFarm(farmerId, farmId))
@@ -137,16 +148,19 @@ class FarmFarmerServiceTest {
                     .id(farmId)
                     .name("Farm")
                     .ownerId(farmerId)
-                    .deletedAt(null)
+                    .deletedAt(LocalDateTime.now()) // 이미 삭제된 상태
                     .build();
 
-            given(farmRepository.findByIdAndDeletedAtIsNull(farmId)).willReturn(Optional.of(farm));
+            given(farmService.getFarmByFarmId(farmId)).willReturn(farm);
 
-            // when
-            farmFarmerService.deleteFarm(farmerId, farmId);
+            // when & then
+            assertThatThrownBy(() -> farmFarmerService.deleteFarm(farmerId, farmId))
+                    .isInstanceOf(BusinessException.class)
+                    .hasFieldOrPropertyWithValue("businessError", BusinessError.FARM_ALREADY_DELETED);
 
-            // then
-            verify(farmRepository).delete(farm);
+            // delete 메서드가 호출되지 않았는지 확인
+            verify(farmService, never()).delete(farm);
+            verify(farmInfoService, never()).deleteFarmInfo(farmId);
         }
     }
 }

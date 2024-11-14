@@ -103,8 +103,18 @@ public class FarmFarmerService {
 
     public void deleteFarm(Long farmerId, Long farmId) {
         Farm farm = farmService.getFarmByFarmId(farmId);
+
+        // farm이 null인 경우 예외 발생
+        if (farm == null) {
+            throw new BusinessException(FARM_NOT_FOUND);
+        }
+
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
+        }
+
+        if (farm.getDeletedAt() != null) {
+            throw new BusinessException(FARM_ALREADY_DELETED);
         }
 
         farmService.delete(farm);
