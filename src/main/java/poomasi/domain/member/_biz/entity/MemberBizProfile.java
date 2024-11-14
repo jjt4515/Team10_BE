@@ -3,6 +3,7 @@ package poomasi.domain.member._biz.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
+import poomasi.domain.member._biz.dto.response.BizProfileProfileResponse;
 
 
 @Entity
@@ -40,4 +41,7 @@ public class MemberBizProfile {
         this.needsAdminApproval = needsAdminApproval;
     }
 
+    public BizProfileProfileResponse toResponse() {
+        return new BizProfileProfileResponse(bizNumber, bizRegImage);
+    }
 }

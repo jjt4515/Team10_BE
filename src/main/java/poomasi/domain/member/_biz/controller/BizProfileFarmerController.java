@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member._biz.dto.request.BizProfileCreateRequest;
 import poomasi.domain.member._biz.service.MemberBizProfileFarmerService;
@@ -27,6 +24,14 @@ public class BizProfileFarmerController {
     ) {
         return ResponseEntity.ok(memberBizProfileFarmerService.updateBizProfile(userDetails.getMember(), request));
 
+    }
+
+    @GetMapping("/profile")
+    @Secured("ROLE_FARMER")
+    public ResponseEntity<?> getBizProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return ResponseEntity.ok(memberBizProfileFarmerService.getBizProfile(userDetails.getMember()));
     }
 
     @PostMapping("/profile/approve")
