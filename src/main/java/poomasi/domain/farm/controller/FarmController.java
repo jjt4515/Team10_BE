@@ -15,7 +15,7 @@ import poomasi.domain.farm.service.FarmPlatformService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/farm")
+@RequestMapping("/api/farms")
 @Description("인증이 필요 없는 Farm 메소드")
 public class FarmController {
     private final FarmPlatformService farmPlatformService;
