@@ -1,40 +1,36 @@
 package poomasi.domain.auth.security.handler;
 
-/*
- * TODO : Oauth2.0 로그인이 성공하면 access, refresh를 발급해야 함.
- *
- * */
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jdk.jfr.Description;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
 import poomasi.domain.member.entity.Member;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
 
 @Slf4j
 @Component
-public class CustomSuccessHandler implements AuthenticationSuccessHandler {
+@RequiredArgsConstructor
+public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
-    public CustomSuccessHandler(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    @Value("${spring.security.redirect_url}")
+    private String redirectUrl;
 
     @Description("TODO : Oauth2.0 로그인이 성공하면 server access, refresh token을 발급하는 메서드")
     @Override
@@ -51,11 +47,11 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
         response.addCookie(createCookie("refresh", refreshToken));
-        response.addCookie(createCookie("access", accessToken));
-
         response.setStatus(HttpStatus.OK.value());
 
-        response.getWriter();
+        //refresh token db에 저장
+        refreshTokenService.putRefreshToken(refreshToken, memberId);
+        response.sendRedirect(redirectUrl+"/access=" + accessToken);
     }
 
     private Cookie createCookie(String key, String value) {
@@ -69,3 +65,5 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         return cookie;
     }
 }
+
+
