@@ -14,7 +14,7 @@ public class TokenWhitelistServiceConfig {
     private String tokenStorageType;
 
     @Bean
-    public TokenWhitelistService tokenStorageService(WhitelistRedisService whitelistRedisService, WhitelistJpaService whitelistJpaService) {
+    public TokenWhitelistService tokenWhitelistService(WhitelistRedisService whitelistRedisService, WhitelistJpaService whitelistJpaService) {
         if ("redis".equals(tokenStorageType)) {
             return whitelistRedisService;
         } else {
