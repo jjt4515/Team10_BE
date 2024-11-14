@@ -2,6 +2,7 @@ package poomasi.domain.order.entity._product;
 
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,14 +25,14 @@ import java.util.List;
 public class ProductOrder extends AbstractOrder {
 
     @Column(name = "merchant_uid")
-    @Description("서버 내부 주문 farmId(아임포트 farmId)")
-    private String merchantUid = "p" + new Date().getTime();
+    @Description("서버 내부 주문 id(아임포트 id)")
+    private String merchantUid;
 
     @Column(name = "ordered_products_id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderedProduct> orderedProducts;
+    private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "product_order_details_id") // 외래 키 지정
     @Description("상품 배송지, 요청 사항")
     private ProductOrderDetails productOrderDetails;
@@ -41,7 +42,7 @@ public class ProductOrder extends AbstractOrder {
     }
 
     public void addOrderedProduct(OrderedProduct orderedProduct) {
-        this.orderedProducts.add(orderedProduct);
+        orderedProducts.add(orderedProduct);
     }
 
     public void setMerchantUid(String merchantUid) {

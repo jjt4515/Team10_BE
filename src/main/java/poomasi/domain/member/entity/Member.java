@@ -82,7 +82,7 @@ public class Member {
     }
 
     @Builder
-    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile, String name) {
         this.id = id;
         this.password = password;
         this.email = email;
@@ -90,6 +90,7 @@ public class Member {
         this.loginType = loginType;
         this.provideId = provideId;
         this.memberProfile = memberProfile;
+        this.name = name;
     }
 
     public boolean isCustomer() {
