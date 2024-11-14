@@ -15,7 +15,6 @@ import poomasi.domain.image.service.ImageService;
 import poomasi.domain.member.entity.Member;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static poomasi.domain.image.dto.ImageResponse.fromEntity;
 

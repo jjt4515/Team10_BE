@@ -69,7 +69,6 @@ public class MemberController {
     }
 
     @GetMapping("/summary/{memberId}")
-    @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
     public ResponseEntity<MemberSummaryResponse> getMemberSummaryById(@PathVariable Long memberId) {
         MemberSummaryResponse memberSummaryResponse = memberService.getMemberSummary(memberId);
         return ResponseEntity.ok(memberSummaryResponse);
