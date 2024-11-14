@@ -20,7 +20,7 @@ import static poomasi.domain.image.dto.ImageResponse.fromEntity;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/image")
+@RequestMapping("/api/images")
 public class ImageController {
     private final ImageService imageService;
 

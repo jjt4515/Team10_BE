@@ -15,7 +15,7 @@ import poomasi.domain.member.service.MemberCustomerService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 public class MemberCustomerController {
     private final MemberCustomerService memberCustomerService;
 
