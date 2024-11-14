@@ -20,7 +20,7 @@ import poomasi.domain.member.dto.request.SignupRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/member")
+@RequestMapping("/api/member")
 public class MemberController {
 
     private final MemberService memberService;
