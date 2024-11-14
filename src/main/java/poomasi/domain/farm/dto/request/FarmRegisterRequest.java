@@ -30,7 +30,9 @@ public record FarmRegisterRequest(
         @NotNull
         String imageUrl,
         @NotNull
-        int price
+        int price,
+
+        FarmInfoAggregateRequest info
 ) {
     public Farm toEntity(Long memberId) {
         return Farm.builder()

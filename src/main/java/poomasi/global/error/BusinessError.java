@@ -52,6 +52,8 @@ public enum BusinessError {
     FARM_INFO_MAIN_REQUIRED(HttpStatus.BAD_REQUEST, "메인 소개가 필요합니다."),
     FARM_INFO_MAIN_REQUIRED_NO_CONTENT(HttpStatus.BAD_REQUEST, "메인 소개가 필요합니다."),
     FARM_INFO_NON_MAIN_REQUIRED_CONTENT(HttpStatus.BAD_REQUEST, "메인이 아닌 이미지는 내용이 필요합니다."),
+    FARM_INFO_NOT_VALID(HttpStatus.BAD_REQUEST, "농장 소개가 유효하지 않습니다."),
+    FARM_INFO_DETAIL_SIZE_MISMATCH(HttpStatus.BAD_REQUEST, "세부 소개의 크기가 일치하지 않습니다."),
 
     // FarmSchedule
     FARM_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 날짜의 스케줄을 찾을 수 없습니다."),

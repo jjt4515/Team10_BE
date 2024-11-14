@@ -30,8 +30,15 @@ public class FarmFarmerService {
             throw new BusinessException(FARM_ALREADY_EXISTS);
         });
 
+        // Farm Info 저장
+        List<FarmInfoRegisterRequest> farmInfoRegisterRequests = request.info().toRequest();
+        farmInfoRegisterRequests.forEach(farmInfoRegisterRequest -> {
+            registerFarmInfo(member, farmInfoRegisterRequest);
+        });
+
         return farmRepository.save(request.toEntity(member.getId())).getId();
     }
+
 
     public Long registerFarmInfo(Member member, FarmInfoRegisterRequest request) {
         Farm farm = getFarmByFarmerId(member.getId());
