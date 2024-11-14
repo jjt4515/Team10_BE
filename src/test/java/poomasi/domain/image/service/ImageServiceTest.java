@@ -14,10 +14,12 @@ import poomasi.domain.image.linker.ImageLinkerFactory;
 import poomasi.domain.image.deleteLinker.ImageDeleteFactory;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
+import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,11 +45,12 @@ class ImageServiceTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     @DisplayName("이미지 저장 성공 테스트")
-    void saveImage_ShouldSaveImage_WhenValidData() {
+    void saveImage_success() {
         // Given
         Long memberId = 1L;
         ImageRequest imageRequest = new ImageRequest("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
@@ -70,24 +73,29 @@ class ImageServiceTest {
         assertEquals(image.getObjectKey(), imageResponse.objectKey());
         verify(imageRepository, times(1)).save(any(Image.class));
     }
-//
-//    @Test
-//    void saveImage_ShouldThrowException_WhenImageLimitExceeded() {
-//        // Given
-//        Long memberId = 1L;
-//        ImageRequest imageRequest = new ImageRequest("key", "http://url.com", ImageType.MEMBER_PROFILE, 1L);
-//
-//        // Simulate the image limit being exceeded for MEMBER_PROFILE.
-//        when(imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(any(), any()))
-//                .thenReturn(1);  // Simulate limit being exceeded
-//
-//        // When / Then
-//        BusinessException exception = assertThrows(BusinessException.class, () ->
-//                imageService.saveImage(memberId, imageRequest)
-//        );
-//        assertEquals("Image limit exceeded", exception.getMessage());
-//    }
-//
+
+    @Test
+    @DisplayName("이미지 저장 실패 테스트 - 개수 초과")
+    void saveImage_IMAGE_LIMIT_EXCEED() {
+        // Given
+        Long memberId = 1L;
+        ImageRequest imageRequest = new ImageRequest("key", "imageUrl", ImageType.MEMBER_PROFILE, 1L);
+
+        when(imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(any(), any()))
+                .thenReturn(1L);
+
+        Member member = mock(Member.class);
+        when(memberService.findMemberById(memberId)).thenReturn(member);
+
+        when(imageRepository.countByTypeAndReferenceIdAndDeletedAtIsNull(any(), any()))
+                .thenReturn(1L);
+
+        // When & Then
+        assertThatThrownBy(() -> imageService.saveImage(memberId, imageRequest))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("businessError", BusinessError.IMAGE_LIMIT_EXCEED);
+    }
+
 //    @Test
 //    void validateImageOwner_ShouldThrowException_WhenOwnerIsNotValid() {
 //        // Given
@@ -105,7 +113,7 @@ class ImageServiceTest {
 //        );
 //        assertEquals("Image owner mismatch", exception.getMessage());
 //    }
-//
+
 //    @Test
 //    void deleteImage_ShouldDeleteImage_WhenValidImage() {
 //        // Given
