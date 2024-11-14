@@ -20,10 +20,6 @@ public class MemberBizProfile {
     @Column(nullable = false)
     private String bizNumber;
 
-    @Comment("사업자명")
-    @Column(nullable = false)
-    private String bizName;
-
     @Comment("사업자 등록증 이미지")
     @Column(nullable = false)
     private String bizRegImage;
@@ -38,9 +34,8 @@ public class MemberBizProfile {
     private Long memberId;
 
     @Builder
-    public MemberBizProfile(String bizNumber, String bizName, String bizRegImage, Long memberId, boolean needsAdminApproval) {
+    public MemberBizProfile(String bizNumber, String bizRegImage, Long memberId, boolean needsAdminApproval) {
         this.bizNumber = bizNumber;
-        this.bizName = bizName;
         this.bizRegImage = bizRegImage;
         this.memberId = memberId;
         this.needsAdminApproval = needsAdminApproval;

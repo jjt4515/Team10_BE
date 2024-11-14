@@ -6,9 +6,6 @@ import poomasi.domain.member._biz.entity.MemberBizProfile;
 
 public record BizProfileCreateRequest(
         @NotNull
-        @Comment("사업자 명")
-        String name,
-        @NotNull
         @Comment("사업자 번호")
         String number,
         @NotNull
@@ -18,7 +15,6 @@ public record BizProfileCreateRequest(
 ) {
     public MemberBizProfile toEntity(Long id, boolean needsAdminApproval) {
         return MemberBizProfile.builder()
-                .bizName(name)
                 .bizNumber(number)
                 .bizRegImage(imageUrl)
                 .memberId(id)
