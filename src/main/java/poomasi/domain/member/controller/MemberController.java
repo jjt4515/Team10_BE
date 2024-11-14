@@ -20,7 +20,7 @@ import poomasi.domain.member.dto.request.SignupRequest;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/member")
+@RequestMapping("/api/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -31,7 +31,7 @@ public class MemberController {
                 .signUp(signupRequest));
     }
 
-    @PutMapping("/toFarmer")
+    @PutMapping("/to-farmer")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
@@ -135,8 +135,6 @@ public class MemberController {
         memberService.suspendAccount(memberId);
         return ResponseEntity.ok().build();
     }
-
-
 
 
 }
