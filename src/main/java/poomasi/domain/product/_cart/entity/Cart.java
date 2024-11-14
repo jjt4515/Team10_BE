@@ -1,12 +1,21 @@
 package poomasi.domain.product._cart.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ConstraintMode;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import poomasi.domain.member.entity.Member;
+import poomasi.domain.product.entity.Product;
 
 @Entity
 @NoArgsConstructor
@@ -17,32 +26,18 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Boolean selected;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Member member;
 
-    private Long memberId;
-
-    private Long productId;
-
-    private Integer count;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Product product;
 
     @Builder
-    public Cart(Long id, Long memberId, Long productId, Boolean selected, Integer count) {
+    public Cart(Long id, Member member, Product product) {
         this.id = id;
-        this.memberId = memberId;
-        this.productId = productId;
-        this.selected = selected;
-        this.count = count;
-    }
-
-    public void addCount() {
-        this.count += 1;
-    }
-
-    public void subCount() {
-        this.count -= 1;
-    }
-
-    public void changeSelect() {
-        this.selected = !this.selected;
+        this.member = member;
+        this.product = product;
     }
 }
