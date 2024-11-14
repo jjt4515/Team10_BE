@@ -47,7 +47,7 @@ public class JwtUtil {
     }
 
     public String generateAccessTokenById(final Long memberId) {
-        Map<String, Object> claims = createClaims(memberId);
+        Map<String, Object> claims = createClaims(memberId); //id, email, role
         claims.put("type", ACCESS);
         return Jwts.builder()
                 .setClaims(claims)
@@ -86,8 +86,9 @@ public class JwtUtil {
         return getClaimFromToken(token, "id", Long.class);
     }
 
-    public String getEmailFromToken(final String token) {
+    public String getEmailFromToken(final String token){
         return getClaimFromToken(token, "email", String.class);
+
     }
 
     public Date getExpirationDateFromToken(final String token) {
@@ -134,7 +135,7 @@ public class JwtUtil {
         return true;
     }
 
-    private Boolean validateToken(final String token) {
+    public Boolean validateToken(final String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(secretKey)
@@ -165,4 +166,5 @@ public class JwtUtil {
             return true;
         }
     }
+
 }
