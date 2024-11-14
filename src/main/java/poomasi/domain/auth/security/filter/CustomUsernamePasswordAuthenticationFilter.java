@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
 
 
@@ -30,15 +31,16 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Description("인증 시도 메서드")
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException{
 
         log.info("email - password 기반으로 인증을 시도 합니다 : CustomUsernamePasswordAuthenticationFilter");
         ObjectMapper loginRequestMapper = new ObjectMapper();
-        String email;
-        String password;
+        String email = null;
+        String password = null;
 
         try {
             BufferedReader reader = request.getReader();
@@ -59,20 +61,21 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
     @Description("로그인 성공 시, accessToken과 refreshToken 발급")
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         UserDetailsImpl customUserDetails = (UserDetailsImpl) authentication.getPrincipal();
+        String username = customUserDetails.getUsername();
+        String role = customUserDetails.getAuthority();
         Long memberId = customUserDetails.getMember().getId();
 
         String accessToken = jwtUtil.generateAccessTokenById(memberId);
         String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
-        log.info("usename password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
-        response.setHeader("access", accessToken);
+        log.info("username password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
         response.addCookie(createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
 
-        // 나중에 주석 해야 함
-        PrintWriter out = response.getWriter();
-        out.println("access : " + accessToken + ", refresh : " + refreshToken);
-        out.close();
+        refreshTokenService.putRefreshToken(refreshToken, memberId);
+
+        response.setContentType("application/json");  // Content-Type 설정
+        response.getWriter().write("{\"access\": \"" + accessToken + "\", \"refresh\": \"" + refreshToken + "\"}");
     }
 
     @Override
