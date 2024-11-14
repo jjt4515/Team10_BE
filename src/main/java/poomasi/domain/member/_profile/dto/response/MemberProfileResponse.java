@@ -9,8 +9,8 @@ public record MemberProfileResponse(
         String phoneNumber,
         String defaultAddress,
         String addressDetail,
-        Long coordinateX,
-        Long coordinateY,
+        Double coordinateX,
+        Double coordinateY,
         boolean isBanned,
         LocalDateTime createdAt,
         Image profileImage){
