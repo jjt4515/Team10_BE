@@ -1,5 +1,6 @@
 package poomasi.domain.member.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.SignUpResponse;
-import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.global.error.BusinessError;
@@ -17,6 +17,7 @@ import poomasi.global.error.BusinessException;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,6 +36,21 @@ class MemberServiceTest {
 
     @InjectMocks
     private MemberService memberService;
+
+    private Member member;
+    private Long memberId;
+
+    @BeforeEach
+    void setUp() {
+        memberId = 1L;
+        member = Member.builder()
+                .id(memberId)
+                .name("testName")
+                .email("test@example.com")
+                .password("password")
+                .role(ROLE_CUSTOMER)
+                .build();
+    }
 
     @Test
     @DisplayName("이메일 중복 시 회원가입 성공 테스트")
@@ -69,81 +85,84 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("")
-    void GetMemberById_성공() {
+    @DisplayName("id로 멤버 조회 성공 테스트")
+    void getMemberById_success() {
         // given
-        Long memberId = 1L;
-        Member member = Member.builder()
-                .id(memberId)
-                .email("test@example.com")
-                .password("password")
-                .role(ROLE_CUSTOMER)
-                .loginType(LoginType.LOCAL)
-                .build();
-
         when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.of(member));
 
         // when
-        MemberResponse memberResponse = memberService.getMemberById(memberId);
+        var memberResponse = memberService.getMemberById(memberId);
 
         // then
         assertNotNull(memberResponse);
-        assertEquals("testName", memberResponse.getName());
-        assertEquals("test@example.com", memberResponse.getEmail());
+        assertEquals("testName", memberResponse.name());
+        assertEquals("test@example.com", memberResponse.email());
     }
 
     @Test
-    void testGetMemberById_MemberNotFound() {
+    @DisplayName("회원 정보 없을 때 조회 실패 테스트")
+    void getMemberById_memberNotFound() {
         // given
-        Long memberId = 999L;
-        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.empty());
+        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(java.util.Optional.empty());
 
         // when & then
-        BusinessException exception = assertThrows(BusinessException.class, () -> memberService.getMemberById(memberId));
-        assertEquals(MEMBER_NOT_FOUND, exception.getErrorCode());
+        assertThatThrownBy(() -> memberService.getMemberById(memberId))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("businessError", poomasi.global.error.BusinessError.MEMBER_NOT_FOUND);
     }
-//
-//    @Test
-//    void getMemberSummary() {
-//    }
-//
-//    @Test
-//    void getAllMembersSummary() {
-//    }
-//
-//    @Test
-//    void convertToFarmer() {
-//    }
-//
-//    @Test
-//    void convertToCustomer() {
-//    }
-//
-//    @Test
-//    void findMemberById() {
-//    }
-//
-//    @Test
-//    void updateCustomer() {
-//    }
-//
-//    @Test
-//    void updateFarmer() {
-//    }
-//
-//    @Test
-//    void updateAddress() {
-//    }
-//
-//    @Test
-//    void deleteAccount() {
-//    }
-//
-//    @Test
-//    void restoreAccount() {
-//    }
-//
-//    @Test
-//    void suspendAccount() {
-//    }
+
+    @Test
+    @DisplayName("회원 정보 업데이트 테스트")
+    void updateCommonAttributes_success() {
+        // given
+        String newName = "Updated Name";
+        String newEmail = "updated@example.com";
+        String newPassword = "newPassword";
+        String newPhoneNumber = "1234567890";
+
+        // when
+        memberService.updateCommonAttributes(member, newName, newEmail, newPassword, newPhoneNumber);
+
+        // then
+        assertEquals(member.getName(), newName);
+        assertEquals(member.getEmail(), newEmail);
+        assertNotEquals(member.getPassword(), "password");
+        assertEquals(member.getOrCreateProfile().getPhoneNumber(), newPhoneNumber);
+    }
+
+    @Test
+    @DisplayName("회원 탈퇴 테스트")
+    void deleteAccount_success() {
+        // when
+        memberService.deleteAccount(member);
+
+        // then
+        verify(memberRepository, times(1)).delete(member);
+    }
+
+    @Test
+    @DisplayName("회원 복구 테스트")
+    void restoreAccount_success() {
+        // given
+        member.setDeletedAt(java.time.LocalDateTime.now());
+        when(memberRepository.findByIdAndDeletedAtIsNotNull(memberId)).thenReturn(java.util.Optional.of(member));
+
+        // when
+        memberService.restoreAccount(memberId);
+
+        // then
+        assertThat(member.getDeletedAt()).isNull();
+        verify(memberRepository, times(1)).save(member);
+    }
+
+    @DisplayName("회원 정지 테스트")
+    @Test
+    void suspendAccount_success() {
+        // when
+        memberService.suspendAccount(memberId);
+
+        // then
+        assertThat(member.getOrCreateProfile().isBanned()).isTrue();
+        verify(memberRepository, times(1)).save(member);
+    }
 }

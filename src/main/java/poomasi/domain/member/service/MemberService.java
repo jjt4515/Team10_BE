@@ -67,6 +67,11 @@ public class MemberService {
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
     }
 
+    public Member findDeletedMemberById(Long memberId) {
+        return memberRepository.findByIdAndDeletedAtIsNotNull(memberId)
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_DELETED));
+    }
+
     public void updateCommonAttributes(Member member, String name, String email, String password, String phoneNumber) {
         if (name != null) member.setName(name);
         if (email != null) member.setEmail(email);
@@ -85,7 +90,7 @@ public class MemberService {
 
     @Transactional
     public void restoreAccount(Long memberId) {
-        Member member = findMemberById(memberId);
+        Member member = findDeletedMemberById(memberId);
         member.setDeletedAt(null);
         memberRepository.save(member);
     }
