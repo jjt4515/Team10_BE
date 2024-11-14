@@ -20,8 +20,6 @@ import poomasi.domain.member.entity.Member;
 @RequestMapping("/api/farm")
 public class FarmFarmerController {
     private final FarmFarmerService farmFarmerService;
-    private final FarmScheduleService farmScheduleService;
-
 
     @Secured("ROLE_FARMER")
     @PostMapping("")
@@ -30,17 +28,6 @@ public class FarmFarmerController {
             @Valid @RequestBody FarmRegisterRequest request) {
         Member member = userDetails.getMember();
         return ResponseEntity.ok(farmFarmerService.registerFarm(member, request));
-
-    }
-
-    @Secured("ROLE_FARMER")
-    @PostMapping("/info")
-    public ResponseEntity<?> registerFarmInfo(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody FarmInfoRegisterRequest request) {
-        Member member = userDetails.getMember();
-        return ResponseEntity.ok(farmFarmerService.registerFarmInfo(member, request));
-
     }
 
     @Secured("ROLE_FARMER")

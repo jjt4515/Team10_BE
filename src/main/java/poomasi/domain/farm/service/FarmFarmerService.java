@@ -2,6 +2,7 @@ package poomasi.domain.farm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
@@ -19,28 +20,31 @@ import static poomasi.global.error.BusinessError.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FarmFarmerService {
     private final FarmRepository farmRepository;
     private final FarmInfoService farmInfoService;
 
     private final int MAX_FARM_INFO_COUNT = 4;
 
+    @Transactional
     public Long registerFarm(Member member, FarmRegisterRequest request) {
-
         farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(member.getId()).ifPresent(farm -> {
             throw new BusinessException(FARM_ALREADY_EXISTS);
         });
 
-        // Farm Info 저장
+        Long id = farmRepository.save(request.toEntity(member.getId())).getId();
+
         List<FarmInfoRegisterRequest> farmInfoRegisterRequests = request.info().toRequest();
         farmInfoRegisterRequests.forEach(farmInfoRegisterRequest -> {
             registerFarmInfo(member, farmInfoRegisterRequest);
         });
 
-        return farmRepository.save(request.toEntity(member.getId())).getId();
+        return id;
     }
 
 
+    @Transactional
     public Long registerFarmInfo(Member member, FarmInfoRegisterRequest request) {
         Farm farm = getFarmByFarmerId(member.getId());
 
@@ -48,7 +52,7 @@ public class FarmFarmerService {
                 .filter(FarmInfo::isValid)
                 .toList();
 
-        if (farmInfos.size() >= MAX_FARM_INFO_COUNT) {
+        if (farmInfos.size() > MAX_FARM_INFO_COUNT) {
             throw new BusinessException(FARM_INFO_LIMIT_EXCEEDED);
         }
 
@@ -61,6 +65,7 @@ public class FarmFarmerService {
         return farmInfoService.saveFarmInfo(request.toEntity(farm.getId()));
     }
 
+    @Transactional
     public Long updateFarm(Long farmerId, FarmUpdateRequest request) {
         Farm farm = getFarmByFarmerId(farmerId);
 

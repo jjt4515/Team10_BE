@@ -34,6 +34,7 @@ public class FarmInfo {
     String title;
 
     @Comment("설명")
+    @Column(nullable = true)
     String content;
 
     @Comment("메인 이미지 여부")
