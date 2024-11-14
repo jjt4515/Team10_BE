@@ -10,7 +10,7 @@ public class FarmOrderDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "farm_order_details_id")
-    private Long id;
+    private Long farmId;
 
     @OneToOne
     private FarmOrder farmOrder;

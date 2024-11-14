@@ -23,7 +23,7 @@ public class ProductDeleteLinker implements ImageDeleteLinker {
     @Override
     public void handleImageDeletion(Image image) {
         Product product = productService.findProductById(image.getReferenceId());
-        product.setImageUrl(null);
+        product.getImages().remove(image);
         productService.saveExistedProduct(product);
     }
 }

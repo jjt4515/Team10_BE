@@ -22,7 +22,7 @@ import poomasi.domain.product.service.ProductFarmerService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 @Slf4j
 public class ProductFarmerController {
 
