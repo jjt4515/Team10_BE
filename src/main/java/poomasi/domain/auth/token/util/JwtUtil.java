@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import poomasi.domain.auth.token.blacklist.service.TokenBlacklistService;
-import poomasi.domain.auth.token.whitelist.service.TokenWhitelistService;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
 
@@ -37,8 +37,8 @@ public class JwtUtil {
     @Value("${jwt.refresh-token-expiration-time}")
     private long REFRESH_TOKEN_EXPIRATION_TIME;
 
-    private final TokenBlacklistService tokenBlacklistService;
-    private final TokenWhitelistService tokenWhitelistService;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
     private final MemberService memberService;
 
     @PostConstruct
@@ -112,10 +112,11 @@ public class JwtUtil {
         if (!validateToken(refreshToken)) {
             return false;
         }
-        String storedMemberId = tokenWhitelistService.getValues(refreshToken, memberId.toString())
+
+        Long storedMemberId = refreshTokenWhitelistService.getMemberIdByRefreshToken(refreshToken, memberId)
                 .orElse(null);
 
-        if (storedMemberId == null || !storedMemberId.equals(memberId.toString())) {
+        if (storedMemberId == null || !storedMemberId.equals(memberId)) {
             log.warn("리프레시 토큰과 멤버 ID가 일치하지 않습니다.");
             return false;
         }
@@ -127,7 +128,8 @@ public class JwtUtil {
         if (!validateToken(accessToken)) {
             return false;
         }
-        if ( tokenBlacklistService.hasKeyBlackList(accessToken)){
+
+        if(accessTokenBlacklistService.hasAccessToken(accessToken)) {
             log.warn("로그아웃한 JWT token입니다.");
             return false;
         }
