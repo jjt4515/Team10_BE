@@ -1,5 +1,6 @@
 package poomasi.domain.member.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,12 +26,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<SignUpResponse> signUp(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(memberService
                 .signUp(signupRequest));
     }
 
-    @PutMapping("/toFarmer")
+    @PutMapping("/to-farmer")
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         Member member = userDetails.getMember();
@@ -78,7 +79,7 @@ public class MemberController {
     @Secured("ROLE_CUSTOMER")
     public ResponseEntity<MemberResponse> updateCustomer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody CustomerUpdateRequest customerUpdateRequest) {
+            @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
@@ -91,7 +92,7 @@ public class MemberController {
     @Secured("ROLE_FARMER")
     public ResponseEntity<FarmerResponse> updateFarmer(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
+            @Valid @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
 
         Member member = userDetails.getMember();
         Member updatedMember = memberService.updateFarmer(member, farmerUpdateRequest);

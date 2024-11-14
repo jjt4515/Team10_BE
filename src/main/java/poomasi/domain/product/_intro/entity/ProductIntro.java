@@ -31,21 +31,25 @@ public class ProductIntro {
 
     private String mainTitle;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image mainImage;
 
     private String subTitle1;
     private String subDesc1;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage1;
 
     private String subTitle2;
     private String subDesc2;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage2;
 
     private String subTitle3;
     private String subDesc3;
     @OneToOne(cascade = CascadeType.ALL)
+    @Setter
     private Image subImage3;
 
     @Builder
@@ -84,5 +88,9 @@ public class ProductIntro {
         this.subImage1 = subImage1;
         this.subImage2 = subImage2;
         this.subImage3 = subImage3;
+    }
+
+    public Long getFarmerId() {
+        return product.getFarmerId();
     }
 }
