@@ -3,6 +3,7 @@ package poomasi.domain.farm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
+import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.entity.Farm;
@@ -108,5 +109,12 @@ public class FarmFarmerService {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
         farmRepository.delete(farm);
+    }
+
+    public Long updateFarmInfo(Member member, FarmInfoUpdateRequest request) {
+        Farm farm = getFarmByFarmerId(member.getId());
+        FarmInfo farmInfo = farmInfoService.getFarmInfo(request.id());
+        farmInfo.update(request);
+        return farmInfoService.saveFarmInfo(farmInfo);
     }
 }

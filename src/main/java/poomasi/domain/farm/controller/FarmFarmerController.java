@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
+import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.service.FarmFarmerService;
@@ -41,6 +42,16 @@ public class FarmFarmerController {
         return ResponseEntity.ok(farmFarmerService.registerFarmInfo(member, request));
 
     }
+
+    @Secured("ROLE_FARMER")
+    @PostMapping("/info/update")
+    public ResponseEntity<?> updateFarmInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody FarmInfoUpdateRequest request) {
+        Member member = userDetails.getMember();
+        return ResponseEntity.ok(farmFarmerService.updateFarmInfo(member, request));
+    }
+
 
     @Secured("ROLE_FARMER")
     @PostMapping("/update")
