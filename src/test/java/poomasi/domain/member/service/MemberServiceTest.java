@@ -35,8 +35,7 @@ class MemberServiceTest {
     private MemberService memberService;
 
     @Test
-    @DisplayName("회원가입 성공 테스트")
-    void signUpSuccessTest() {
+    void 회원가입_성공() {
         // given
         SignupRequest signupRequest = new SignupRequest("testName", "test@example.com", "testPassword");
         Member mockMember = mock(Member.class);
@@ -52,8 +51,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("이메일 중복 시 회원가입 실패 테스트")
-    void signUpEmailDuplicationTest() {
+    void 회원가입_실패_이메일_중복() {
         // given
         SignupRequest signupRequest = new SignupRequest("testName", "test@example.com", "testPassword");
         given(memberRepository.findByEmailAndDeletedAtIsNull(anyString())).willReturn(Optional.of(mock(Member.class)));
@@ -65,10 +63,32 @@ class MemberServiceTest {
 
         verify(memberRepository, times(1)).findByEmailAndDeletedAtIsNull(signupRequest.email());
     }
-//
-//    @Test
-//    void getMemberById() {
-//    }
+
+    @Test
+    void GetMemberById_성공() {
+        // given
+        Long memberId = 1L;
+        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.of(member));
+
+        // when
+        MemberResponse memberResponse = memberService.getMemberById(memberId);
+
+        // then
+        assertNotNull(memberResponse);
+        assertEquals("testName", memberResponse.getName());
+        assertEquals("test@example.com", memberResponse.getEmail());
+    }
+
+    @Test
+    void testGetMemberById_MemberNotFound() {
+        // given
+        Long memberId = 999L;
+        when(memberRepository.findByIdAndDeletedAtIsNull(memberId)).thenReturn(Optional.empty());
+
+        // when & then
+        BusinessException exception = assertThrows(BusinessException.class, () -> memberService.getMemberById(memberId));
+        assertEquals(MEMBER_NOT_FOUND, exception.getErrorCode());
+    }
 //
 //    @Test
 //    void getMemberSummary() {

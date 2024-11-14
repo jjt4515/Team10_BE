@@ -10,9 +10,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.member._profile.dto.request.AddressUpdateRequest;
-import poomasi.domain.member.dto.request.CustomerUpdateRequest;
-import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.*;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
@@ -29,21 +26,6 @@ public class MemberController {
     public ResponseEntity<SignUpResponse> signUp(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(memberService
                 .signUp(signupRequest));
-    }
-
-    @PutMapping("/to-farmer")
-    @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Member member = userDetails.getMember();
-        memberService.convertToFarmer(member);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/to-customer/{memberId}")
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<Void> convertToCustomer(@PathVariable Long memberId) {
-        memberService.convertToCustomer(memberId);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{memberId}")
@@ -74,43 +56,6 @@ public class MemberController {
         return ResponseEntity.ok(memberSummaryResponse);
     }
 
-    @PutMapping("/update/customer")
-    @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<MemberResponse> updateCustomer(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody CustomerUpdateRequest customerUpdateRequest) {
-
-        Member member = userDetails.getMember();
-        Member updatedMember = memberService.updateCustomer(member, customerUpdateRequest);
-
-        MemberResponse memberResponse = MemberResponse.fromEntity(updatedMember);
-        return ResponseEntity.ok(memberResponse);
-    }
-
-    @PutMapping("/update/farmer")
-    @Secured("ROLE_FARMER")
-    public ResponseEntity<FarmerResponse> updateFarmer(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @Valid @RequestBody FarmerUpdateRequest farmerUpdateRequest) {
-
-        Member member = userDetails.getMember();
-        Member updatedMember = memberService.updateFarmer(member, farmerUpdateRequest);
-
-        FarmerResponse memberResponse = FarmerResponse.fromEntity(updatedMember);
-        return ResponseEntity.ok(memberResponse);
-    }
-
-    @PutMapping("/update/customer/address")
-    @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<Void> updateAddress(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody AddressUpdateRequest addressUpdateRequest
-    ) {
-        Member member = userDetails.getMember();
-        memberService.updateAddress(member, addressUpdateRequest);
-        return ResponseEntity.ok().build();
-    }
-
     // 회원 탈퇴
     @DeleteMapping("/delete")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
@@ -135,6 +80,4 @@ public class MemberController {
         memberService.suspendAccount(memberId);
         return ResponseEntity.ok().build();
     }
-
-
 }
