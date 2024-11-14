@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.member._profile.entity.MemberProfile;
-import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.entity.ProductOrder;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
 

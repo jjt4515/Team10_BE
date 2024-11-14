@@ -14,9 +14,9 @@ import poomasi.domain.order.dto.response.OrderDetailsResponse;
 import poomasi.domain.order.dto.response.OrderProductDetailsResponse;
 import poomasi.domain.order.dto.response.OrderResponse;
 import poomasi.domain.order.entity.PaymentStatus;
-import poomasi.domain.order.entity._product.OrderedProduct;
-import poomasi.domain.order.entity._product.ProductOrder;
-import poomasi.domain.order.entity._product.ProductOrderDetails;
+import poomasi.domain.order.entity.OrderedProduct;
+import poomasi.domain.order.entity.ProductOrder;
+import poomasi.domain.order.entity.ProductOrderDetails;
 import poomasi.domain.order.repository.OrderedProductRepository;
 import poomasi.domain.order.repository.ProductOrderRepository;
 import poomasi.domain.product._cart.entity.Cart;
@@ -108,8 +108,8 @@ public class ProductOrderService {
             productOrder.addOrderedProduct(orderedProduct);
             totalPrice = totalPrice.add(price);
         }
-        productOrder.setTotalAmount(totalPrice);
-        productOrder.setCheckSum(totalPrice);
+        //productOrder.setTotalAmount(totalPrice);
+        //productOrder.setCheckSum(totalPrice);
         productOrderRepository.save(productOrder);
 
         String merchantUid = productOrder.getMerchantUid();

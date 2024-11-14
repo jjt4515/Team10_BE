@@ -14,11 +14,10 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.product._intro.entity.ProductIntro;
-import poomasi.domain.order.entity._product.OrderedProduct;
+import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
-import poomasi.domain.store.entity.Store;
 
 @Entity
 @Getter

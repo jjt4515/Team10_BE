@@ -1,6 +1,6 @@
 package poomasi.domain.order.dto.response;
 
-import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.entity.ProductOrder;
 
 import java.time.LocalDateTime;
 import java.util.List;

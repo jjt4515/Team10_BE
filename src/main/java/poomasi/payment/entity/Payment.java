@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jdk.jfr.Description;
 import lombok.Getter;
 import poomasi.domain.order.entity.PaymentStatus;
-import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.entity.ProductOrder;
 
 import java.math.BigDecimal;
 

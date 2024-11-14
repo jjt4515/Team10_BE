@@ -50,8 +50,6 @@ public class SecurityConfig {
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
 
-
-
     /*@Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
@@ -87,9 +85,7 @@ public class SecurityConfig {
         //기본 로그아웃 비활성화
         http.logout(AbstractHttpConfigurer::disable);
 
-
         http.authorizeHttpRequests((authorize) -> authorize
-
 
                 // 기본 경로 및 테스트 경로
                 // 인증 및 인가가 필요한 부분을 "authenticated"로 표시해주세요

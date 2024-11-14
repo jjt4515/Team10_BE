@@ -1,6 +1,6 @@
 package poomasi.domain.order.dto.response;
 
-import poomasi.domain.order.entity._product.ProductOrderDetails;
+import poomasi.domain.order.entity.ProductOrderDetails;
 
 public record OrderDetailsResponse(
         String address,
