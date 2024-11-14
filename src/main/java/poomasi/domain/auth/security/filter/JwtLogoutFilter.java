@@ -12,12 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 
 import java.io.IOException;
@@ -29,7 +28,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final BlacklistJpaService blacklistServices;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
 
     @Value("${jwt.access-token-expiration-time}")
@@ -79,7 +78,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
         if(refreshToken!=null) {
             log.info("jwt logout filter - refresh token을 지웁니다");
-            refreshTokenService.removeMemberRefreshToken(memberId);
+            refreshTokenWhitelistService.removeMemberRefreshToken(memberId);
         }
 
         // 쿠키 삭제

@@ -16,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 import poomasi.domain.auth.security.filter.JwtLogoutFilter;
@@ -27,8 +26,8 @@ import poomasi.domain.auth.security.handler.OAuth2SuccessHandler;
 import poomasi.domain.auth.security.userdetail.OAuth2UserDetailServiceImpl;
 import poomasi.domain.auth.security.userdetail.UserDetailsServiceImpl;
 import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 
 
 @AllArgsConstructor
@@ -45,7 +44,7 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
     private final BlacklistJpaService blacklistService;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
@@ -132,7 +131,7 @@ public class SecurityConfig {
 
         //username password filter
         CustomUsernamePasswordAuthenticationFilter customUsernameFilter =
-                new CustomUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenService);
+                new CustomUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenWhitelistService);
         customUsernameFilter.setFilterProcessesUrl("/api/login");
         http.addFilterAt(customUsernameFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -141,7 +140,7 @@ public class SecurityConfig {
                 OAuth2LoginAuthenticationFilter.class);
 
         //logout filter
-        JwtLogoutFilter customLogoutFilter = new JwtLogoutFilter(jwtUtil, blacklistService, refreshTokenService);
+        JwtLogoutFilter customLogoutFilter = new JwtLogoutFilter(jwtUtil, blacklistService, refreshTokenWhitelistService);
         http.addFilterAfter(customLogoutFilter, JwtAuthenticationFilter.class);
 
         return http.build();
