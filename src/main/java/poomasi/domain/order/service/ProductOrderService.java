@@ -128,7 +128,7 @@ public class ProductOrderService {
                 );
     }
 
-    @Description("멤버 id 기반으로 특정 orderId 들고오는 메서드")
+    @Description("멤버 farmId 기반으로 특정 orderId 들고오는 메서드")
     public OrderResponse findOrderByMemberId(Long orderId) {
         Member member = getMember();
         ProductOrder productOrder = productOrderRepository.findById(orderId)

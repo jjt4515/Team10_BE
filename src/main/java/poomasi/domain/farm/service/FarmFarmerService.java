@@ -14,7 +14,6 @@ import poomasi.domain.member.entity.Member;
 import poomasi.global.error.BusinessException;
 
 import java.util.List;
-import java.util.Objects;
 
 import static poomasi.global.error.BusinessError.*;
 
@@ -23,6 +22,7 @@ import static poomasi.global.error.BusinessError.*;
 @Transactional(readOnly = true)
 public class FarmFarmerService {
     private final FarmRepository farmRepository;
+    private final FarmService farmService;
     private final FarmInfoService farmInfoService;
 
     private final int MAX_FARM_INFO_COUNT = 4;
@@ -45,8 +45,8 @@ public class FarmFarmerService {
 
 
     @Transactional
-    public Long registerFarmInfo(Member member, FarmInfoRegisterRequest request) {
-        Farm farm = getFarmByFarmerId(member.getId());
+    public void registerFarmInfo(Member member, FarmInfoRegisterRequest request) {
+        Farm farm = farmService.getFarmByFarmerId(member.getId());
 
         List<FarmInfo> farmInfos = farmInfoService.getFarmInfoByFarmId(farm.getId()).stream()
                 .filter(FarmInfo::isValid)
@@ -62,12 +62,12 @@ public class FarmFarmerService {
             throw new BusinessException(FARM_INFO_MAIN_REQUIRED);
         }
 
-        return farmInfoService.saveFarmInfo(request.toEntity(farm.getId()));
+        farmInfoService.saveFarmInfo(request.toEntity(farm.getId()));
     }
 
     @Transactional
     public Long updateFarm(Long farmerId, FarmUpdateRequest request) {
-        Farm farm = getFarmByFarmerId(farmerId);
+        Farm farm = farmService.getFarmByFarmerId(farmerId);
 
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
@@ -76,16 +76,9 @@ public class FarmFarmerService {
         return farmRepository.save(request.toEntity(farm)).getId();
     }
 
-    public Farm getFarmByFarmerId(Long farmerId) {
-        return farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(farmerId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
-    }
-
-    private Farm getFarmByFarmId(Long farmId) {
-        return farmRepository.findByIdAndDeletedAtIsNull(farmId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
-    }
 
     public void updateFarmExpPrice(Long farmerId, Long farmId, int expPrice) {
-        Farm farm = this.getFarmByFarmId(farmId);
+        Farm farm = farmService.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
@@ -93,7 +86,7 @@ public class FarmFarmerService {
     }
 
     public void updateFarmMaxCapacity(Long farmerId, Long farmId, Integer maxCapacity) {
-        Farm farm = this.getFarmByFarmId(farmId);
+        Farm farm = farmService.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
@@ -101,7 +94,7 @@ public class FarmFarmerService {
     }
 
     public void updateFarmMaxReservation(Long farmerId, Long farmId, Integer maxReservation) {
-        Farm farm = this.getFarmByFarmId(farmId);
+        Farm farm = farmService.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
@@ -109,16 +102,23 @@ public class FarmFarmerService {
     }
 
     public void deleteFarm(Long farmerId, Long farmId) {
-        Farm farm = this.getFarmByFarmId(farmId);
+        Farm farm = farmService.getFarmByFarmId(farmId);
         if (!farm.getOwnerId().equals(farmerId)) {
             throw new BusinessException(FARM_OWNER_MISMATCH);
         }
-        farmRepository.delete(farm);
+
+        farmService.delete(farm);
+        farmInfoService.deleteFarmInfo(farmId);
     }
 
     public Long updateFarmInfo(Member member, FarmInfoUpdateRequest request) {
-        Farm farm = getFarmByFarmerId(member.getId());
-        FarmInfo farmInfo = farmInfoService.getFarmInfo(request.id());
+        Farm farm = farmService.getFarmByFarmerId(member.getId());
+
+        if (!farm.getOwnerId().equals(member.getId())) {
+            throw new BusinessException(FARM_OWNER_MISMATCH);
+        }
+
+        FarmInfo farmInfo = farmInfoService.getFarmInfo(request.farmId());
         farmInfo.update(request);
         return farmInfoService.saveFarmInfo(farmInfo);
     }

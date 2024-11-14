@@ -24,7 +24,7 @@ import java.util.List;
 public class ProductOrder extends AbstractOrder {
 
     @Column(name = "merchant_uid")
-    @Description("서버 내부 주문 id(아임포트 id)")
+    @Description("서버 내부 주문 farmId(아임포트 farmId)")
     private String merchantUid = "p" + new Date().getTime();
 
     @Column(name = "ordered_products_id")
