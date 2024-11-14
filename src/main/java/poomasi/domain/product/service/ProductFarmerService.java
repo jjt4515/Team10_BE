@@ -9,6 +9,9 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.repository.CategoryRepository;
 import poomasi.domain.product._category.service.CategoryService;
+import poomasi.domain.product._intro.entity.ProductIntro;
+import poomasi.domain.product._intro.repository.ProductIntroRepository;
+import poomasi.domain.product.dto.ProductRegisterResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
@@ -29,9 +32,10 @@ public class ProductFarmerService {
     private final CategoryService categoryService;
     private final StoreService storeService;
     private final ImageRepository imageRepository;
+    private final ProductIntroRepository productIntroRepository;
 
     @Transactional
-    public Long registerProduct(Member member, ProductRegisterRequest request) {
+    public ProductRegisterResponse registerProduct(Member member, ProductRegisterRequest request) {
         Category category = getCategory(request.categoryId());
         Store store = member.getStore();
 
@@ -40,7 +44,7 @@ public class ProductFarmerService {
         category.addProduct(saveProduct);
         store.addProduct(saveProduct);
         saveProduct.getProductIntro().setProduct(saveProduct);
-        return saveProduct.getId();
+        return new ProductRegisterResponse(saveProduct.getId(), saveProduct.getProductIntro().getId());
     }
 
     private Image getImage(Long imageId) {
