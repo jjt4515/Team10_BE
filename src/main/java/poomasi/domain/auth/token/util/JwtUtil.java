@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import poomasi.domain.auth.token.blacklist.service.TokenBlacklistService;
-import poomasi.domain.auth.token.refreshtoken.service.TokenStorageService;
+import poomasi.domain.auth.token.whitelist.service.TokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
 
@@ -38,7 +38,7 @@ public class JwtUtil {
     private long REFRESH_TOKEN_EXPIRATION_TIME;
 
     private final TokenBlacklistService tokenBlacklistService;
-    private final TokenStorageService tokenStorageService;
+    private final TokenWhitelistService tokenWhitelistService;
     private final MemberService memberService;
 
     @PostConstruct
@@ -112,7 +112,7 @@ public class JwtUtil {
         if (!validateToken(refreshToken)) {
             return false;
         }
-        String storedMemberId = tokenStorageService.getValues(refreshToken, memberId.toString())
+        String storedMemberId = tokenWhitelistService.getValues(refreshToken, memberId.toString())
                 .orElse(null);
 
         if (storedMemberId == null || !storedMemberId.equals(memberId.toString())) {
