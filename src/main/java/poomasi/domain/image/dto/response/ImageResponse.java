@@ -1,4 +1,4 @@
-package poomasi.domain.image.dto;
+package poomasi.domain.image.dto.response;
 
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;

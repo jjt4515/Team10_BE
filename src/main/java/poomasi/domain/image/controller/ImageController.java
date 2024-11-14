@@ -7,20 +7,17 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.image.dto.ImageRequest;
-import poomasi.domain.image.dto.ImageResponse;
-import poomasi.domain.image.entity.Image;
+import poomasi.domain.image.dto.request.ImageRequest;
+import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.image.service.ImageService;
 import poomasi.domain.member.entity.Member;
 
 import java.util.List;
 
-import static poomasi.domain.image.dto.ImageResponse.fromEntity;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/images")
+@RequestMapping("/api/image")
 public class ImageController {
     private final ImageService imageService;
 
@@ -30,8 +27,7 @@ public class ImageController {
     public ResponseEntity<?> saveImageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @Valid @RequestBody ImageRequest imageRequest) {
         Member member = userDetails.getMember();
-        Image savedImage = imageService.saveImage(member.getId(), imageRequest);
-        ImageResponse imageResponse = fromEntity(savedImage);
+        ImageResponse imageResponse = imageService.saveImage(member.getId(), imageRequest);
         return ResponseEntity.ok(imageResponse);
     }
 
@@ -41,12 +37,7 @@ public class ImageController {
     public ResponseEntity<List<ImageResponse>> saveMultipleImages(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                           @Valid @RequestBody List<ImageRequest> imageRequests) {
         Member member = userDetails.getMember();
-        List<Image> savedImages = imageService.saveMultipleImages(member.getId(), imageRequests);
-
-        List<ImageResponse> imageResponses = savedImages.stream()
-                .map(ImageResponse::fromEntity)
-                .toList();
-
+        List<ImageResponse> imageResponses = imageService.saveMultipleImages(member.getId(), imageRequests);
         return ResponseEntity.ok(imageResponses);
     }
 
@@ -63,20 +54,15 @@ public class ImageController {
     // 특정 이미지 조회
     @GetMapping("/{id}")
     public ResponseEntity<ImageResponse> getImage(@PathVariable Long id) {
-        return ResponseEntity.ok(fromEntity(imageService.getImageById(id)));
+        return ResponseEntity.ok(imageService.getImageById(id));
     }
 
     // 모든 이미지 조회 (특정 referenceId에 따라)
     @GetMapping("/reference/{type}/{referenceId}")
     public ResponseEntity<List<ImageResponse>> getImagesByTypeAndReference(@PathVariable ImageType type,
                                                                    @PathVariable Long referenceId) {
-        List<Image> images = imageService.getImagesByTypeAndReferenceId(type, referenceId);
-
-        List<ImageResponse> imageResponses = images.stream()
-                .map(ImageResponse::fromEntity)
-                .toList();
-
-        return ResponseEntity.ok(imageResponses);
+        List<ImageResponse> images = imageService.getImagesByTypeAndReferenceId(type, referenceId);
+        return ResponseEntity.ok(images);
     }
 
     // 이미지 정보 수정
@@ -86,9 +72,8 @@ public class ImageController {
                                              @PathVariable Long id,
                                              @Valid @RequestBody ImageRequest imageRequest) {
         Member member = userDetails.getMember();
-        Image updatedImage = imageService.updateImage(member.getId(), id, imageRequest);
-        ImageResponse imageResponse = fromEntity(updatedImage);
-        return ResponseEntity.ok(imageResponse);
+        ImageResponse updatedImage = imageService.updateImage(member.getId(), id, imageRequest);
+        return ResponseEntity.ok(updatedImage);
     }
 
     @PutMapping("/recover/{id}")
