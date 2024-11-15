@@ -126,7 +126,7 @@ public class OrderService {
             String productName = product.getName();
             BigDecimal price = product.getPrice(); //1개당 가격
 
-            OrderedProduct orderedProduct = new OrderedProduct()
+            OrderedProduct orderedProduct = OrderedProduct
                     .builder()
                     .product(product)
                     .order(order)
@@ -135,7 +135,6 @@ public class OrderService {
                     .price(price)
                     .count(quantityInOrderRequest)
                     .deliveryFee(product.getShippingFee())
-                    .imageUrl(product.getImageUrl())
                     .growEnv(product.getGrowEnv())
                     .build();
 

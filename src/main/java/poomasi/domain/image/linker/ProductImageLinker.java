@@ -23,7 +23,7 @@ public class ProductImageLinker implements ImageLinker {
     @Override
     public void link(Long referenceId, Image savedImage) {
         Product product = productService.findProductById(referenceId);
-        product.setImageUrl(savedImage.getImageUrl());
+        product.getImages().add(savedImage);
         productService.saveExistedProduct(product);
     }
 }

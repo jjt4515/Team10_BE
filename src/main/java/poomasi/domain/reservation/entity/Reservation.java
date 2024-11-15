@@ -79,19 +79,19 @@ public class Reservation {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Setter
-    Review review;
+    private Review review;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Payment payment;
 
     @OneToOne
     @Setter
     @Getter
     private FarmAfterSales farmAfterSales;
 
-    @OneToOne
-    private Payment payment;
-
     @Builder
     public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
-            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
+            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid, Payment payment) {
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -102,6 +102,7 @@ public class Reservation {
         this.price = price;
         this.review = null;
         this.merchantUid = merchantUid;
+        this.payment = payment;
     }
 
     public ReservationResponse toResponse() {

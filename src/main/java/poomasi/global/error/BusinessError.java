@@ -2,6 +2,7 @@ package poomasi.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -31,6 +32,7 @@ public enum BusinessError {
     MEMBER_ID_MISMATCH(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
     INVALID_ROLE(HttpStatus.FORBIDDEN, "권한이 없는 요청입니다."),
     MEMBER_BIZ_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "사업자 프로필이 존재하지 않습니다."),
+    MEMBER_NOT_DELETED(HttpStatus.NOT_FOUND, "회원이 탈퇴한 이력이 없습니다."),
 
     // MemberProfile
     MEMBER_PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 세부 정보가 존재하지 않습니다."),
@@ -74,8 +76,7 @@ public enum BusinessError {
     RESERVATION_MEMBER_EXCEED(HttpStatus.BAD_REQUEST, "최대 수용 가능 인원을 초과했습니다."),
 
     //Cart
-    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다.")
-    ,
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
     //ProductTag
     INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
@@ -99,6 +100,8 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_FOUND(HttpStatus.NOT_FOUND, "주문을 찾을 수 없습니다."),
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
     ORDERED_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 주문입니다."),
+    COUNT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "주문 가능 최대 개수 보다 많이 요청했습니다."),
+    PORTONE_NOT_WORKING(HttpStatus.BAD_GATEWAY, "포트원 서버가 동작하지 않습니다."),
     CART_PRODUCT_MISMATCHING(HttpStatus.BAD_REQUEST, "장바구니에 담겨 있지 않는 상품을 주문하려 합니다"),
 
     //Store
@@ -120,8 +123,12 @@ public enum BusinessError {
 
 
     //Product intro
-    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다.");
+    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다."),
 
+    //SQS
+    SQS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"SQS생성에 실패했습니다"),
+    SQS_EVENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SQS EVENT 실행에 실패했습니다.")
+    ;
     private final HttpStatus httpStatus;
 
     private final String message;

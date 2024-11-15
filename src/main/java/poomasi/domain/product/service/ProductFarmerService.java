@@ -8,6 +8,11 @@ import poomasi.domain.image.repository.ImageRepository;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.service.CategoryService;
+import poomasi.domain.product._intro.entity.ProductIntro;
+import poomasi.domain.product._intro.repository.ProductIntroRepository;
+import poomasi.domain.product.dto.ProductRegisterResponse;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.entity.Product;
@@ -25,23 +30,19 @@ public class ProductFarmerService {
     private final CategoryService categoryService;
     private final StoreService storeService;
     private final ImageRepository imageRepository;
+    private final ProductIntroRepository productIntroRepository;
 
     @Transactional
-    public Long registerProduct(Member member, ProductRegisterRequest request) {
+    public ProductRegisterResponse registerProduct(Member member, ProductRegisterRequest request) {
         Category category = getCategory(request.categoryId());
         Store store = member.getStore();
-
-//        Image introMainImage = getImage(request.mainImageId());
-//        Image introSubImage1 = getImage(request.subImage1Id());
-//        Image introSubImage2 = getImage(request.subImage2Id());
-//        Image introSubImage3 = getImage(request.subImage3Id());
 
         Product saveProduct = productRepository.save(request.toEntity(member,store));
 
         category.addProduct(saveProduct);
         store.addProduct(saveProduct);
         saveProduct.getProductIntro().setProduct(saveProduct);
-        return saveProduct.getId();
+        return new ProductRegisterResponse(saveProduct.getId(), saveProduct.getProductIntro().getId());
     }
 
     private Image getImage(Long imageId) {

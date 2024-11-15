@@ -1,6 +1,9 @@
 package poomasi.domain.product._category.dto;
 
+import java.math.BigDecimal;
+import java.util.List;
 import lombok.Builder;
+import poomasi.domain.image.entity.Image;
 import poomasi.domain.product.entity.Product;
 
 import java.math.BigDecimal;
@@ -10,7 +13,7 @@ public record ProductListInCategoryResponse(
         Long categoryId,
         String name,
         String description,
-        String imageUrl,
+        List<Image> images,
         Integer quantity,
         BigDecimal price
 ) {
@@ -20,7 +23,7 @@ public record ProductListInCategoryResponse(
                 .categoryId(product.getCategoryId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .imageUrl(product.getImageUrl())
+                .images(product.getImages())
                 .quantity(product.getStock())
                 .price(product.getPrice())
                 .build();

@@ -45,7 +45,7 @@ dependencies {
     // JSON
     implementation 'org.json:json:20210307'
     implementation 'com.google.code.gson:gson:2.10.1'
-
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -65,6 +65,9 @@ dependencies {
     // AWS
     implementation(platform("software.amazon.awssdk:bom:2.27.21"))
     implementation("software.amazon.awssdk:s3")
+
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 
     // 아임포트 및 아임포트 웹훅
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'

@@ -12,7 +12,7 @@ import poomasi.domain.store.service.StoreService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/store")
+@RequestMapping("/api/stores")
 public class StoreController {
     private final StoreService storeService;
 

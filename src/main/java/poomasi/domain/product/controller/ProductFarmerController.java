@@ -10,12 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.dto.ProductRegisterRequest;
+import poomasi.domain.product.dto.ProductRegisterResponse;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.service.ProductFarmerService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 @Slf4j
 public class ProductFarmerController {
 
@@ -27,8 +28,8 @@ public class ProductFarmerController {
             (@AuthenticationPrincipal UserDetailsImpl userDetails,
                     @RequestBody ProductRegisterRequest product) {
         Member member = userDetails.getMember();
-        Long productId = productFarmerService.registerProduct(member, product);
-        return new ResponseEntity<>(productId, HttpStatus.CREATED);
+        ProductRegisterResponse response = productFarmerService.registerProduct(member, product);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Secured({"ROLE_FARMER", "ROLE_ADMIN"})

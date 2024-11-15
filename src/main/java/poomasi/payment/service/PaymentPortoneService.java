@@ -1,5 +1,11 @@
 package poomasi.payment.service;
 
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import java.io.IOException;
+import java.util.Objects;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +20,7 @@ import poomasi.domain.product.service.ProductService;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.service.ReservationService;
 import poomasi.global.error.ApplicationException;
+import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
@@ -35,6 +42,7 @@ public class PaymentPortoneService implements PaymentService {
     private final ProductService productService;
     private final OrderService orderService;
     private final ReservationService reservationService;
+    private final IamportClient iamportClient;
 
     @Override
     @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
@@ -129,7 +137,42 @@ public class PaymentPortoneService implements PaymentService {
         // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
     }
 
+    @Description("결제 내역 단건 조회")
+    public String getPayment(String impUid) {
+        IamportResponse<Payment> response = null;
+        try {
+            response = iamportClient.paymentByImpUid(impUid);
+        } catch (IamportResponseException | IOException e) {
+            throw new BusinessException(BusinessError.SQS_ERROR);
+        };
+        if(response.getCode() != 200)
+            throw new BusinessException(BusinessError.SQS_ERROR);
 
+        return response.getResponse().getStatus();
+    }
+
+    public void confirmProductPayment(Order productOrder, String status) {
+        if(status.equals("paid") &&
+                productOrder.getPayment().getPaymentStatus()== PAYMENT_PENDING){
+            productOrder.getPayment().setPaymentStatus(PAYMENT_COMPLETE);
+        }else if(status.equals("cancelled") || status.equals("failed")){
+            productOrder.getPayment().setPaymentStatus(PAYMENT_DECLINED);
+            List<OrderedProduct> products = productOrder.getOrderedProducts();
+
+            products.forEach(orderedProduct->
+                    orderedProduct.getProduct()
+                            .addStock(orderedProduct.getCount()));
+        }
+    }
+
+    public void confirmFarmPayment(Reservation reservation, String status) {
+        if(status.equals("paid") &&
+                reservation.getPayment().getPaymentStatus()== PAYMENT_PENDING){
+            reservation.getPayment().setPaymentStatus(PAYMENT_COMPLETE);
+        }else if(status.equals("cancelled") || status.equals("failed")){
+            reservation.getPayment().setPaymentStatus(PAYMENT_DECLINED);
+        }
+    }
 }
 
 

@@ -5,10 +5,12 @@ import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Setter;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.reservation.entity.Reservation;
 
 import java.math.BigDecimal;
+import poomasi.domain.reservation.entity.Reservation;
 
 @Entity
 @Getter
