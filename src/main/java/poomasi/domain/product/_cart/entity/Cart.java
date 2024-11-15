@@ -40,4 +40,10 @@ public class Cart {
         this.member = member;
         this.product = product;
     }
+
+    public boolean containsProduct(){
+        return product != null;
+    }
+
+
 }

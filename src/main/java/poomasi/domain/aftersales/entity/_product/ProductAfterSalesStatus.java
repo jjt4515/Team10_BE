@@ -4,8 +4,7 @@ public enum ProductAfterSalesStatus {
     EXCHANGE,
     CANCEL,
     REFUND,
-
-
+    
     //환불
     REFUND_REQUESTED,           // 환불 요청됨
     REFUND_APPROVED,            // 환불 승인됨
@@ -18,5 +17,4 @@ public enum ProductAfterSalesStatus {
 
 
     ;
-
-}
+    

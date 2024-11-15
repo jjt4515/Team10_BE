@@ -36,38 +36,15 @@ public class ProductAfterSalesDetail {
     @Timestamp
     private LocalDateTime deletedAt;
 
-    @ManyToOne
+    @OneToOne
     private OrderedProduct orderedProduct;
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "product_refund_detail_id", nullable = true) // 외래 키 설정
-    private ProductRefundDetail productRefundDetail;
-    
-    //TODO : payment에 있는 것을 변경해야 함
-    private String impUid;
-
-    @Description("환불/교환/취소 금액")
-    private BigDecimal adjustAmount;
-    
-    @Description("취소/교환/환불 수량")
-    private Integer adjustmentQuantity;
-
-    @Description("환불/교환/취소 요청 사유")
-    private String reason;
 
     @Enumerated(EnumType.STRING)
     private ProductAfterSalesStatus productAfterSalesStatus;
 
     @Builder
-    public ProductAfterSalesDetail(OrderedProduct orderedProduct,
-                                   BigDecimal adjustAmount,
-                                   String reason,
-                                   Integer adjustmentQuantity,
-                                   ProductAfterSalesStatus productAfterSalesStatus) {
+    public ProductAfterSalesDetail(OrderedProduct orderedProduct, ProductAfterSalesStatus productAfterSalesStatus) {
         this.orderedProduct = orderedProduct;
-        this.adjustAmount = adjustAmount;
-        this.reason = reason;
-        this.adjustmentQuantity = adjustmentQuantity;
         this.productAfterSalesStatus = productAfterSalesStatus;
     }
 
@@ -79,23 +56,7 @@ public class ProductAfterSalesDetail {
         this.productAfterSalesStatus = productAfterSalesStatus;
     }
 
-    public String getProductRefundDeniedReason(){
-        return this.productRefundDetail.getProductRefundDeniedReason();
-    }
 
-    public void setProductRefundDeniedReason(String productRefundDeniedReason){
-        this.productRefundDetail.setProductRefundDeniedReason(productRefundDeniedReason);
-    }
-
-    public void setProductRefundDetail(ProductRefundDetail productRefundDetail) {
-        this.productRefundDetail = productRefundDetail;
-        productRefundDetail.setProductAfterSalesDetail(this);
-    }
-
-    public void changeRefundApproveStatus(String invoiceNumber){
-        this.productAfterSalesStatus = ProductAfterSalesStatus.REFUND_APPROVED;
-        this.productRefundDetail.setInvoiceNumber(invoiceNumber);
-    }
 
 }
 

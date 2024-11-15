@@ -19,18 +19,20 @@ public class PaymentController {
 
     private final PaymentPortoneService paymentService;
 
-    @Description("결제 바로 직전 포트원에서 보내는 confirm 요청" + " 결제를 진행하려면 HTTP Status 200 응답, 그렇지 않으면 500 응답 보내기")
-    @PostMapping("/confirm")
-    public ResponseEntity<?> ddd(@RequestParam String merchantUid, @RequestParam String impUid) {
-        paymentService.confirmBeforePayment(merchantUid, impUid);
-        return ResponseEntity.ok().build();
-    }
-
     @Description("포트원 웹훅 수신 api")
     @PostMapping("/portone-webhook")
     public void handleIamportWebhook(@RequestBody PaymentWebHookRequest paymentWebHookRequest) throws IamportResponseException, IOException {
         paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
+
+
+    //TODO : 프론트엔드에게 promise로 받는 것
+    //여기서 SQS 처리한다.
+
+
+
+
+
 
 }
 

@@ -8,10 +8,8 @@ import java.math.BigDecimal;
 public record ProductRefundRequestResponse(
         Long orderedProductId,
         OrderedProductStatus orderedProductStatus,
-
         Long productAfterSalesDetailId,
-        Integer refundQuantity,
-        ProductAfterSalesStatus productAfterSalesTypem,
+        ProductAfterSalesStatus productAfterSalesType,
         BigDecimal finalRefundAmount
 ) {
 }

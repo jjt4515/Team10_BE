@@ -77,12 +77,18 @@ public class PaymentUtil {
 
     @Transactional
     @Description("imp uid로 결제 부분 환불 api 호출")
-    public void partialRefundByImpUid(String impUid, BigDecimal checkSum, BigDecimal amount, String reason) throws IOException, IamportResponseException {
+    public void partialRefundByImpUid(String impUid, BigDecimal checkSum, BigDecimal amount) {
         CancelData cancelData = new CancelData(impUid, true, amount);
         cancelData.setChecksum(checkSum);
-        cancelData.setReason(reason);
-        iamportClient.cancelPaymentByImpUid(cancelData);
+        try {
+            iamportClient.cancelPaymentByImpUid(cancelData);
+        } catch (IOException e) {
+            log.error("iamport response exception : " + e.getMessage(), e);
+        } catch (IamportResponseException e) {
+            log.error("iamport exception : " + e.getMessage(), e);
+        }
     }
+
 
     @Transactional
     @Description("merchant Uid로 결제 부분 환불 api 호출")

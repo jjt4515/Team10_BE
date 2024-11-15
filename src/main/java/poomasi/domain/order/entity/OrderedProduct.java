@@ -1,6 +1,5 @@
 package poomasi.domain.order.entity;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.io.Serializable;
+
 import java.math.BigDecimal;
 import java.util.List;
 import jdk.jfr.Description;
@@ -26,30 +25,29 @@ import lombok.Setter;
 import poomasi.domain.aftersales.entity._product.ProductAfterSalesDetail;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.review.entity.Review;
+import poomasi.payment.entity.Payment;
+
+import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
 
 @Entity
 @Table(name = "ordered_products")
 @Getter
 @NoArgsConstructor
-public class OrderedProduct implements Serializable {
+public class OrderedProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ordered_product_id")
     private Long id;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "product_after_sales_detail_id")
-    private List<ProductAfterSalesDetail> productAfterSalesDetails;
+    private ProductAfterSalesDetail productAfterSalesDetail;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_order_id")
-    private ProductOrder productOrder;
-
-    //FIXME : store Id를 참조해야 한다.
-    //나중에 store Id로 변경해야 한다
-    //private Store store;
-    //private Long storeId;
+    private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
@@ -61,6 +59,12 @@ public class OrderedProduct implements Serializable {
     @Column(name = "product_name", length = 255)
     private String productName;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "grow_env")
+    private String growEnv;
+
     @Description("구매 당시 1개당 가격")
     private BigDecimal price;
 
@@ -68,12 +72,16 @@ public class OrderedProduct implements Serializable {
     @Column(name = "count")
     private Integer count;
 
+    @Description("택배 회사")
+    @Column(name = "delivery_service", nullable = true)
+    private String deliveryService;
+
     @Description("송장 번호")
     @Column(name = "invoice_number", nullable = true)
     private String invoiceNumber;
 
     @Enumerated(EnumType.STRING)
-    private OrderedProductStatus orderedProductStatus;
+    private OrderedProductStatus orderedProductStatus = PENDING_SELLER_APPROVAL;
 
     @Description("TODO : product의 delivery fee를 참조해야 한다.")
     private BigDecimal deliveryFee;
@@ -91,25 +99,20 @@ public class OrderedProduct implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Setter
-    Review review;
-
-    // 웹훅 받아서 조회해야 함.
-    // findByInvoiceNumber 후 
-    // web hook controller 만들어서
-    // 배송 상태 적절히 변경해야 함
+    private Review review;
 
     @Builder
-    public OrderedProduct(Product product, ProductOrder productOrder, OrderedProductStatus orderedProductStatus, String productDescription,
-            BigDecimal deliveryFee, String productName, BigDecimal price, Integer count) {
+    public OrderedProduct(Product product, Order order, String productDescription,
+                          String productName, BigDecimal price, Integer count, BigDecimal deliveryFee, String imageUrl, String growEnv) {
         this.product = product;
-        this.productOrder = productOrder;
+        this.order = order;
         this.productDescription = productDescription;
         this.productName = productName;
         this.price = price;
         this.count = count;
-        this.review = null;
-        this.orderedProductStatus = orderedProductStatus;
         this.deliveryFee = deliveryFee;
+        this.imageUrl = imageUrl;
+        this.growEnv = growEnv;
     }
 
     public void setInvoiceNumber(String invoiceNumber) {
@@ -121,12 +124,12 @@ public class OrderedProduct implements Serializable {
     }
 
     public void addProductAfterSalesDetail(ProductAfterSalesDetail productAfterSalesDetail) {
-        this.productAfterSalesDetails.add(productAfterSalesDetail);
+        this.productAfterSalesDetail = productAfterSalesDetail;
         productAfterSalesDetail.setOrderedProduct(this);
     }
 
     public Long getOrderId() {
-        return this.productOrder.getId();
+        return this.order.getId();
     }
 
     public void subtractRefundableCount(Integer refundableCount) {
@@ -145,16 +148,36 @@ public class OrderedProduct implements Serializable {
         return this.orderedProductStatus;
     }
 
+    public String getStoreName(){
+        return this.product.getStore().getName();
+    }
+
     public String getStoreAddress() {
-        //return this.store.getStoreAddress()
-        return "TODO : store의 address를 참조해야 함";
+        return this.product.getStore().getAddress();
     }
 
     public String getStoreAddressDetail() {
-        //return this.store.getStoreAddressDetail()
-        return "TODO: store의 address detail을 참조해야 함";
+        return "배송상세주소";
+        //return this.product.getStore().getAddressDetail();
     }
 
+    public Long getProductId(){
+        return this.product.getId();
+    }
+
+    public Payment getPayment(){
+        return this.order.getPayment();
+    }
+
+    public BigDecimal calculateCancelAmount(){
+        BigDecimal count = new BigDecimal(this.count);
+        return this.price.multiply(count).add(deliveryFee);
+    }
+
+    public BigDecimal calculateRefundAmount(){
+        BigDecimal count = new BigDecimal(this.count);
+        return this.price.multiply(count);
+    }
 
 }
 

@@ -23,7 +23,7 @@ spring:
       host: ${REDIS_HOST}
 
   security:
-    redirect_url: http://localhost:3000
+    redirect_url : https://localhost:3000/callback/kakao
     oauth2:
       client:
         registration:
