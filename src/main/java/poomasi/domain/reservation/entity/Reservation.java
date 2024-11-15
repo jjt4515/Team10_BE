@@ -17,6 +17,7 @@ import poomasi.domain.reservation.dto.response.ReservationResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import poomasi.domain.review.entity.Review;
 
 @Entity
@@ -85,7 +86,7 @@ public class Reservation {
 
     @Builder
     public Reservation(Long id, Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
-            int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
+                       int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
         this.id = id;
         this.farm = farm;
         this.member = member;
@@ -101,6 +102,7 @@ public class Reservation {
 
     public ReservationResponse toResponse() {
         return ReservationResponse.builder()
+                .id(id)
                 .farmId(farm.getId())
                 .memberId(member.getId())
                 .scheduleId(scheduleId.getId())
