@@ -6,6 +6,7 @@ import poomasi.domain.farm.entity.FarmInfo;
 import poomasi.domain.farm.repository.FarmInfoRepository;
 import poomasi.global.error.BusinessException;
 
+import java.util.Collection;
 import java.util.List;
 
 import static poomasi.global.error.BusinessError.FARM_INFO_MAIN_REQUIRED_NO_CONTENT;
@@ -41,5 +42,9 @@ public class FarmInfoService {
 
     public void deleteFarmInfo(Long farmId) {
         farmInfoRepository.deleteAllByFarmId(farmId);
+    }
+
+    public List<FarmInfo> getFarmSchedulesByFarmId(Long farmId) {
+        return farmInfoRepository.findAllByFarmId(farmId);
     }
 }

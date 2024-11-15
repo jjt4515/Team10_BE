@@ -32,7 +32,7 @@ public class FarmSchedule {
     private LocalTime endTime;
 
     @Builder
-    public FarmSchedule(Long farmId, LocalDate date, LocalTime startTime, LocalTime endTime, ScheduleStatus status) {
+    public FarmSchedule(Long farmId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.farmId = farmId;
         this.date = date;
         this.startTime = startTime;

@@ -43,7 +43,7 @@ public class BlacklistJpaService implements TokenBlacklistService{
 
     @Override
     public boolean hasKeyBlackList(String key) {
-        return blacklistRepository.existsByTokenKeyAndExpireAtBefore(key, LocalDateTime.now());
+        return blacklistRepository.existsByTokenKeyAndExpireAtAfter(key, LocalDateTime.now());
     }
 
     @Transactional

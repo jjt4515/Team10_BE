@@ -8,15 +8,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Value("${spring.security.redirect_url}")
     private String redirectUrl;
@@ -50,7 +49,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
 
         //refresh token db에 저장
-        refreshTokenService.putRefreshToken(refreshToken, memberId);
+        refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
         response.sendRedirect(redirectUrl+"/access=" + accessToken);
     }
 

@@ -1,4 +1,4 @@
-package poomasi.domain.image.dto;
+package poomasi.domain.image.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

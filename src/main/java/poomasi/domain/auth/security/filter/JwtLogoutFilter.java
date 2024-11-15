@@ -12,28 +12,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 
 import java.io.IOException;
-import java.time.Duration;
 
 @RequiredArgsConstructor
 @Slf4j
 public class JwtLogoutFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final BlacklistJpaService blacklistServices;
-    private final RefreshTokenService refreshTokenService;
-
-
-    @Value("${jwt.access-token-expiration-time}")
-    private long ACCESS_TOKEN_EXPIRE_TIME;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -66,11 +60,11 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
         Member member = ((UserDetailsImpl) impl).getMember();
         Long memberId = member.getId();
 
-        if(blacklistServices.hasKeyBlackList(accessToken)){
+        if(accessTokenBlacklistService.hasAccessToken(accessToken)){
             log.info("jwt logout filter - access token이 블랙리스트에 있어요.");
         }else{
             log.info("jwt logout filter - access token이 블랙리스트에 없어요. 저장할게요");
-            blacklistServices.setBlackList(accessToken, memberId.toString(), Duration.ofSeconds(ACCESS_TOKEN_EXPIRE_TIME));
+            accessTokenBlacklistService.putAccessToken(accessToken, memberId);
         }
 
         //db refresh token 제거
@@ -79,7 +73,7 @@ public class JwtLogoutFilter extends OncePerRequestFilter {
 
         if(refreshToken!=null) {
             log.info("jwt logout filter - refresh token을 지웁니다");
-            refreshTokenService.removeMemberRefreshToken(memberId);
+            refreshTokenWhitelistService.removeMemberRefreshToken(memberId);
         }
 
         // 쿠키 삭제

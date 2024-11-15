@@ -3,7 +3,7 @@ package poomasi.domain.auth.token.reissue.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.auth.token.reissue.dto.ReissueRequest;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.auth.token.reissue.dto.ReissueResponse;
 import poomasi.global.error.BusinessException;
 import poomasi.domain.auth.token.util.JwtUtil;
@@ -15,7 +15,7 @@ import static poomasi.global.error.BusinessError.*;
 public class ReissueTokenService {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     // 토큰 재발급
     public ReissueResponse reissueToken(ReissueRequest reissueRequest) {
@@ -30,10 +30,10 @@ public class ReissueTokenService {
 
     public ReissueResponse getTokenResponse(Long memberId) {
         String newAccessToken = jwtUtil.generateAccessTokenById(memberId);
-        refreshTokenService.removeMemberRefreshToken(memberId);
+        refreshTokenWhitelistService.removeMemberRefreshToken(memberId);
 
         String newRefreshToken = jwtUtil.generateRefreshTokenById(memberId);
-        refreshTokenService.putRefreshToken(newRefreshToken, memberId);
+        refreshTokenWhitelistService.putRefreshToken(newRefreshToken, memberId);
 
         return new ReissueResponse(newAccessToken, newRefreshToken);
     }

@@ -1,13 +1,15 @@
 package poomasi.domain.wishlist.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
+import poomasi.domain.image.entity.Image;
 import poomasi.domain.wishlist.entity.WishList;
 
 public record WishListResponse(
         Long productId,
         String productName,
         BigDecimal price,
-        String imageUrl,
+        List<Image> images,
         String description
 ) {
     public static WishListResponse fromEntity(WishList wishList) {
@@ -15,7 +17,7 @@ public record WishListResponse(
                 wishList.getProduct().getId(),
                 wishList.getProduct().getName(),
                 wishList.getProduct().getPrice(),
-                wishList.getProduct().getImageUrl(),
+                wishList.getProduct().getImages(),
                 wishList.getProduct().getDescription()
         );
     }

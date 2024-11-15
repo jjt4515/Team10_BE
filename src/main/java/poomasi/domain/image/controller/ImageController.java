@@ -7,8 +7,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.image.dto.ImageRequest;
-import poomasi.domain.image.entity.Image;
+import poomasi.domain.image.dto.request.ImageRequest;
+import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.image.service.ImageService;
 import poomasi.domain.member.entity.Member;
@@ -27,18 +27,18 @@ public class ImageController {
     public ResponseEntity<?> saveImageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                            @Valid @RequestBody ImageRequest imageRequest) {
         Member member = userDetails.getMember();
-        Image savedImage = imageService.saveImage(member.getId(), imageRequest);
-        return ResponseEntity.ok(savedImage);
+        ImageResponse imageResponse = imageService.saveImage(member.getId(), imageRequest);
+        return ResponseEntity.ok(imageResponse);
     }
 
     // 여러 이미지 정보 저장
     @PostMapping("/multiple")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
-    public ResponseEntity<List<Image>> saveMultipleImages(@AuthenticationPrincipal UserDetailsImpl userDetails,
+    public ResponseEntity<List<ImageResponse>> saveMultipleImages(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                           @Valid @RequestBody List<ImageRequest> imageRequests) {
         Member member = userDetails.getMember();
-        List<Image> savedImages = imageService.saveMultipleImages(member.getId(), imageRequests);
-        return ResponseEntity.ok(savedImages);
+        List<ImageResponse> imageResponses = imageService.saveMultipleImages(member.getId(), imageRequests);
+        return ResponseEntity.ok(imageResponses);
     }
 
     // 특정 이미지 삭제
@@ -53,15 +53,15 @@ public class ImageController {
 
     // 특정 이미지 조회
     @GetMapping("/{id}")
-    public ResponseEntity<Image> getImage(@PathVariable Long id) {
+    public ResponseEntity<ImageResponse> getImage(@PathVariable Long id) {
         return ResponseEntity.ok(imageService.getImageById(id));
     }
 
     // 모든 이미지 조회 (특정 referenceId에 따라)
     @GetMapping("/reference/{type}/{referenceId}")
-    public ResponseEntity<List<Image>> getImagesByTypeAndReference(@PathVariable ImageType type,
+    public ResponseEntity<List<ImageResponse>> getImagesByTypeAndReference(@PathVariable ImageType type,
                                                                    @PathVariable Long referenceId) {
-        List<Image> images = imageService.getImagesByTypeAndReferenceId(type, referenceId);
+        List<ImageResponse> images = imageService.getImagesByTypeAndReferenceId(type, referenceId);
         return ResponseEntity.ok(images);
     }
 
@@ -72,7 +72,7 @@ public class ImageController {
                                              @PathVariable Long id,
                                              @Valid @RequestBody ImageRequest imageRequest) {
         Member member = userDetails.getMember();
-        Image updatedImage = imageService.updateImage(member.getId(), id, imageRequest);
+        ImageResponse updatedImage = imageService.updateImage(member.getId(), id, imageRequest);
         return ResponseEntity.ok(updatedImage);
     }
 

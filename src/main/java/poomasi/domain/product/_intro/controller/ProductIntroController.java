@@ -18,7 +18,7 @@ import poomasi.domain.product._intro.service.ProductIntroService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/product/{productId}/intro")
+@RequestMapping("/api/products/{productId}/intro")
 public class ProductIntroController {
 
     private final ProductIntroService productIntroService;
