@@ -9,6 +9,8 @@ import poomasi.global.config.aws.AwsProperties;
 import poomasi.global.config.s3.dto.request.PresignedUrlPutRequest;
 import poomasi.global.config.s3.dto.response.PresignedPutUrlResponse;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/s3")
@@ -25,11 +27,13 @@ public class S3PresignedUrlController {
 
     @GetMapping("/presigned-url-put")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
-    public ResponseEntity<?> presignedUrlPut(@Valid @RequestBody PresignedUrlPutRequest request) {
+    public ResponseEntity<?> presignedUrlPut(@RequestParam String keyPrefix,
+                                             @RequestParam Map<String, String> metadata) {
         PresignedPutUrlResponse presignedPutUrl = s3PresignedUrlService.createPresignedPutUrl(
                 awsProperties.getS3().getBucket(),
                 awsProperties.getS3().getRegion(),
-                request.keyPrefix(), request.metadata());
+                keyPrefix,
+                metadata);
         return ResponseEntity.ok(presignedPutUrl);
     }
 }
