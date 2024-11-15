@@ -17,7 +17,7 @@ import poomasi.domain.member.entity.Member;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/farm")
+@RequestMapping("/api/farmer/farms")
 public class FarmFarmerController {
     private final FarmFarmerService farmFarmerService;
 
