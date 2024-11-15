@@ -1,6 +1,7 @@
 package poomasi.domain.product.dto;
 
 import poomasi.domain.member.entity.Member;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.entity.Product;
 
 public record ProductRegisterRequest(
@@ -12,7 +13,7 @@ public record ProductRegisterRequest(
         Long price
 ) {
 
-    public Product toEntity(Member member) {
+    public Product toEntity(Member member, Store store) {
         return Product.builder()
                 .categoryId(categoryId)
                 .farmerId(member.getId())
@@ -22,6 +23,7 @@ public record ProductRegisterRequest(
                 .imageUrl(imageUrl)
                 .stock(stock)
                 .price(price)
+                .store(store)
                 .build();
     }
 }

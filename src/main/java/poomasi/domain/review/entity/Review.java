@@ -51,8 +51,9 @@ public class Review {
     private Member reviewer;
 
     @Builder
-    public Review(Float rating, String content, Long entityId, EntityType entityType,
+    public Review(Long id, Float rating, String content, Long entityId, EntityType entityType,
             Member reviewer) {
+        this.id = id;
         this.rating = rating;
         this.content = content;
         this.entityId = entityId;
@@ -65,7 +66,4 @@ public class Review {
         this.content = reviewRequest.content();
     }
 
-    public void setEntityType(EntityType entityType) {
-        this.entityType = entityType;
-    }
 }

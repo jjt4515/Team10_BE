@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'com.apollographql.apollo3' version '4.0.0-beta.7'
+
 }
 
 group = 'camp.nextstep.edu'
@@ -67,6 +69,9 @@ dependencies {
     // 아임포트 및 아임포트 웹훅
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+
 }
 
 
@@ -74,3 +79,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+
+tasks.getByName('jar') {
+    enabled = false
+}

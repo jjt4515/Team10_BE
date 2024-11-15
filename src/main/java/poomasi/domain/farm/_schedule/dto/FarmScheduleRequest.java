@@ -5,5 +5,6 @@ public record FarmScheduleRequest(
         Integer year,
         Integer month
 ) {
+
 }
 

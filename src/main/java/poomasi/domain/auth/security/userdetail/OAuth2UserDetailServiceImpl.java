@@ -11,7 +11,7 @@ import poomasi.domain.auth.security.oauth2.dto.response.OAuth2KakaoResponse;
 import poomasi.domain.auth.security.oauth2.dto.response.OAuth2Response;
 import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.entity.MemberProfile;
+import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.entity.Role;
 import poomasi.domain.member.repository.MemberRepository;
 
@@ -52,7 +52,7 @@ public class OAuth2UserDetailServiceImpl extends DefaultOAuth2UserService {
 
 
         //일단 없으면 가입시키는 쪽으로 구현ㄴ
-        Member member = memberRepository.findByEmail(email).orElse(null);
+        Member member = memberRepository.findByEmailAndDeletedAtIsNull(email).orElse(null);
         if(member == null) {
             member = Member.builder()
                     .email(email)
