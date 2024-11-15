@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import poomasi.domain.farm.entity.Farm;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Builder
 public record FarmRegisterRequest(
         @NotNull
@@ -33,6 +36,18 @@ public record FarmRegisterRequest(
         String imageUrl,
         @NotNull
         int price,
+
+        @NotNull
+        LocalDate startDate,
+
+        @NotNull
+        LocalDate endDate,
+
+        @NotNull
+        LocalTime startTime,
+
+        @NotNull
+        LocalTime endTime,
 
         @NotNull
         String businessNumber,
