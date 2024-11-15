@@ -100,9 +100,31 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "api/logout").authenticated()
 
                 //진택 api
-                .requestMatchers(HttpMethod.POST, "/api/member/update/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/member/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/reiusse").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/reissue").authenticated()
+                
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/summary").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/self").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer/address").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/members/delete").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/restore/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/suspend/**").authenticated()
+
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-get").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-put").authenticated()
+
+                .requestMatchers(HttpMethod.POST, "/api/images").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/images/multiple").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/images/delete/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/update/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/recover/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
 
                 //지민 api
                 .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
