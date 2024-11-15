@@ -14,6 +14,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.image.entity.Image;
+import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.order.entity._product.OrderedProduct;
 import poomasi.domain.store.entity.Store;
@@ -32,6 +33,7 @@ public class Product {
     private Long id;
 
     @Comment("카테고리 ID")
+    @Setter
     private Long categoryId;
 
     @Comment("등록한 사람")
@@ -169,4 +171,7 @@ public class Product {
     }
 
 
+    public void setCategory(Category category) {
+        this.categoryId = category.getId();
+    }
 }
