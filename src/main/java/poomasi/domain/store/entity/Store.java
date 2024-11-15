@@ -60,7 +60,6 @@ public class Store {
         this.name = storeRegisterRequest.name();
         this.address = storeRegisterRequest.address();
         this.phone = storeRegisterRequest.phone();
-        this.businessNumber = storeRegisterRequest.businessNumber();
     }
 
     public void addProduct(Product saveProduct) {

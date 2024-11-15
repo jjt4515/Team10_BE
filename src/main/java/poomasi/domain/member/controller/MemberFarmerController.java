@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.member.dto.request.ConvertToFarmerRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.dto.response.FarmerResponse;
 import poomasi.domain.member.entity.Member;
@@ -23,9 +24,10 @@ public class MemberFarmerController {
 
     @PutMapping("/to-farmer")
     @Secured("ROLE_CUSTOMER")
-    public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> convertToFarmer(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                @RequestBody ConvertToFarmerRequest convertToFarmerRequest) {
         Member member = userDetails.getMember();
-        memberFarmerService.convertToFarmer(member);
+        memberFarmerService.convertToFarmer(member, convertToFarmerRequest);
         return ResponseEntity.noContent().build();
     }
 

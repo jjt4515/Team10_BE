@@ -3,10 +3,13 @@ package poomasi.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.member.dto.request.ConvertToFarmerRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
+import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.service.StoreService;
 import poomasi.global.error.BusinessException;
 
 import static poomasi.domain.member.entity.Role.ROLE_FARMER;
@@ -20,12 +23,17 @@ import static poomasi.global.error.BusinessError.MEMBER_ALREADY_FARMER;
 public class MemberFarmerService {
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final StoreService storeService;
 
     @Transactional
-    public void convertToFarmer(Member member) {
+    public void convertToFarmer(Member member, ConvertToFarmerRequest convertToFarmerRequest) {
         if (member.isFarmer()) {
             throw new BusinessException(MEMBER_ALREADY_FARMER);
         }
+
+        StoreRegisterRequest storeRegisterRequest = convertToFarmerRequest.toStoreRegisterRequest();
+
+        storeService.addStore(storeRegisterRequest,member);
 
         member.setAddress(null, null, null, null);
         member.setRole(ROLE_FARMER);

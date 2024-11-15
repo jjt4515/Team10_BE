@@ -7,11 +7,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import poomasi.domain.member.dto.request.ConvertToFarmerRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.entity.Role;
 import poomasi.domain.member.repository.MemberRepository;
 import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.service.StoreService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -29,6 +31,9 @@ class MemberFarmerServiceTest {
 
     @Mock
     private MemberService memberService;
+
+    @Mock
+    private StoreService storeService;
 
     @InjectMocks
     private MemberFarmerService memberFarmerService;
@@ -59,10 +64,11 @@ class MemberFarmerServiceTest {
     @DisplayName("회원 -> 농부로 변환 성공 테스트")
     void convertToFarmer_success() {
         // given
+        ConvertToFarmerRequest convertToFarmerRequest = new ConvertToFarmerRequest("name", "address", "phone");
         given(memberRepository.save(customerMember)).willReturn(customerMember);
 
         // when
-        memberFarmerService.convertToFarmer(customerMember);
+        memberFarmerService.convertToFarmer(customerMember, convertToFarmerRequest);
 
         // then
         assertEquals(Role.ROLE_FARMER, customerMember.getRole());
@@ -72,8 +78,9 @@ class MemberFarmerServiceTest {
     @Test
     @DisplayName("이미 농부인 회원 변환 시도 시 예외 발생 테스트")
     void convertToFarmer_alreadyFarmer() {
+        ConvertToFarmerRequest convertToFarmerRequest = new ConvertToFarmerRequest("name", "address", "phone");
         // when & then
-        assertThatThrownBy(() -> memberFarmerService.convertToFarmer(farmerMember))
+        assertThatThrownBy(() -> memberFarmerService.convertToFarmer(farmerMember, convertToFarmerRequest))
                 .isInstanceOf(BusinessException.class)
                 .hasFieldOrPropertyWithValue("businessError", BusinessError.MEMBER_ALREADY_FARMER);
     }
