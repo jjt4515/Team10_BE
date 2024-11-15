@@ -13,4 +13,3 @@ imp:
   api:
     key: ${IMP_API_KEY}
     secretKey: ${IMP_SECRET_KEY}
-
