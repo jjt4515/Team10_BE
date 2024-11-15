@@ -8,4 +8,5 @@ import poomasi.payment.entity.Payment;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 //    public Long countByImpuidContainsIgnoreCase(String impuid);
     //List<Payment> findByOrderId(Long orderId);
+    Payment findByImpUid(String impUid);
 }

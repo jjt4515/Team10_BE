@@ -1,8 +1,9 @@
 package poomasi.domain.review.dto;
 
-import java.util.List;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.review.entity.Review;
+
+import java.util.List;
 
 public record ReviewResponse
         (Long id,

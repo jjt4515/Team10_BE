@@ -2,14 +2,19 @@ package poomasi.payment.entity;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
+import lombok.Builder;
 import lombok.Getter;
-import poomasi.domain.order.entity.PaymentStatus;
-import poomasi.domain.order.entity._product.ProductOrder;
+import lombok.Setter;
+import lombok.Setter;
+import poomasi.domain.order.entity.Order;
+import poomasi.domain.reservation.entity.Reservation;
 
 import java.math.BigDecimal;
+import poomasi.domain.reservation.entity.Reservation;
 
 @Entity
 @Getter
+
 public class Payment {
 
     @Id
@@ -20,33 +25,45 @@ public class Payment {
     @Description("아임포트 결제 imp_uid")
     private String impUid;
 
+    @Setter
     @OneToOne(mappedBy = "payment")
-    private ProductOrder productOrder;
+    private Order order;
+
+    @Setter
+    @OneToOne(mappedBy = "payment")
+    private Reservation reservation;
 
     @Description("포트원 결제 금액")
-    private BigDecimal totalPrice;
+    private BigDecimal totalAmount;
 
-    @Description("할인 가격")
-    private BigDecimal discountPrice;
-
-    @Description("사용 포인트")
-    private BigDecimal usedPoint;
-
-    @Description("배송비")
-    private BigDecimal deliveryFee;
-
-    @Description("최종 가격")
-    private BigDecimal finalPrice;
-        
     @Description("결제 방식")
     @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
+    private PaymentMethod paymentMethod = PaymentMethod.TOSS_PAYMENTS;
 
     @Description("checksum")
     private BigDecimal checkSum;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.PAYMENT_PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private ItemType itemType;
+
+    public Payment(){
+    }
+
+
+    @Builder
+    public Payment(String impUid, Order order,
+                   Reservation reservation, BigDecimal totalAmount, BigDecimal checkSum, ItemType itemType) {
+        this.impUid = impUid;
+        this.order = order;
+        this.reservation = reservation;
+        this.totalAmount = totalAmount;
+        this.checkSum = checkSum;
+        this.itemType = itemType;
+    }
+
 
     public void setCheckSum(BigDecimal checksum) {
         this.checkSum = checksum;
@@ -58,6 +75,15 @@ public class Payment {
 
     public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
+    }
+
+    @Description("체크섬보다 크면 true 후 체크섬 빼기, 아니면 false")
+    public boolean isCheckSumValid(BigDecimal amount){
+        if(checkSum.compareTo(amount) >= 0){
+            checkSum = checkSum.subtract(amount);
+            return true;
+        }
+        return false;
     }
 
 

@@ -11,9 +11,6 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.request.ReservationRequest;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
 import poomasi.domain.reservation.service.ReservationPlatformService;
-import poomasi.payment.util.PaymentUtil;
-
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/reservation")

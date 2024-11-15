@@ -1,12 +1,14 @@
 package poomasi.domain.farm.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Comment;
+import org.hibernate.annotations.CurrentTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLSelect;
 import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 
 import java.time.LocalDateTime;

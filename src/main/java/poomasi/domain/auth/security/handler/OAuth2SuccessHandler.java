@@ -28,9 +28,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
-    @Value("${spring.security.redirect_url}")
-    private String redirectUrl;
-
     @Description("TODO : Oauth2.0 로그인이 성공하면 server access, refresh token을 발급하는 메서드")
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -49,8 +46,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
 
         //refresh token db에 저장
+
         refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
-        response.sendRedirect(redirectUrl+"/access=" + accessToken);
+        response.sendRedirect("https://poomasi.shop/callback/kakao"+"?access=" + accessToken);
     }
 
     private Cookie createCookie(String key, String value) {
@@ -60,6 +58,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setDomain("https://poomasi.shop");
+
 
         return cookie;
     }

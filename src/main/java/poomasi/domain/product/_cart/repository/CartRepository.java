@@ -1,7 +1,5 @@
 package poomasi.domain.product._cart.repository;
 
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +9,9 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._cart.dto.CartResponse;
 import poomasi.domain.product._cart.entity.Cart;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
@@ -18,6 +19,8 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     List<CartResponse> findByMember(Member member);
 
     Optional<Cart> findByMemberIdAndProductId(Long memberId, Long productId);
+
+    List<Cart> findByMemberId(Long memberId);
 
     @Query("SELECT e FROM Cart e WHERE e.id IN :ids")
     List<Cart> getCartsByIdList(List<Long> ids);

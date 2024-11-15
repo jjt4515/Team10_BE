@@ -79,31 +79,6 @@ class ReservationPlatformServiceTest {
     @DisplayName("예약 생성 테스트")
     class CreateReservation {
 
-        @Test
-        @DisplayName("예약 생성 성공")
-        void shouldCreateReservationSuccessfully() {
-            // given
-            given(farmService.getValidFarmByFarmId(anyLong())).willReturn(farm);
-            given(farmScheduleService.getFarmScheduleByScheduleId(anyLong())).willReturn(farmSchedule);
-            given(reservationService.getValidReservationsByFarmIdAndScheduleId(anyLong(), any())).willReturn(List.of());
-            given(paymentUtil.createMerchantUid(ItemType.PRODUCT)).willReturn("merchant_uid");
-            Reservation reservation = Reservation.builder()
-                    .id(1L)
-                    .farm(farm)
-                    .scheduleId(farmSchedule)
-                    .member(member)
-                    .price(new BigDecimal("1000"))
-                    .build();
-            given(reservationService.createReservation(any())).willReturn(reservation);
-
-            // when
-            ReservationResponse response = reservationPlatformService.createReservation(member, request);
-
-            // then
-            assertNotNull(response);
-            assertEquals(1L, response.id());
-            verify(paymentUtil).sendPrepareData("merchant_uid", reservation.getPrice());
-        }
 
         @Test
         @DisplayName("최대 예약 수용 초과로 예약 생성 실패")

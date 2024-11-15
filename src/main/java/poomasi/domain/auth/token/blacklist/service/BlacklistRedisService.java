@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Optional;
 
 import static poomasi.global.config.redis.error.RedisExceptionHandler.handleRedisException;
 

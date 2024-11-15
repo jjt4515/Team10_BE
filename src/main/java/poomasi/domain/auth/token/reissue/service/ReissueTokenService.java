@@ -3,12 +3,13 @@ package poomasi.domain.auth.token.reissue.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.auth.token.reissue.dto.ReissueRequest;
+import poomasi.domain.auth.token.reissue.dto.ReissueRequest;
 import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.auth.token.reissue.dto.ReissueResponse;
-import poomasi.global.error.BusinessException;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.global.error.BusinessException;
 
-import static poomasi.global.error.BusinessError.*;
+import static poomasi.global.error.BusinessError.REFRESH_TOKEN_NOT_VALID;
 
 @Service
 @RequiredArgsConstructor

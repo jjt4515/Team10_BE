@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
 import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
 import poomasi.domain.auth.token.util.JwtUtil;
 

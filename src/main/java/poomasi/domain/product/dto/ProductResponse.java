@@ -1,12 +1,13 @@
 package poomasi.domain.product.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
 import lombok.Builder;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.product._intro.dto.ProductIntroResponse;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.entity.ProductTagEnum;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 public record ProductResponse(

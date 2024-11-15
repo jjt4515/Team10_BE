@@ -1,6 +1,5 @@
 package poomasi.domain.review.controller.product;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,8 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
 import poomasi.domain.review.service.product.ProductReviewService;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

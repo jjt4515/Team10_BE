@@ -1,5 +1,6 @@
 package poomasi.domain.farm.entity;
 
+import jakarta.persistence.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,9 +29,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.farm.dto.request.FarmUpdateRequest;
-
-import poomasi.domain.order.entity._farm.OrderedFarm;
 import poomasi.domain.review.entity.Review;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -115,10 +118,6 @@ public class Farm {
     @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "entityId")
     private List<Review> reviewList = new ArrayList<>();
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ordered_farm_id")
-    private OrderedFarm orderedFarm;
 
     private double averageRating;
 

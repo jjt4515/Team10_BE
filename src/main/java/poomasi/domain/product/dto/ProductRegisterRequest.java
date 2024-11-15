@@ -1,13 +1,12 @@
 package poomasi.domain.product.dto;
 
-import poomasi.domain.image.entity.Image;
-import java.math.BigDecimal;
 import org.hibernate.annotations.Comment;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._intro.entity.ProductIntro;
-import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.store.entity.Store;
+
+import java.math.BigDecimal;
 
 public record ProductRegisterRequest(
         //product

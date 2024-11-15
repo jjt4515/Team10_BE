@@ -7,7 +7,6 @@ import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
 import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.farm.dto.response.FarmDetailResponse;
 import poomasi.domain.farm.dto.response.FarmInfoAggregateResponse;
-import poomasi.domain.farm.dto.response.FarmInfoResponse;
 import poomasi.domain.farm.dto.response.FarmResponse;
 
 import java.util.List;

@@ -1,14 +1,9 @@
 package poomasi.domain.product._cart.service;
 
-import java.util.List;
-import java.util.Optional;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._cart.dto.CartResponse;
 import poomasi.domain.product._cart.entity.Cart;
@@ -17,6 +12,10 @@ import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.service.ProductService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +39,6 @@ public class CartService {
         if (cartOptional.isPresent())
             return cartOptional.get().getId();
 
-
         Cart cart = Cart.builder()
                 .member(member)
                 .product(product)
@@ -58,12 +56,12 @@ public class CartService {
         cartRepository.delete(cart);
     }
 
-
     @Transactional
     @Description("전부 삭제")
     public void deleteAll(Member member) {
         cartRepository.deleteAllByMemberId(member.getId());
     }
+
 
     @Description("요청한 사람이랑 카트 주인이랑 같은지 확인")
     private void checkAuth(Member member, Cart cart) {
@@ -77,6 +75,10 @@ public class CartService {
                 .orElseThrow(() -> new BusinessException(BusinessError.CART_NOT_FOUND));
     }
 
+    public List<Cart> getCart(Long memberId){
+        return cartRepository.findByMemberId(memberId);
+    }
+
     private Product getProductById(Long productId) {
         return productService.findProductById(productId);
     }
@@ -86,5 +88,14 @@ public class CartService {
         List<Cart> orderList = cartRepository.getCartsByIdList(ids);
         cartRepository.deleteAll(orderList);
         return orderList;
+    }
+
+    public List<Long> extractProductIds(List<Cart> cartList) {
+        return cartList.stream()
+                .filter(Cart::containsProduct)         // product가 존재하는지 확인
+                .map(cart -> cart.getProduct().getId()) // product의 id를 추출
+                .collect(Collectors.toList());         // List<Long>으로 수집
+
+
     }
 }

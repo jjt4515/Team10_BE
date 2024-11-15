@@ -7,12 +7,10 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.service.FarmFarmerService;
-import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.member.entity.Member;
 
 @RestController

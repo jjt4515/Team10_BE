@@ -7,8 +7,6 @@ import poomasi.domain.member._biz.repository.MemberBizProfileRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MemberBizProfileService {
