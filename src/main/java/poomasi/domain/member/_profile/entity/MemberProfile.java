@@ -80,6 +80,4 @@ public class MemberProfile {
         if (coordinateY != null) this.coordinateY = coordinateY;
 
     }
-
-
 }
