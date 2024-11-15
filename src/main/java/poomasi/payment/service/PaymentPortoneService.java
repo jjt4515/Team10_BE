@@ -33,6 +33,7 @@ import java.util.List;
 
 import static poomasi.global.error.ApplicationError.PAYMENT_AMOUNT_MISMATCH;
 import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
+import static poomasi.payment.entity.PaymentStatus.*;
 
 @Service
 @RequiredArgsConstructor

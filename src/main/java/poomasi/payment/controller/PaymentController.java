@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import poomasi.global.sqs.SQSRequest;
+import poomasi.global.sqs.SQSService;
 import poomasi.payment.service.PaymentPortoneService;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.service.PaymentPortoneService;
@@ -17,11 +19,12 @@ import poomasi.payment.service.PaymentPortoneService;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentPortoneService paymentService;
+    private final SQSService sqsService;
 
     @Description("포트원 웹훅 수신 api")
     @PostMapping("/portone-webhook")
@@ -30,7 +33,13 @@ public class PaymentController {
         paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
 
-    //TODO : 프론트엔드에게 promise로 받는 것
-    //여기서 SQS 처리한다.
+    @Description("포트원 웹훅 수신 api")
+    @PostMapping("/receive-sqs")
+    public void receiveSqsMessagesqs(@RequestBody SQSRequest sqsRequest) throws InterruptedException {
+        System.out.println("프론트엔드에서 SQS 요청을 수신했습니다.");
+
+    }
+
+
 }
 

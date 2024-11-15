@@ -1,4 +1,4 @@
-package poomasi.domain.order.sqs;
+package poomasi.global.sqs;
 
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import io.awspring.cloud.sqs.operations.SqsTemplate;

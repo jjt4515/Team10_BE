@@ -1,4 +1,4 @@
-package poomasi.domain.order.sqs;
+package poomasi.global.sqs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import poomasi.domain.order.repository.OrderRepository;
 import poomasi.domain.order.repository.OrderedProductRepository;
-import poomasi.domain.order.repository.ProductOrderRepository;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.repository.ReservationRepository;
 import poomasi.payment.service.PaymentPortoneService;

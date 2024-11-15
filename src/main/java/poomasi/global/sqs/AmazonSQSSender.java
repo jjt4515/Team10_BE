@@ -1,4 +1,4 @@
-package poomasi.domain.order.sqs;
+package poomasi.global.sqs;
 
 import io.awspring.cloud.sqs.operations.SendResult;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
@@ -19,7 +19,6 @@ public class AmazonSQSSender {
 
     public SendResult<String> sendMessage(String queueName, String groupId, String message)
             throws InterruptedException {
-        //System.out.println("Sender: " + message);
 
         Thread.sleep(5000);
 

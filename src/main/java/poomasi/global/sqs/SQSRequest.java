@@ -1,4 +1,4 @@
-package poomasi.domain.order.sqs;
+package poomasi.global.sqs;
 
 public record SQSRequest(
         String merchantUid,
