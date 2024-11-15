@@ -2,7 +2,6 @@ package poomasi.domain.auth.token.reissue.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.reissue.dto.ReissueRequest;
 import poomasi.domain.auth.token.reissue.dto.ReissueRequest;
 import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
