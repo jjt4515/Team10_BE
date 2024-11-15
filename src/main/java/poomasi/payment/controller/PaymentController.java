@@ -42,6 +42,8 @@ public class PaymentController {
         return ResponseEntity.ok(paymentResponse);
     }
 
+    /*
+
 
     @Secured("ROLE_CUSTOMER")
     @Description("order에 해당하는 결제 내역 조회")

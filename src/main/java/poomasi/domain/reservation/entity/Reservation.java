@@ -26,7 +26,7 @@ import poomasi.domain.review.entity.Review;
         @Index(name = "idx_member_id", columnList = "member_id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reservation {
+public class  Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

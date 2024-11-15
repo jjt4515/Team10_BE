@@ -2,6 +2,7 @@ package poomasi.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -101,6 +102,7 @@ public enum BusinessError {
     ORDER_PRODUCT_DETAILS_NOT_OWNED_EXCEPTION(HttpStatus.UNAUTHORIZED, "허가되지 않은 주문입니다."),
     ORDERED_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 주문입니다."),
     COUNT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "주문 가능 최대 개수 보다 많이 요청했습니다."),
+    PORTONE_NOT_WORKING(HttpStatus.BAD_GATEWAY, "포트원 서버가 동작하지 않습니다."),
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
@@ -118,8 +120,12 @@ public enum BusinessError {
     REFUND_AFTER_SALES_REQUEST_INVALID_OWNER(HttpStatus.BAD_REQUEST, "판매자의 환불 요청이 아닙니다."),
 
     //Product intro
-    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다.");
+    INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다."),
 
+    //SQS
+    SQS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"SQS생성에 실패했습니다"),
+    SQS_EVENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SQS EVENT 실행에 실패했습니다.")
+    ;
     private final HttpStatus httpStatus;
 
     private final String message;

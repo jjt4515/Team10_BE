@@ -1,25 +1,36 @@
 package poomasi.payment.service;
 
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.exception.IamportResponseException;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
+import java.io.IOException;
+import java.util.Objects;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.order.entity.PaymentStatus;
 import poomasi.domain.order.entity._product.OrderedProduct;
+import poomasi.domain.order.entity._product.OrderedProductStatus;
 import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.entity._product.ProductsOrderDetailsStatus;
 import poomasi.domain.order.service.ProductOrderService;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.service.ProductService;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.service.ReservationService;
 import poomasi.global.error.ApplicationException;
+import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentPreRegisterRequest;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.dto.response.PaymentPreRegisterResponse;
+import poomasi.payment.dto.response.PaymentResponse;
 import poomasi.payment.entity.ItemType;
 import poomasi.payment.util.PaymentUtil;
 
@@ -46,6 +57,7 @@ public class PaymentPortoneService implements PaymentService {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final AtomicBoolean isWebhookReceived = new AtomicBoolean(false); // 웹훅 수신 여부 체크
+    private final IamportClient iamportClient;
     //private final ThreadLocal<AtomicBoolean> isWebhookReceived = ThreadLocal.withInitial(AtomicBoolean::new); -> thread local로 제어
 
     @Override
@@ -171,7 +183,34 @@ public class PaymentPortoneService implements PaymentService {
         // FIXME: SQS로 웹훅 수신 여부 체크하는 로직으로 변경 필요 2024-11-13
     }
 
+    @Description("결제 내역 단건 조회")
+    public String getPayment(String impUid) {
+        IamportResponse<Payment> response = null;
+        try {
+            response = iamportClient.paymentByImpUid(impUid);
+        } catch (IamportResponseException | IOException e) {
+            throw new BusinessException(BusinessError.SQS_ERROR);
+        };
+        if(response.getCode() != 200)
+            throw new BusinessException(BusinessError.SQS_ERROR);
 
+        return response.getResponse().getStatus();
+    }
+
+    public void confirmProductPayment(ProductOrder productOrder, String status) {
+
+        if(status.equals("paid") &&
+                productOrder.getPayment().getPaymentStatus()== PAYMENT_PENDING){
+            productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+        }else if(status.equals("cancelled") || status.equals("failed")){
+            productOrder.setPaymentStatus(PAYMENT_DECLINED);
+            List<OrderedProduct> products = productOrder.getOrderedProducts();
+
+            products.forEach(orderedProduct->
+                    orderedProduct.getProduct()
+                            .addStock(orderedProduct.getCount()));
+        }
+    }
 }
 
 
