@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ApplicationError {
     ENCRYPT_ERROR("암호화 에러입니다."),
+    ENUM_TYPE_ERROR("지원하지 않는 타입입니다."),
 
     // Payment
     PAYMENT_INVALID_REQUEST("결제 요청이 올바르지 않습니다."),
