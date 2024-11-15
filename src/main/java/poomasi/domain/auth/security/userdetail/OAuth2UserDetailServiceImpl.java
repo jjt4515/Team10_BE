@@ -45,7 +45,7 @@ public class OAuth2UserDetailServiceImpl extends DefaultOAuth2UserService {
         
         // 정보 추출
         String providerId = oAuth2UserInfo.getProviderId();
-        //String nickName = oAuth2UserInfo.getNickname();
+        String nickName = oAuth2UserInfo.getNickname();
         String email = oAuth2UserInfo.getEmail();
 
         Role role = Role.ROLE_CUSTOMER;
@@ -60,7 +60,7 @@ public class OAuth2UserDetailServiceImpl extends DefaultOAuth2UserService {
                     .loginType(loginType) 
                     .provideId(providerId)
                     .memberProfile(new MemberProfile())
-                    //.name(nickName)
+                    .name(nickName)
                     .build();
 
             memberRepository.save(member);
