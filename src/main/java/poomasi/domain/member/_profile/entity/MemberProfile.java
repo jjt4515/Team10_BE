@@ -24,6 +24,7 @@ public class MemberProfile {
     private String phoneNumber;
 
     @Column(nullable = false)
+    @Setter
     @Builder.Default
     private boolean isBanned = false;
 
@@ -46,11 +47,11 @@ public class MemberProfile {
     @Column(nullable = true, length = 255)
     private String addressDetail;
 
-    @Column(nullable=true, length=255)
-    private Long coordinateX;
+    @Column(nullable = true, length = 255)
+    private Double coordinateX;
 
-    @Column(nullable=true, length=255)
-    private Long coordinateY;
+    @Column(nullable = true, length = 255)
+    private Double coordinateY;
 
     @PrePersist
     public void prePersist() {
@@ -71,8 +72,8 @@ public class MemberProfile {
     public void setAddress(
             String defaultAddress,
             String addressDetail,
-            Long coordinateX,
-            Long coordinateY) {
+            Double coordinateX,
+            Double coordinateY) {
         if (defaultAddress != null) this.defaultAddress = defaultAddress;
         if (addressDetail != null) this.addressDetail = addressDetail;
         if (coordinateX != null) this.coordinateX = coordinateX;

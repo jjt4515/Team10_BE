@@ -18,12 +18,8 @@ public class ReissueTokenController {
     private final ReissueTokenService reissueTokenService;
 
     @PostMapping("/api/reissue")
-    public ResponseEntity<ReissueResponse> reissue(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-                                                   @RequestBody ReissueRequest reissueRequest){
-
-        String accessToken = authorizationHeader.replace("Bearer ", "");
-
-        return ResponseEntity.ok(reissueTokenService.reissueToken(accessToken, reissueRequest));
+    public ResponseEntity<ReissueResponse> reissue(@RequestBody ReissueRequest reissueRequest){
+        return ResponseEntity.ok(reissueTokenService.reissueToken(reissueRequest));
     }
 
 }

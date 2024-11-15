@@ -27,20 +27,20 @@ public record ProductIntroResponse(
         return ProductIntroResponse.builder()
                 .productIntroId(product.getId())
 
-                .mainImageUrl(product.getMainImage().getImageUrl())
+                .mainImageUrl(product.getMainImage() == null?"":product.getMainImage().getImageUrl())
                 .mainTitle(product.getMainTitle())
 
                 .subTitle1(product.getSubTitle1())
                 .subDesc1(product.getSubDesc1())
-                .subImage1Url(product.getSubImage1().getImageUrl())
+                .subImage1Url(product.getSubImage1() == null?"":product.getSubImage1().getImageUrl())
 
                 .subTitle2(product.getSubTitle2())
                 .subDesc2(product.getSubDesc2())
-                .subImage2Url(product.getSubImage2().getImageUrl())
+                .subImage2Url(product.getSubImage2() == null?"":product.getSubImage2().getImageUrl())
 
                 .subTitle3(product.getSubTitle3())
                 .subDesc3(product.getSubDesc3())
-                .subImage3Url(product.getSubImage3().getImageUrl())
+                .subImage3Url(product.getSubImage3() == null?"":product.getSubImage3().getImageUrl())
                 .build();
     }
 }

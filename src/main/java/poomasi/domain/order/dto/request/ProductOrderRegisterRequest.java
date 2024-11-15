@@ -1,6 +1,11 @@
 package poomasi.domain.order.dto.request;
 
-public record ProductOrderRegisterRequest(String destinationAddress,
-                                          String destinationAddressDetail,
-                                          String deliveryRequest) {
+import java.util.List;
+
+public record ProductOrderRegisterRequest(
+    List<CartOrderRequest> carts,
+    String destinationAddress,
+    String destinationAddressDetail,
+    String deliveryRequest)
+{
 }

@@ -1,19 +1,18 @@
 package poomasi.domain.member.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import poomasi.domain.store.entity.Store;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.store.entity.Store;
 import poomasi.domain.wishlist.entity.WishList;
-import poomasi.global.error.BusinessError;
-import poomasi.global.error.BusinessException;
-import java.util.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,7 +26,7 @@ public class Member {
     private Long id;
 
     @Setter
-    @Column(nullable = true, length = 50)
+    @Column(length = 50)
     private String name;
 
     @Setter
@@ -51,12 +50,14 @@ public class Member {
     @Column(nullable = true)
     private String provideId;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberProfile memberProfile;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<WishList> wishLists;
 
+    @Setter
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -67,8 +68,9 @@ public class Member {
     @Column(nullable = true)
     private String farmerTierCode;
 
+    @Getter
     @Setter
-    @OneToOne(mappedBy="owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Store store;
 
     public Member(String name, String email, String password, LoginType loginType, Role role) {
@@ -81,14 +83,15 @@ public class Member {
     }
 
     @Builder
-    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile) {
+    public Member(Long id, String email, String password, Role role, LoginType loginType, String provideId, MemberProfile memberProfile, String name) {
         this.id = id;
         this.password = password;
         this.email = email;
         this.role = role;
         this.loginType = loginType;
         this.provideId = provideId;
-        this.memberProfile = memberProfile;
+        this.memberProfile = (memberProfile != null) ? memberProfile : getOrCreateProfile();
+        this.name = name;
     }
 
     public boolean isCustomer() {
@@ -101,12 +104,6 @@ public class Member {
 
     public boolean isAdmin() {
         return role == Role.ROLE_ADMIN;
-    }
-
-    public Store getStore() {
-        if(store == null)
-            throw new BusinessException(BusinessError.STORE_NOT_FOUND);
-        return store;
     }
 
     public MemberProfile getOrCreateProfile() {
@@ -124,6 +121,8 @@ public class Member {
         return store;
     }
 
-
-
+    public void setAddress(String defaultAddress, String addressDetail, Double coordinateX, Double coordinateY) {
+        MemberProfile memberProfile = getOrCreateProfile();
+        memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
+    }
 }

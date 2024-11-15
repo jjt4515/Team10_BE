@@ -13,6 +13,7 @@ import poomasi.global.error.BusinessException;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final MemberRepository memberRepository;
+
     public UserDetailsServiceImpl(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }

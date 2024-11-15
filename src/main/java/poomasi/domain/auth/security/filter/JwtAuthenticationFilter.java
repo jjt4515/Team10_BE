@@ -16,6 +16,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
+import poomasi.domain.auth.token.blacklist.service.BlacklistRedisService;
+import poomasi.domain.auth.token.reissue.service.ReissueTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.entity.Role;
@@ -31,42 +34,57 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
+    private final BlacklistJpaService blacklistRedisService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        log.info("jwt 인증 필터입니다");
+        log.info("[JwtAuthenticationFilter] - jwt 인증 필터입니다");
         String requestHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String accessToken = null;
 
-        if (requestHeader == null || !requestHeader.startsWith("Bearer ")) {
-            log.info("access token을 header로 갖지 않았으므로 다음 usernamepassword 필터로 이동합니다");
+        String requestUri = request.getRequestURI();
+        if ("/oauth2/authentication/kakao".equals(requestUri)) {
+            log.info("[JwtAuthenticationFilter] - 카카오 인증 요청이므로 필터를 통과합니다.");
+            // 요청을 그대로 다음 필터로 넘김
             filterChain.doFilter(request, response);
-        }else{
-            //access 추출하기
-            log.info("access token 추출하기");
+            return;
+        }
+
+        if("/api/login".equals(requestUri)) {
+            log.info("[JwtAuthenticationFilter] - 로그인 요청이므로 필터를 통과합니다.");
+            // 요청을 그대로 다음 필터로 넘김
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        if (requestHeader == null || !requestHeader.startsWith("Bearer ")) {
+            log.info("[JwtAuthenticationFilter] : access token을 header로 갖지 않았으므로 다음 필터로 이동합니다");
+            filterChain.doFilter(request, response);
+            return;
+        }else{ //존재하고 Bearer로 존재한다면
+            log.info("[JwtAuthenticationFilter] : access token 추출하기");
             accessToken = requestHeader.substring(7);
         }
 
-        log.info("access token 추출 완료: " + accessToken);
+        log.info("[JwtAuthenticationFilter] : access token 추출 완료: " + accessToken);
 
-        if (accessToken  == null) {
+        if (accessToken == null) {
             log.info("access token이 존재하지 않아서 다음 filter로 넘어갑니다.");
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 만료 검사
-        if(jwtUtil.isTokenExpired(accessToken)){
-            log.warn("[인증 실패] - 토큰이 만료되었습니다.");
-            PrintWriter writer = response.getWriter();
-            writer.print("만료된 토큰입니다.");
+        if(blacklistRedisService.hasKeyBlackList(accessToken)){
+            log.info("블랙리스트에 있는 토큰입니다.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"message\": \"" + "token is in Blacklist");
             return;
         }
 
         // 유효성 검사
-        if(!jwtUtil.validateTokenInFilter(accessToken)) {
+        if(!jwtUtil.validateAccessToken(accessToken)) {
             log.warn("JWT 필터 - [인증 실패] - 위조된 토큰입니다.");
             PrintWriter writer = response.getWriter();
             writer.print("위조된 토큰입니다.");
@@ -74,8 +92,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // 만료 검사
+        if(jwtUtil.isTokenExpired(accessToken)){
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"message\": \"" + "token is expired");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.info("토큰 검증 완료");
-        String username = jwtUtil.getEmailFromTokenInFilter(accessToken);
+        String username = jwtUtil.getEmailFromToken(accessToken);
         UserDetailsImpl userDetailsImpl = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
 
         // (ID, password, auth)
@@ -83,8 +109,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
-
+        return;
     }
+
 
 
 

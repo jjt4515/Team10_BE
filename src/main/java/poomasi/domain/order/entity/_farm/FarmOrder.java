@@ -2,8 +2,6 @@ package poomasi.domain.order.entity._farm;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
-import org.hibernate.annotations.Comment;
-import poomasi.domain.order._payment.entity.Payment;
 import poomasi.domain.order.entity._abstract.AbstractOrder;
 
 import java.util.Date;
@@ -35,7 +33,7 @@ public class FarmOrder extends AbstractOrder {
     */
 
     @Column(name = "merchant_uid")
-    @Description("서버 내부 주문 id(아임포트 id)")
+    @Description("서버 내부 주문 farmId(아임포트 farmId)")
     private String merchantUid = "f" + new Date().getTime();
 
 
