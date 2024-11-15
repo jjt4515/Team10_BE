@@ -1,22 +1,19 @@
 package poomasi.domain.review.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.image.entity.Image;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.review.dto.ReviewRequest;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -49,6 +46,9 @@ public class Review {
     @Comment("작성자")
     @ManyToOne(fetch = FetchType.LAZY)
     private Member reviewer;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final List<Image> images = new ArrayList<>();
 
     @Builder
     public Review(Long id, Float rating, String content, Long entityId, EntityType entityType,

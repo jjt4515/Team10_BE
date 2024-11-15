@@ -12,6 +12,8 @@ import poomasi.global.error.BusinessException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static poomasi.global.error.BusinessError.FARM_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class FarmService {
@@ -20,12 +22,17 @@ public class FarmService {
     public List<Farm> getFarmListByOwnerId(Long farmerId) {
         return farmRepository.findAllByOwnerIdAndDeletedAtIsNull(farmerId);
     }
+
     public Farm getValidFarmByFarmId(Long farmId) {
         Farm farm = getFarmByFarmId(farmId);
         if (farm.getStatus() != FarmStatus.OPEN) {
             throw new BusinessException(BusinessError.FARM_NOT_OPEN);
         }
         return farm;
+    }
+
+    public Farm getFarmByFarmerId(Long farmerId) {
+        return farmRepository.getFarmByOwnerIdAndDeletedAtIsNull(farmerId).orElseThrow(() -> new BusinessException(FARM_NOT_FOUND));
     }
 
     public Farm getFarmByFarmId(Long farmId) {
@@ -36,5 +43,10 @@ public class FarmService {
     public List<Farm> getFarmList(Pageable pageable) {
         return farmRepository.findByDeletedAtIsNull(pageable).stream()
                 .collect(Collectors.toList());
+    }
+
+    public void delete(Farm farm) {
+        farm.delete();
+        farmRepository.save(farm);
     }
 }

@@ -3,39 +3,42 @@ package poomasi.domain.store.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.member.entity.Member;
 import poomasi.domain.store.dto.StoreRegisterRequest;
 import poomasi.domain.store.service.StoreService;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/store")
+@RequestMapping("/api/stores")
 public class StoreController {
-
     private final StoreService storeService;
 
     @Secured("ROLE_FARMER")
     @PostMapping("")
-    public ResponseEntity<?> addStore(@RequestBody StoreRegisterRequest storeRegisterRequest) {
-        storeService.addStore(storeRegisterRequest);
+    public ResponseEntity<?> addStore(
+            @RequestBody StoreRegisterRequest storeRegisterRequest,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        Member member = userDetails.getMember();
+        storeService.addStore(storeRegisterRequest, member);
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_FARMER")
-    @GetMapping("")
-    public ResponseEntity<?> getStore() {
-        return ResponseEntity.ok(storeService.getStore());
+    @GetMapping("/{memberId}")
+    public ResponseEntity<?> getStore(@PathVariable Long memberId) {
+        return ResponseEntity.ok(storeService.getStore(memberId));
     }
 
     @Secured("ROLE_FARMER")
     @PutMapping("")
-    public ResponseEntity<?> updateStore(@RequestBody StoreRegisterRequest storeRegisterRequest) {
-        storeService.updateStore(storeRegisterRequest);
+    public ResponseEntity<?> updateStore(
+            @RequestBody StoreRegisterRequest storeRegisterRequest,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        storeService.updateStore(storeRegisterRequest, userDetails.getMember());
         return ResponseEntity.ok().build();
     }
 }

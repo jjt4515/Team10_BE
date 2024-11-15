@@ -1,16 +1,18 @@
 package poomasi.domain.image.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
-import poomasi.domain.image.dto.ImageRequest;
+import poomasi.domain.image.dto.request.ImageRequest;
+import poomasi.domain.image.dto.response.ImageResponse;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "image", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"type", "reference_id"})
-})
+@Table(name = "image")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,6 +50,18 @@ public class Image {
         this.referenceId = referenceId;
     }
 
+    @Builder
+    public Image(Long id, String objectKey, String imageUrl, ImageType type, Long referenceId, LocalDateTime createdAt, LocalDateTime deletedAt) {
+        this.id = id;
+        this.objectKey = objectKey;
+        this.imageUrl = imageUrl;
+        this.type = type;
+        this.referenceId = referenceId;
+        this.createdAt = createdAt;
+        this.deletedAt = deletedAt;
+    }
+
+
     public void update(ImageRequest request) {
         this.objectKey = request.objectKey();
         this.imageUrl = request.imageUrl();
@@ -61,6 +75,18 @@ public class Image {
                 image.imageUrl,
                 image.type,
                 image.referenceId
+        );
+    }
+
+    public static Image fromResponse(ImageResponse imageResponse) {
+        return new Image(
+                imageResponse.id(),
+                imageResponse.objectKey(),
+                imageResponse.imageUrl(),
+                imageResponse.type(),
+                imageResponse.referenceId(),
+                imageResponse.createdAt(),
+                imageResponse.deletedAt()
         );
     }
 }

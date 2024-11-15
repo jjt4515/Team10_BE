@@ -1,6 +1,5 @@
 package poomasi.domain.review.controller.farm;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +15,28 @@ import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
 import poomasi.domain.review.service.farm.FarmReviewService;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class FarmReviewController {
 
     private final FarmReviewService farmReviewService;
 
-    @GetMapping("/api/farm/{farmId}/reviews")
+    @GetMapping("/api/farms/{farmId}/reviews")
     public ResponseEntity<?> getProductReviews(@PathVariable Long farmId) {
         List<ReviewResponse> response = farmReviewService.getFarmReview(farmId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/api/farm/{farmId}/reviews")
+    @PostMapping("/api/farms/{reservationId}/reviews")
     public ResponseEntity<?> registerProductReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long farmId,
+            @PathVariable Long reservationId,
             @RequestBody ReviewRequest reviewRequest) {
         Member member = userDetails.getMember();
         Long reviewId = farmReviewService.registerFarmReview(
-                member, farmId, reviewRequest);
+                member, reservationId, reviewRequest);
         return new ResponseEntity<>(reviewId, HttpStatus.CREATED);
     }
 }

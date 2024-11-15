@@ -15,4 +15,5 @@ public interface FarmScheduleRepository extends JpaRepository<FarmSchedule, Long
 
     List<FarmSchedule> findByFarmIdAndDate(Long aLong, LocalDate date);
 
+    List<FarmSchedule> findByFarmId(Long farmId);
 }

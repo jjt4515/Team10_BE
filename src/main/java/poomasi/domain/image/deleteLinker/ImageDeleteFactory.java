@@ -3,23 +3,21 @@ package poomasi.domain.image.deleteLinker;
 import org.springframework.stereotype.Component;
 import poomasi.domain.image.entity.ImageType;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Component
 public class ImageDeleteFactory {
 
-    private final Map<ImageType, ImageDeleteLinker> handlerMap;
+    private final List<ImageDeleteLinker> deleteLinkers;
 
-    public ImageDeleteFactory(
-            ProductDeleteLinker productDeleteLinker,
-            MemberProfileDeleteLinker memberProfileDeleteLinker) {
-        this.handlerMap = new HashMap<>();
-        handlerMap.put(ImageType.PRODUCT, productDeleteLinker);
-        handlerMap.put(ImageType.MEMBER_PROFILE, memberProfileDeleteLinker);
+    public ImageDeleteFactory(List<ImageDeleteLinker> deleteLinkers) {
+        this.deleteLinkers = deleteLinkers;
     }
 
     public ImageDeleteLinker getDeleteLinker(ImageType type) {
-        return handlerMap.get(type);
+        return deleteLinkers.stream()
+                .filter(linker -> linker.supports(type))
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import poomasi.domain.auth.token.blacklist.service.TokenBlacklistService;
-import poomasi.domain.auth.token.refreshtoken.service.TokenStorageService;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.service.MemberService;
 
@@ -37,8 +37,8 @@ public class JwtUtil {
     @Value("${jwt.refresh-token-expiration-time}")
     private long REFRESH_TOKEN_EXPIRATION_TIME;
 
-    private final TokenBlacklistService tokenBlacklistService;
-    private final TokenStorageService tokenStorageService;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
     private final MemberService memberService;
 
     @PostConstruct
@@ -46,54 +46,8 @@ public class JwtUtil {
         secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
-    public String generateTokenInFilter(String email, String role , String tokenType, Long memberId){
-        Map<String, Object> claims = this.createClaimsInFilter(email, role, tokenType);
-        String memberIdString = memberId.toString();
-
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(memberIdString)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    private Map<String, Object> createClaimsInFilter(String email, String role, String tokenType) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("email", email);
-        claims.put("role", role);
-        claims.put("tokenType" , tokenType);
-        return claims;
-    }
-
-    public Boolean validateTokenInFilter(String token){
-
-        log.info("jwt util에서 토큰 검증을 진행합니다 . .");
-
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            log.info("jwt util에서 토큰 검증 하다가 exception 터졌습니다.");
-            log.info(e.getMessage());
-            return false;
-        }
-
-    }
-
-    public String getRoleFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "role", String.class);
-    }
-
-    public String getEmailFromTokenInFilter(final String token) {
-        return getClaimFromToken(token, "email", String.class);
-    }
-
-
     public String generateAccessTokenById(final Long memberId) {
-        Map<String, Object> claims = createClaims(memberId);
+        Map<String, Object> claims = createClaims(memberId); //id, email, role
         claims.put("type", ACCESS);
         return Jwts.builder()
                 .setClaims(claims)
@@ -132,6 +86,11 @@ public class JwtUtil {
         return getClaimFromToken(token, "id", Long.class);
     }
 
+    public String getEmailFromToken(final String token){
+        return getClaimFromToken(token, "email", String.class);
+
+    }
+
     public Date getExpirationDateFromToken(final String token) {
         return getAllClaimsFromToken(token).getExpiration();
     }
@@ -154,10 +113,11 @@ public class JwtUtil {
         if (!validateToken(refreshToken)) {
             return false;
         }
-        String storedMemberId = tokenStorageService.getValues(refreshToken, memberId.toString())
+
+        Long storedMemberId = refreshTokenWhitelistService.getMemberIdByRefreshToken(refreshToken, memberId)
                 .orElse(null);
 
-        if (storedMemberId == null || !storedMemberId.equals(memberId.toString())) {
+        if (storedMemberId == null || !storedMemberId.equals(memberId)) {
             log.warn("리프레시 토큰과 멤버 ID가 일치하지 않습니다.");
             return false;
         }
@@ -169,7 +129,8 @@ public class JwtUtil {
         if (!validateToken(accessToken)) {
             return false;
         }
-        if ( tokenBlacklistService.hasKeyBlackList(accessToken)){
+
+        if(accessTokenBlacklistService.hasAccessToken(accessToken)) {
             log.warn("로그아웃한 JWT token입니다.");
             return false;
         }
@@ -208,7 +169,4 @@ public class JwtUtil {
         }
     }
 
-    public long getAccessTokenExpiration() {
-        return ACCESS_TOKEN_EXPIRATION_TIME;
-    }
 }

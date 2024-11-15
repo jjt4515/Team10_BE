@@ -13,5 +13,4 @@ public interface BlacklistRepository extends JpaRepository<Blacklist, Long> {
     Optional<Blacklist> findByTokenKeyAndExpireAtAfter(String key, LocalDateTime now);
     boolean existsByTokenKeyAndExpireAtAfter(String key, LocalDateTime now);
     void deleteAllByExpireAtBefore(LocalDateTime now);
-
 }

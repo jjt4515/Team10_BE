@@ -1,5 +1,6 @@
 package poomasi.domain.reservation.controller;
 
+import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -17,14 +18,16 @@ import poomasi.domain.reservation.service.ReservationPlatformService;
 public class ReservationPlatformController {
     private final ReservationPlatformService reservationPlatformService;
 
-    @PostMapping("/create")
+    @PostMapping("/pre-reservation")
     @Secured("ROLE_CUSTOMER")
+    @Description("FARM 사전 주문")
     public ResponseEntity<?> createReservation(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody ReservationRequest request
     ) {
         Member member = userDetails.getMember();
         ReservationResponse reservation = reservationPlatformService.createReservation(member, request);
+
         return ResponseEntity.ok(reservation);
     }
 
