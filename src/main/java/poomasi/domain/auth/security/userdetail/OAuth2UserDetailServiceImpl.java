@@ -1,6 +1,5 @@
 package poomasi.domain.auth.security.userdetail;
 
-import jdk.jfr.Description;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -9,9 +8,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import poomasi.domain.auth.security.oauth2.dto.response.OAuth2KakaoResponse;
 import poomasi.domain.auth.security.oauth2.dto.response.OAuth2Response;
+import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.entity.Role;
 import poomasi.domain.member.repository.MemberRepository;
 

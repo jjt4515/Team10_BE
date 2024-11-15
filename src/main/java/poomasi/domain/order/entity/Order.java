@@ -15,13 +15,11 @@ import poomasi.payment.entity.Payment;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "product_order")
 @Getter
-@Builder
 @SQLDelete(sql = "UPDATE product_order SET deleted_at = current_timestamp WHERE id = ?")
 public class Order {
 
@@ -94,7 +92,6 @@ public class Order {
         return this.payment.getPaymentMethod().toString();
     }
 
-
     public void addTotalAmount(BigDecimal amount){
         this.totalAmount = this.totalAmount.add(amount);
     }
@@ -106,5 +103,10 @@ public class Order {
 
     public void setMerchantUid(String merchantUid){
         this.merchantUid = merchantUid;
+    }
+
+    public void setPayment(Payment payment){
+        this.payment=payment;
+        payment.setOrder(this);
     }
 }

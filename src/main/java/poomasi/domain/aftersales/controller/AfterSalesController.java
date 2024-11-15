@@ -1,20 +1,18 @@
 package poomasi.domain.aftersales.controller;
 
-
-import com.siot.IamportRestClient.exception.IamportResponseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.aftersales.dto.cancel.request.FarmCancelRequest;
 import poomasi.domain.aftersales.dto.cancel.request.ProductCancelRequest;
 import poomasi.domain.aftersales.dto.refund.request.ProductRefundRequest;
 import poomasi.domain.aftersales.dto.refund.request.ProductRefundRequestApprovalRequest;
-import poomasi.domain.aftersales.dto.refund.request.ProductRefundRequestDeniedRequest;
 import poomasi.domain.aftersales.service.FarmAfterSalesService;
 import poomasi.domain.aftersales.service.ProductAfterSalesService;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/aftersales")
@@ -24,55 +22,38 @@ public class AfterSalesController {
     private final ProductAfterSalesService productAfterSalesService;
     private final FarmAfterSalesService farmAfterSalesService;
 
-    //-------------------------product cancel---------------------//
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/product/cancel")
-    public ResponseEntity<?> productCancel(@RequestBody ProductCancelRequest productCancelRequest) throws IOException, IamportResponseException {
+    @PostMapping("/products/cancel")
+    public ResponseEntity<?> productCancel(@RequestBody ProductCancelRequest productCancelRequest) {
         return ResponseEntity.ok(
                 productAfterSalesService.cancel(productCancelRequest)
         );
     }
 
-    //-------------------------product refund---------------------//
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/refund-request")
+    @PostMapping("/products/refund-request")
     public ResponseEntity<?> requestRefund(@RequestBody ProductRefundRequest productRefundRequest) {
         return ResponseEntity.ok(
                 productAfterSalesService.
-                        createRefundRequest(productRefundRequest)
+                        refund(productRefundRequest)
         );
     }
 
     @Secured({"ROLE_FARMER"})
-    @PostMapping("/approve-refund-request")
-    public ResponseEntity<?> approveRefundRequest(@RequestBody ProductRefundRequestApprovalRequest productRefundRequestApprovalRequest) throws IOException, IamportResponseException {
+    @PostMapping("/approve-products-refund")
+    public ResponseEntity<?> approveRefund(@RequestBody ProductRefundRequestApprovalRequest productRefundRequestApprovalRequest) {
         return ResponseEntity.ok(
                 productAfterSalesService.processRefundApproval(productRefundRequestApprovalRequest)
         );
     }
 
-
-    @Secured({"ROLE_FARMER"})
-    @PostMapping("/deniedrefund-request")
-    public ResponseEntity<?> deniedRefundRequest(@RequestBody ProductRefundRequestDeniedRequest productRefundRequestDeniedRequest) {
-        return ResponseEntity.ok(
-                productAfterSalesService.processRefundDenied(productRefundRequestDeniedRequest)
-        );
-    }
-
-
-    //-------------------------farm cancel---------------------//
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    @PostMapping("/farm/cancel")
-    public ResponseEntity<?> farmCancel(@RequestBody FarmCancelRequest farmCancelRequest) throws IOException, IamportResponseException {
+    @PostMapping("/farms/cancel")
+    public ResponseEntity<?> farmCancel(@RequestBody FarmCancelRequest farmCancelRequest){
         return ResponseEntity.ok(
-                farmAfterSalesService.farmCancel(farmCancelRequest)
+                farmAfterSalesService.cancel(farmCancelRequest)
         );
     }
-    
-    
-    //------------웹훅 api 받아서 해야 함---------//
-
 
 
 

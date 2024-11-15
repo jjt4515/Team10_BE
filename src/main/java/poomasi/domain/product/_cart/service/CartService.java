@@ -1,16 +1,9 @@
 package poomasi.domain.product._cart.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._cart.dto.CartResponse;
 import poomasi.domain.product._cart.entity.Cart;
@@ -19,6 +12,10 @@ import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.service.ProductService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

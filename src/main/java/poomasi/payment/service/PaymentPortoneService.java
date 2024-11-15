@@ -18,15 +18,12 @@ import poomasi.global.error.BusinessException;
 import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
-import poomasi.payment.dto.response.PaymentPreRegisterResponse;
 import poomasi.payment.entity.ItemType;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static poomasi.domain.order.entity.PaymentStatus.*;
 import static poomasi.global.error.ApplicationError.PAYMENT_AMOUNT_MISMATCH;
 import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 
@@ -61,9 +58,6 @@ public class PaymentPortoneService implements PaymentService {
     @Override
     @Description("웹훅 처리 service -> 결제 정상적으로 성공됨을 보장: 결제 금액 확인")
     public void handlePortOneProductWebhookEvent(PaymentWebHookRequest paymentWebHookRequest) {
-
-
-
         String impUid = paymentWebHookRequest.impUid();
         String merchantUid = paymentWebHookRequest.merchantUid();
 

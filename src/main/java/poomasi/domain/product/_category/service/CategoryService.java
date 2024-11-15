@@ -1,6 +1,5 @@
 package poomasi.domain.product._category.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.product._category.dto.CategoryResponse;
@@ -9,6 +8,8 @@ import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._category.repository.CategoryRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

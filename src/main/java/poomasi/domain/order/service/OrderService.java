@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.order.dto.request.ProductOrderRequest;
 import poomasi.domain.order.dto.request.PreOrderRequest;
+import poomasi.domain.order.dto.request.ProductOrderRequest;
 import poomasi.domain.order.dto.response.OrderResponse;
 import poomasi.domain.order.dto.response.PreOrderResponse;
 import poomasi.domain.order.entity.Order;
@@ -29,6 +29,7 @@ import poomasi.domain.product.service.ProductService;
 import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.Payment;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
@@ -103,7 +104,6 @@ public class OrderService {
         orderRepository.save(order);
 
         for (ProductOrderRequest productOrderRequest1 : productOrderRequest) {
-
             Long productId = productOrderRequest1.productId();
             Product product = productService.findValidProductById(productId);
             Integer productStock = product.getStock();
@@ -145,6 +145,17 @@ public class OrderService {
 
         String merchantUid = paymentUtil.createMerchantUid(ItemType.PRODUCT);
         order.setMerchantUid(merchantUid);
+
+
+        Payment payment = Payment
+                .builder()
+                .totalAmount(order.getTotalAmount())
+                .checkSum(order.getTotalAmount())
+                .itemType(ItemType.PRODUCT)
+                .build();
+
+        order.setPayment(payment);
+
         orderRepository.save(order);
 
         paymentUtil.sendPrepareData(merchantUid, order.getTotalAmount());

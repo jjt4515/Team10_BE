@@ -1,7 +1,6 @@
 package poomasi.payment.service;
 
 import poomasi.payment.dto.request.PaymentWebHookRequest;
-import poomasi.payment.dto.response.PaymentPreRegisterResponse;
 
 import java.math.BigDecimal;
 

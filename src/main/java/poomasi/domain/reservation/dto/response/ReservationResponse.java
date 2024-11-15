@@ -1,6 +1,5 @@
 package poomasi.domain.reservation.dto.response;
 
-import java.time.LocalDate;
 import lombok.Builder;
 import poomasi.domain.reservation.entity.ReservationStatus;
 

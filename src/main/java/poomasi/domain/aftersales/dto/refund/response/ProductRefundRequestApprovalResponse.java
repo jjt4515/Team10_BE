@@ -1,12 +1,12 @@
 package poomasi.domain.aftersales.dto.refund.response;
 
+import poomasi.domain.order.entity.OrderedProductStatus;
+
 import java.math.BigDecimal;
 
 public record ProductRefundRequestApprovalResponse(
         Long orderedProductId,
-        Integer count,
-        BigDecimal refundAmount,
-        Long productAfterSalesDetailId,
-        String invoiceNumber
+        OrderedProductStatus orderedProductStatus,
+        BigDecimal refundAmount
 ) {
 }

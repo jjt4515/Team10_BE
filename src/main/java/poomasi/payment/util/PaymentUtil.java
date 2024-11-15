@@ -7,7 +7,6 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.request.PrepareData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
-import jakarta.persistence.DiscriminatorColumn;
 import jdk.jfr.Description;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,8 +58,10 @@ public class PaymentUtil {
         try {
             IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
             return iamportResponse;
-        } catch (IamportResponseException | IOException e) {
-            log.error(e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("iamport response exception : " + e.getMessage(), e);
+        } catch (IamportResponseException e) {
+            log.error("iamport exception : " + e.getMessage(), e);
         }
         throw new ApplicationException(PAYMENT_INVALID_REQUEST);
     }
@@ -70,9 +71,12 @@ public class PaymentUtil {
         CancelData cancelDate = new CancelData(impUid, false);
         try {
             iamportClient.cancelPaymentByImpUid(cancelDate);
-        } catch (IamportResponseException | IOException e) {
-            log.error(e.getMessage(), e);
+        } catch (IOException e) {
+            log.error("iamport response exception : " + e.getMessage(), e);
+        } catch (IamportResponseException e) {
+            log.error("iamport exception : " + e.getMessage(), e);
         }
+        throw new ApplicationException(PAYMENT_INVALID_REQUEST);
     }
 
     @Transactional
@@ -87,29 +91,37 @@ public class PaymentUtil {
         } catch (IamportResponseException e) {
             log.error("iamport exception : " + e.getMessage(), e);
         }
+        throw new ApplicationException(PAYMENT_INVALID_REQUEST);
     }
 
 
     @Transactional
     @Description("merchant Uid로 결제 부분 환불 api 호출")
-    public void partialRefundByMerchantUid(String merchantUid, BigDecimal checkSum, BigDecimal amount, String reason) throws IOException, IamportResponseException {
+    public void refundByMerchantUid(String merchantUid, BigDecimal checkSum, BigDecimal amount) {
+
         CancelData cancelData = new CancelData(merchantUid, false, amount);
         cancelData.setChecksum(checkSum);
-        cancelData.setReason(reason);
-        iamportClient.cancelPaymentByImpUid(cancelData);
+        try {
+           iamportClient.cancelPaymentByImpUid(cancelData);
+        } catch (IOException e) {
+            log.error("iamport response exception : " + e.getMessage(), e);
+        } catch (IamportResponseException e) {
+            log.error("iamport exception : " + e.getMessage(), e);
+        }
+        throw new ApplicationException(PAYMENT_INVALID_REQUEST);
     }
-
 
     @Description("사전 결제 데이터 전송")
     public void sendPrepareData(String merchantUid, BigDecimal amount) {
         PrepareData prepareData = this.generatePrepareData(merchantUid, amount);
         try {
             iamportClient.postPrepare(prepareData);
-        } catch (IOException e1) {
-            // TODO
-        } catch (IamportResponseException e2) {
-            // TODO
+        } catch (IOException e) {
+            log.error("iamport response exception : " + e.getMessage(), e);
+        } catch (IamportResponseException e) {
+            log.error("iamport exception : " + e.getMessage(), e);
         }
+        throw new ApplicationException(PAYMENT_INVALID_REQUEST);
     }
 
     @Description("단건 조회 후, 결제 되어야 할 금액과 결제 된 금액이 같은지 확인하는 메서드")

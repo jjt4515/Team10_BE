@@ -1,23 +1,21 @@
 package poomasi.domain.reservation.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.aftersales.entity.FarmAfterSales;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
+import poomasi.domain.review.entity.Review;
+import poomasi.payment.entity.Payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
@@ -82,6 +80,14 @@ public class Reservation {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Setter
     Review review;
+
+    @OneToOne
+    @Setter
+    @Getter
+    private FarmAfterSales farmAfterSales;
+
+    @OneToOne
+    private Payment payment;
 
     @Builder
     public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,

@@ -14,8 +14,8 @@ import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.Payment;
 import poomasi.payment.service.PaymentPortoneService;
-import poomasi.payment.service.PaymentService;
 import poomasi.payment.util.PaymentUtil;
 
 @Service
@@ -49,8 +49,15 @@ public class ReservationPlatformService {
         // 3. 사전 결제 생성
         String merchantUid = paymentUtil.createMerchantUid(ItemType.PRODUCT);
         Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule, merchantUid));
-        paymentPortoneService.prepaymentRegister(merchantUid, reservation.getPrice());
+        Payment payment = Payment
+                        .builder()
+                        .reservation(reservation)
+                        .totalAmount(reservation.getPrice())
+                        .checkSum(reservation.getPrice())
+                        .itemType(ItemType.FARM)
+                        .build();
 
+        paymentPortoneService.prepaymentRegister(merchantUid, reservation.getPrice());
         return reservation.toResponse();
     }
 
@@ -59,7 +66,6 @@ public class ReservationPlatformService {
         if (!reservation.getMember().getId().equals(member.getId()) && !member.isAdmin() && !reservation.getFarm().getOwnerId().equals(member.getId())) {
             throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
         }
-
         return reservation.toResponse();
     }
 

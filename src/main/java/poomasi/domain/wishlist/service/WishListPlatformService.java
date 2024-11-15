@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.wishlist.dto.WishListDeleteRequest;
 import poomasi.domain.wishlist.dto.WishListResponse;
 import poomasi.domain.wishlist.dto.request.WishListAddRequest;
-import poomasi.domain.wishlist.entity.WishList;
 
 import java.util.List;
 

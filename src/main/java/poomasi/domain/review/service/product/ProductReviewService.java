@@ -1,6 +1,5 @@
 package poomasi.domain.review.service.product;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +16,8 @@ import poomasi.domain.review.entity.Review;
 import poomasi.domain.review.repository.ReviewRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

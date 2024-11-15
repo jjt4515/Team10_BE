@@ -1,31 +1,18 @@
 package poomasi.domain.order.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-
-import java.math.BigDecimal;
-import java.util.List;
+import jakarta.persistence.*;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import poomasi.domain.aftersales.entity._product.ProductAfterSalesDetail;
+import poomasi.domain.aftersales.entity.ProductAfterSales;
+import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.review.entity.Review;
 import poomasi.payment.entity.Payment;
+
+import java.math.BigDecimal;
 
 import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
 
@@ -41,8 +28,8 @@ public class OrderedProduct {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true, name = "product_after_sales_detail_id")
-    private ProductAfterSalesDetail productAfterSalesDetail;
+    @JoinColumn(nullable = true, name = "product_after_sales_id")
+    private ProductAfterSales productAfterSales;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,20 +73,13 @@ public class OrderedProduct {
     @Description("TODO : product의 delivery fee를 참조해야 한다.")
     private BigDecimal deliveryFee;
 
-    @Description("환불 가능한 남은 수량")
-    @Column(name = "refundable_count")
-    private Integer adjustableQuantity;
-
-    @Description("취소 된 수량")
-    @Column(name = "cacnel_quantity")
-    private Integer cancelQuantity;
-
     @Description("flag가 설정되어 있으면 배송비 환불하지 않아도 된다")
     private boolean isCanceled = false;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Setter
     private Review review;
+
 
     @Builder
     public OrderedProduct(Product product, Order order, String productDescription,
@@ -123,29 +103,17 @@ public class OrderedProduct {
         this.orderedProductStatus = orderedProductStatus;
     }
 
-    public void addProductAfterSalesDetail(ProductAfterSalesDetail productAfterSalesDetail) {
-        this.productAfterSalesDetail = productAfterSalesDetail;
-        productAfterSalesDetail.setOrderedProduct(this);
+    public void addProductAfterSalesDetail(ProductAfterSales productAfterSales) {
+        this.productAfterSales = productAfterSales;
+        productAfterSales.setOrderedProduct(this);
     }
 
     public Long getOrderId() {
         return this.order.getId();
     }
 
-    public void subtractRefundableCount(Integer refundableCount) {
-        this.adjustableQuantity -= refundableCount;
-    }
-
-    public void addCancelQuantity(Integer cancelQuantity) {
-        this.isCanceled = true;
-        this.cancelQuantity += cancelQuantity;
-    }
-
-    public OrderedProductStatus changeOrderedProductStatusToCancel() {
-        if (this.count == this.cancelQuantity) {
-            this.orderedProductStatus = OrderedProductStatus.CANCELLED;
-        }
-        return this.orderedProductStatus;
+    public Member getStoreOwner(){
+        return this.product.getStore().getOwner();
     }
 
     public String getStoreName(){
@@ -154,11 +122,6 @@ public class OrderedProduct {
 
     public String getStoreAddress() {
         return this.product.getStore().getAddress();
-    }
-
-    public String getStoreAddressDetail() {
-        return "배송상세주소";
-        //return this.product.getStore().getAddressDetail();
     }
 
     public Long getProductId(){
@@ -178,6 +141,5 @@ public class OrderedProduct {
         BigDecimal count = new BigDecimal(this.count);
         return this.price.multiply(count);
     }
-
 }
 

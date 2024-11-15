@@ -11,13 +11,13 @@ import poomasi.domain.member._profile.dto.request.AddressUpdateRequest;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;
 import poomasi.domain.member.dto.request.FarmerUpdateRequest;
+import poomasi.domain.member.dto.request.SignupRequest;
 import poomasi.domain.member.dto.response.MemberResponse;
 import poomasi.domain.member.dto.response.MemberSummaryResponse;
+import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.domain.member.entity.LoginType;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.member.repository.MemberRepository;
-import poomasi.domain.member.dto.request.SignupRequest;
-import poomasi.domain.member.dto.response.SignUpResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.global.error.BusinessException;
 

@@ -19,10 +19,8 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 @Slf4j

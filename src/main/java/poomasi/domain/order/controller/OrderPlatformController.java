@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.order.dto.request.PreOrderRequest;
-import poomasi.domain.order.dto.response.OrderResponse;
 import poomasi.domain.order.dto.response.PreOrderResponse;
 import poomasi.domain.order.service.OrderService;
 import poomasi.payment.service.PaymentPortoneService;

@@ -1,7 +1,8 @@
 package poomasi.domain.wishlist.dto;
 
-import java.math.BigDecimal;
 import poomasi.domain.wishlist.entity.WishList;
+
+import java.math.BigDecimal;
 
 public record WishListResponse(
         Long productId,

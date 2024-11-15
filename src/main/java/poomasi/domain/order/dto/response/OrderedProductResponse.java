@@ -1,7 +1,8 @@
 package poomasi.domain.order.dto.response;
 
-import java.math.BigDecimal;
 import poomasi.domain.order.entity.OrderedProduct;
+
+import java.math.BigDecimal;
 
 public record OrderedProductResponse(
         Long productId,
