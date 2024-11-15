@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import poomasi.domain.order.entity.PaymentStatus;
 import poomasi.domain.order.entity.Order;
 
 import java.math.BigDecimal;
+import poomasi.domain.reservation.entity.Reservation;
 
 @Entity
 @Getter
@@ -24,6 +26,9 @@ public class Payment {
 
     @OneToOne(mappedBy = "payment")
     private Order order;
+
+    @OneToOne(mappedBy = "payment")
+    private Reservation reservation;
 
     @Description("포트원 결제 금액")
     private BigDecimal totalAmount;

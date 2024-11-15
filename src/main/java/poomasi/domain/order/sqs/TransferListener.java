@@ -6,6 +6,7 @@ import io.awspring.cloud.sqs.annotation.SqsListener;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import poomasi.domain.order.repository.OrderRepository;
 import poomasi.domain.order.repository.OrderedProductRepository;
 import poomasi.domain.order.repository.ProductOrderRepository;
 import poomasi.domain.reservation.entity.Reservation;
@@ -16,7 +17,7 @@ import poomasi.payment.service.PaymentService;
 @Component
 @RequiredArgsConstructor
 public class TransferListener {
-    private final ProductOrderRepository productOrderRepository;
+    private final OrderRepository orderRepository;
     private final ReservationRepository reservationRepository;
     private final PaymentPortoneService paymentService;
 
@@ -30,16 +31,17 @@ public class TransferListener {
         String type = (String) parsedMap.get("type");
 
         if(type.equals("product")){
-            productOrderRepository.findByMerchantUid(mid).ifPresent(productOrder -> {
+            orderRepository.findByMerchantUid(mid).ifPresent(productOrder -> {
                 String impUid =  productOrder.getPayment().getImpUid();
                 String status = paymentService.getPayment(impUid);
                 paymentService.confirmProductPayment(productOrder, status);
             });
         }else{
-//            reservationRepository.findByMerchantUid(mid).ifPresent(reservation -> {
-//                String impUid = reservation.getPayment().getImpUid();
-//                String status = paymentService.getPayment(impUid);
-//            });
+            reservationRepository.findByMerchantUid(mid).ifPresent(reservation -> {
+                String impUid = reservation.getPayment().getImpUid();
+                String status = paymentService.getPayment(impUid);
+                paymentService.confirmFarmPayment(reservation, status);
+            });
         }
 
     }

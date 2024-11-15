@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
@@ -142,8 +143,8 @@ public class OrderedProduct {
     }
 
     public OrderedProductStatus changeOrderedProductStatusToCancel() {
-        if (this.count == this.cancelQuantity) {
-            this.orderedProductStatus = OrderedProductStatus.CANCELLED;
+        if (Objects.equals(this.count, this.cancelQuantity)) {
+            this.orderedProductStatus = OrderedProductStatus.CANCEL_PENDING;
         }
         return this.orderedProductStatus;
     }

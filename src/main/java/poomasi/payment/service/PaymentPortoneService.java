@@ -45,6 +45,7 @@ public class PaymentPortoneService implements PaymentService {
     private final ProductService productService;
     private final OrderService orderService;
     private final ReservationService reservationService;
+    private final IamportClient iamportClient;
 
     @Override
     @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
@@ -156,18 +157,26 @@ public class PaymentPortoneService implements PaymentService {
         return response.getResponse().getStatus();
     }
 
-    public void confirmProductPayment(ProductOrder productOrder, String status) {
-
+    public void confirmProductPayment(Order productOrder, String status) {
         if(status.equals("paid") &&
                 productOrder.getPayment().getPaymentStatus()== PAYMENT_PENDING){
-            productOrder.setPaymentStatus(PAYMENT_COMPLETE);
+            productOrder.getPayment().setPaymentStatus(PAYMENT_COMPLETE);
         }else if(status.equals("cancelled") || status.equals("failed")){
-            productOrder.setPaymentStatus(PAYMENT_DECLINED);
+            productOrder.getPayment().setPaymentStatus(PAYMENT_DECLINED);
             List<OrderedProduct> products = productOrder.getOrderedProducts();
 
             products.forEach(orderedProduct->
                     orderedProduct.getProduct()
                             .addStock(orderedProduct.getCount()));
+        }
+    }
+
+    public void confirmFarmPayment(Reservation reservation, String status) {
+        if(status.equals("paid") &&
+                reservation.getPayment().getPaymentStatus()== PAYMENT_PENDING){
+            reservation.getPayment().setPaymentStatus(PAYMENT_COMPLETE);
+        }else if(status.equals("cancelled") || status.equals("failed")){
+            reservation.getPayment().setPaymentStatus(PAYMENT_DECLINED);
         }
     }
 }
