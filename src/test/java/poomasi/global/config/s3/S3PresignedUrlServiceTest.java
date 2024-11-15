@@ -1,11 +1,9 @@
 package poomasi.global.config.s3;
 
-import static org.hibernate.metamodel.mapping.internal.AnyKeyPart.KEY_NAME;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import poomasi.global.config.s3.dto.response.PresignedPutUrlResponse;
 import poomasi.global.util.EncryptionUtil;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.SdkHttpRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -42,11 +42,7 @@ class S3PresignedUrlServiceTest {
     private static final String BUCKET_NAME = "test-bucket";
     private static final String REGION = "us-west-2";
     private static final String KEY_PREFIX = "test-prefix";
-
-    @BeforeEach
-    void setup() {
-        given(encryptionUtil.encodeTime(any())).willReturn("encodedTimeString");
-    }
+    private static final String KEY_NAME = "test-key";
 
     @Test
     @DisplayName("Presigned Put URL 생성 성공 테스트")
@@ -55,8 +51,15 @@ class S3PresignedUrlServiceTest {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("key1", "value1");
 
+        given(encryptionUtil.encodeTime(any())).willReturn("encodedTimeString");
+
         PresignedPutObjectRequest mockPresignedRequest = mock(PresignedPutObjectRequest.class);
-        given(mockPresignedRequest.url()).willReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        SdkHttpRequest mockHttpRequest = mock(SdkHttpRequest.class);
+
+        // Mock httpRequest method() to return PUT
+        when(mockPresignedRequest.url()).thenReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        when(mockPresignedRequest.httpRequest()).thenReturn(mockHttpRequest);
+        when(mockHttpRequest.method()).thenReturn(SdkHttpMethod.PUT);
 
         given(s3Presigner.presignPutObject(any(PutObjectPresignRequest.class)))
                 .willReturn(mockPresignedRequest);
@@ -76,7 +79,12 @@ class S3PresignedUrlServiceTest {
     void createPresignedGetUrl_Success() throws MalformedURLException {
         // Given
         PresignedGetObjectRequest mockPresignedRequest = mock(PresignedGetObjectRequest.class);
-        given(mockPresignedRequest.url()).willReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        SdkHttpRequest mockHttpRequest = mock(SdkHttpRequest.class);
+
+        // Mock httpRequest method() to return GET
+        when(mockPresignedRequest.url()).thenReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        when(mockPresignedRequest.httpRequest()).thenReturn(mockHttpRequest);
+        when(mockHttpRequest.method()).thenReturn(SdkHttpMethod.GET);
 
         given(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
                 .willReturn(mockPresignedRequest);
