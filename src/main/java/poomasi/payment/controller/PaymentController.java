@@ -33,11 +33,10 @@ public class PaymentController {
         paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
 
-    @Description("포트원 웹훅 수신 api")
+    @Description("포트원 웹훅 수신 대기 api")
     @PostMapping("/receive-sqs")
     public void receiveSqsMessagesqs(@RequestBody SQSRequest sqsRequest) throws InterruptedException {
         System.out.println("프론트엔드에서 SQS 요청을 수신했습니다.");
-
     }
 
 
