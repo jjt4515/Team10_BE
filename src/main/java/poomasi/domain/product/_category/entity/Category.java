@@ -45,5 +45,6 @@ public class Category {
 
     public void addProduct(Product saveProduct) {
         this.products.add(saveProduct);
+        saveProduct.setCategory(this);
     }
 }

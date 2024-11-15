@@ -25,7 +25,7 @@ public record FarmResponse(
                 .latitude(farm.getLatitude())
                 .longitude(farm.getLongitude())
                 .description(farm.getDescription())
-                .experiencePrice(farm.getExperiencePrice())
+                .experiencePrice(farm.getExperiencePrice().intValue())
                 .averageRating(farm.getAverageRating())
                 .build();
     }

@@ -1,4 +1,4 @@
-package poomasi.domain.auth.token.refreshtoken.entity;
+package poomasi.domain.auth.token.whitelist.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshToken {
+public class Whitelist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

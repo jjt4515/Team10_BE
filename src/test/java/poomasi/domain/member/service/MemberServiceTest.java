@@ -53,7 +53,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("이메일 중복 시 회원가입 성공 테스트")
+    @DisplayName("회원가입 성공 테스트")
     void signUp_success() {
         // given
         SignupRequest signupRequest = new SignupRequest("testName", "test@example.com", "testPassword");

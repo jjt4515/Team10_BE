@@ -9,6 +9,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.image.entity.Image;
+import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.product._intro.entity.ProductIntro;
@@ -32,6 +33,7 @@ public class Product {
     private Long id;
 
     @Comment("카테고리 ID")
+    @Setter
     private Long categoryId;
 
     @Comment("등록한 사람")
@@ -99,13 +101,13 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductIntro productIntro;
 
-//    @PreRemove
-//    public void preRemove() {
-//        // Product가 삭제되기 전에 연관된 이미지를 삭제
-//        for (Image image : images) {
-//            image.setDeletedAt(LocalDateTime.now());
-//        }
-//    }
+    @PreRemove
+    public void preRemove() {
+        // Product가 삭제되기 전에 연관된 이미지를 삭제
+        for (Image image : images) {
+            image.setDeletedAt(LocalDateTime.now());
+        }
+    }
 
     @Builder
     public Product(Long productId,
@@ -169,4 +171,7 @@ public class Product {
     }
 
 
+    public void setCategory(Category category) {
+        this.categoryId = category.getId();
+    }
 }

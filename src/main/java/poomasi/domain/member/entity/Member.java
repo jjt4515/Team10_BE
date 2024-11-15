@@ -90,7 +90,7 @@ public class Member {
         this.role = role;
         this.loginType = loginType;
         this.provideId = provideId;
-        this.memberProfile = memberProfile;
+        this.memberProfile = (memberProfile != null) ? memberProfile : getOrCreateProfile();
         this.name = name;
     }
 

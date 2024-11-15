@@ -16,8 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Description("인증 시도 메서드")
     @Override
@@ -70,7 +70,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         response.addCookie(createCookie("refresh", refreshToken));
         response.setStatus(HttpStatus.OK.value());
 
-        refreshTokenService.putRefreshToken(refreshToken, memberId);
+        refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
 
         response.setContentType("application/json");  // Content-Type 설정
         response.getWriter().write("{\"access\": \"" + accessToken + "\", \"refresh\": \"" + refreshToken + "\"}");

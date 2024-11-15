@@ -12,11 +12,11 @@ import poomasi.domain.member._biz.service.MemberBizProfileFarmerService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/biz/farmer")
+@RequestMapping("/api/farmer/biz-profile")
 public class BizProfileFarmerController {
     private final MemberBizProfileFarmerService memberBizProfileFarmerService;
 
-    @PostMapping("/profile")
+    @PostMapping
     @Secured("ROLE_FARMER")
     public ResponseEntity<?> saveBizProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -26,7 +26,7 @@ public class BizProfileFarmerController {
 
     }
 
-    @GetMapping("/profile")
+    @GetMapping
     @Secured("ROLE_FARMER")
     public ResponseEntity<?> getBizProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -34,7 +34,7 @@ public class BizProfileFarmerController {
         return ResponseEntity.ok(memberBizProfileFarmerService.getBizProfile(userDetails.getMember()));
     }
 
-    @PostMapping("/profile/approve")
+    @PostMapping("/approve")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<?> approveBizProfile(
             @Valid @RequestBody BizProfileApproveRequest request

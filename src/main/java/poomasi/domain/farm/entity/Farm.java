@@ -1,6 +1,25 @@
 package poomasi.domain.farm.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -72,7 +91,7 @@ public class Farm {
 
     @Comment("체험 비용")
     @Column(nullable = false)
-    private int experiencePrice;
+    private BigDecimal experiencePrice;
 
     @Comment("팀 최대 인원")
     @Column(nullable = false)
@@ -112,7 +131,7 @@ public class Farm {
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
-        this.experiencePrice = experiencePrice;
+        this.experiencePrice = new BigDecimal(experiencePrice);
         this.maxCapacity = maxCapacity;
         this.maxReservation = maxReservation;
         this.businessNumber = businessNumber;
@@ -135,7 +154,7 @@ public class Farm {
     }
 
     public void updateExpPrice(int expPrice) {
-        this.experiencePrice = expPrice;
+        this.experiencePrice = new BigDecimal(expPrice);
     }
 
     public void updateMaxCapacity(Integer maxCapacity) {

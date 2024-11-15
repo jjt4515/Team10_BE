@@ -25,7 +25,7 @@ public record ReservationRequest(
                 .reservationDate(farmSchedule.getDate())
                 .memberCount(memberCount)
                 .request(request)
-                .price(new BigDecimal(farm.getExperiencePrice() * memberCount))
+                .price(farm.getExperiencePrice().multiply(BigDecimal.valueOf(memberCount)))
                 .status(ReservationStatus.ACCEPTED)
                 .merchantUid(merchantUid)
                 .build();

@@ -8,7 +8,7 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product.entity.Product;
+import poomasi.global.common.ServiceType;
 
 import java.time.LocalDateTime;
 
@@ -26,10 +26,13 @@ public class WishList {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Comment("상품")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Comment("상품 혹은 농장 아이디")
+    private Long objectId;
+
+    @Comment("상품 혹은 농장 구분")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ServiceType type;
 
     @Comment("등록일시")
     @CurrentTimestamp
@@ -39,9 +42,10 @@ public class WishList {
     private LocalDateTime deletedAt;
 
     @Builder
-    public WishList(Member member, Product product) {
+    public WishList(Member member, Long objectId, ServiceType type) {
         this.member = member;
-        this.product = product;
+        this.objectId = objectId;
+        this.type = type;
     }
 
 }

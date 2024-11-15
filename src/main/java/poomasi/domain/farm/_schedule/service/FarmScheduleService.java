@@ -10,6 +10,8 @@ import poomasi.domain.farm._schedule.repository.FarmScheduleRepository;
 import poomasi.global.error.BusinessException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
 
 import static poomasi.global.error.BusinessError.*;
@@ -18,6 +20,28 @@ import static poomasi.global.error.BusinessError.*;
 @RequiredArgsConstructor
 public class FarmScheduleService {
     private final FarmScheduleRepository farmScheduleRepository;
+
+    public void addFarmSchedule(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, Long farmId) {
+        List<FarmSchedule> farmSchedules = farmScheduleRepository.findByFarmIdAndDateRange(farmId, startDate, endDate);
+
+        // 같은 날짜에 동일한 시간에 스케줄이 있는지 확인
+        for (FarmSchedule farmSchedule : farmSchedules) {
+            if (startTime.isBefore(farmSchedule.getEndTime()) && endTime.isAfter(farmSchedule.getStartTime())) {
+                throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
+            }
+        }
+        // 등록
+        for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+            FarmSchedule farmSchedule = FarmSchedule.builder()
+                    .farmId(farmId)
+                    .date(date)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .build();
+
+            farmScheduleRepository.save(farmSchedule);
+        }
+    }
 
     public void addFarmSchedule(FarmScheduleUpdateRequest request) {
         if (request.startTime().isAfter(request.endTime())) {
@@ -54,5 +78,9 @@ public class FarmScheduleService {
         return farmScheduleRepository.findById(id).orElseThrow(
                 () -> new BusinessException(FARM_SCHEDULE_NOT_FOUND)
         );
+    }
+
+    public List<FarmSchedule> getFarmScheduleByFarmId(Long farmId) {
+        return farmScheduleRepository.findByFarmId(farmId);
     }
 }

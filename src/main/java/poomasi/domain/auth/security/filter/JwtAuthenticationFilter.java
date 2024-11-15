@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
 import poomasi.domain.auth.token.util.JwtUtil;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
-    private final BlacklistJpaService blacklistRedisService;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
 
 
     @Override
@@ -69,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if(blacklistRedisService.hasKeyBlackList(accessToken)){
+        if(accessTokenBlacklistService.hasAccessToken(accessToken)){
             log.info("블랙리스트에 있는 토큰입니다.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"message\": \"" + "token is in Blacklist");

@@ -14,8 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.auth.token.refreshtoken.service.RefreshTokenService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 import poomasi.domain.member.entity.Member;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Description("TODO : Oauth2.0 로그인이 성공하면 server access, refresh token을 발급하는 메서드")
     @Override
@@ -46,7 +46,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpStatus.OK.value());
 
         //refresh token db에 저장
-        refreshTokenService.putRefreshToken(refreshToken, memberId);
+
+        refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
         response.sendRedirect("https://poomasi.shop/callback/kakao"+"?access=" + accessToken);
     }
 
