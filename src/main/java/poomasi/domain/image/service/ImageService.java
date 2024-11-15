@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.image.deleteLinker.ImageDeleteFactory;
 import poomasi.domain.image.deleteLinker.ImageDeleteLinker;
-import poomasi.domain.image.dto.ImageRequest;
+import poomasi.domain.image.dto.request.ImageRequest;
+import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.image.linker.ImageLinker;
@@ -42,7 +43,7 @@ public class ImageService {
     // 이미지 타입에 맞게 link, deleteLink, 개수 제한, ownerValidate
 
     @Transactional
-    public Image saveImage(Long memberId, ImageRequest imageRequest) {
+    public ImageResponse saveImage(Long memberId, ImageRequest imageRequest) {
         // 기존 이미지가 있는 경우 복구 또는 예외 처리 (실제 복구 로직과는 차이가 있음)
         validateImageOwner(memberId, imageRequest.type(), imageRequest.referenceId());
         validateImageLimit(imageRequest);
@@ -53,7 +54,7 @@ public class ImageService {
 
         imageLink(image);
 
-        return imageRepository.save(image);
+        return ImageResponse.fromEntity(imageRepository.save(image));
     }
 
     // 이미지 주인이 맞는지 검증
@@ -108,7 +109,7 @@ public class ImageService {
 
     // 여러 이미지 저장
     @Transactional
-    public List<Image> saveMultipleImages(Long memberId, List<ImageRequest> imageRequests) {
+    public List<ImageResponse> saveMultipleImages(Long memberId, List<ImageRequest> imageRequests) {
         return imageRequests.stream()
                 .map(imageRequest -> saveImage(memberId, imageRequest))
                 .collect(Collectors.toList());
@@ -116,27 +117,36 @@ public class ImageService {
 
     @Transactional
     public void deleteImage(Long memberId, Long id) {
-        Image image = getImageById(id);
-        validateImageOwner(memberId, image.getType(), image.getReferenceId());
+        ImageResponse imageResponse = getImageById(id);
+        validateImageOwner(memberId, imageResponse.type(), imageResponse.referenceId());
+
+        Image image = Image.fromResponse(imageResponse);
         imageRepository.delete(image);
 
         imageDeleteLink(image);
     }
 
-    public Image getImageById(Long id) {
-        return imageRepository.findByIdAndDeletedAtIsNull(id)
+    public ImageResponse getImageById(Long id) {
+        Image image = imageRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new BusinessException(IMAGE_NOT_FOUND));
+        return ImageResponse.fromEntity(image);
     }
 
-    public List<Image> getImagesByTypeAndReferenceId(ImageType type, Long referenceId) {
-        return imageRepository.findByTypeAndReferenceIdAndDeletedAtIsNull(type, referenceId);
+    public List<ImageResponse> getImagesByTypeAndReferenceId(ImageType type, Long referenceId) {
+        return imageRepository.findByTypeAndReferenceIdAndDeletedAtIsNull(type, referenceId)
+                .stream()
+                .map(ImageResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // 이미지 수정
     @Transactional
-    public Image updateImage(Long memberId, Long id, ImageRequest imageRequest) {
-        Image image = getImageById(id);
+    public ImageResponse updateImage(Long memberId, Long id, ImageRequest imageRequest) {
+        ImageResponse imageResponse = getImageById(id);
+        Image image = Image.fromResponse(imageResponse);
+
         validateImageOwner(memberId, image.getType(), image.getReferenceId());
+        validateImageOwner(memberId, imageRequest.type(), imageRequest.referenceId());
 
         if (!image.getType().equals(imageRequest.type()) ||
                 !image.getReferenceId().equals(imageRequest.referenceId())) {
@@ -154,12 +164,14 @@ public class ImageService {
         }
 
 
-        return imageRepository.save(image);
+        return ImageResponse.fromEntity(imageRepository.save(image));
     }
 
     @Transactional
     public void recoverImage(Long memberId, Long id) {
-        Image image = getImageById(id);
+        ImageResponse imageResponse = getImageById(id);
+        Image image = Image.fromResponse(imageResponse);
+
         validateImageOwner(memberId, image.getType(), image.getReferenceId());
 
         if (image.getDeletedAt() == null) {

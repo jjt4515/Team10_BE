@@ -50,6 +50,7 @@ public class Member {
     @Column(nullable = true)
     private String provideId;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberProfile memberProfile;
 
@@ -89,7 +90,7 @@ public class Member {
         this.role = role;
         this.loginType = loginType;
         this.provideId = provideId;
-        this.memberProfile = memberProfile;
+        this.memberProfile = (memberProfile != null) ? memberProfile : getOrCreateProfile();
         this.name = name;
     }
 
@@ -120,9 +121,8 @@ public class Member {
         return store;
     }
 
-    public void setIsBanned(boolean isBanned){
-        memberProfile.setBanned(isBanned);
+    public void setAddress(String defaultAddress, String addressDetail, Double coordinateX, Double coordinateY) {
+        MemberProfile memberProfile = getOrCreateProfile();
+        memberProfile.setAddress(defaultAddress, addressDetail, coordinateX, coordinateY);
     }
-
-
 }
