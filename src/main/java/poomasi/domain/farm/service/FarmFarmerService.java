@@ -3,6 +3,7 @@ package poomasi.domain.farm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.farm.dto.request.FarmInfoRegisterRequest;
 import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
 import poomasi.domain.farm.dto.request.FarmRegisterRequest;
@@ -24,6 +25,7 @@ public class FarmFarmerService {
     private final FarmRepository farmRepository;
     private final FarmService farmService;
     private final FarmInfoService farmInfoService;
+    private final FarmScheduleService farmScheduleService;
 
     private final int MAX_FARM_INFO_COUNT = 4;
 
@@ -39,6 +41,8 @@ public class FarmFarmerService {
         farmInfoRegisterRequests.forEach(farmInfoRegisterRequest -> {
             registerFarmInfo(member, farmInfoRegisterRequest);
         });
+
+        farmScheduleService.addFarmSchedule(request.startDate(), request.endDate(), request.startTime(), request.endTime(), id);
 
         return id;
     }

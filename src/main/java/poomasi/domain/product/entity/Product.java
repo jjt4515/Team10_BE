@@ -99,13 +99,13 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductIntro productIntro;
 
-//    @PreRemove
-//    public void preRemove() {
-//        // Product가 삭제되기 전에 연관된 이미지를 삭제
-//        for (Image image : images) {
-//            image.setDeletedAt(LocalDateTime.now());
-//        }
-//    }
+    @PreRemove
+    public void preRemove() {
+        // Product가 삭제되기 전에 연관된 이미지를 삭제
+        for (Image image : images) {
+            image.setDeletedAt(LocalDateTime.now());
+        }
+    }
 
     @Builder
     public Product(Long productId,
