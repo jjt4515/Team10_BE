@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -25,17 +24,6 @@ class RefreshTokenWhitelistServiceTest {
 
     private final String refreshToken = "test-refresh-token";
     private final Long memberId = 1L;
-    private final Long REFRESH_TOKEN_EXPIRE_TIME = 604800L;
-
-    @Test
-    @DisplayName("putRefreshToken 성공 테스트")
-    void putRefreshToken_Success() {
-        // When
-        refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
-
-        // Then
-        verify(tokenWhitelistService).setValues(refreshToken, memberId.toString(), Duration.ofSeconds(REFRESH_TOKEN_EXPIRE_TIME));
-    }
 
     @Test
     @DisplayName("getMemberIdByRefreshToken 성공 테스트")

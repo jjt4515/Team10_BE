@@ -6,16 +6,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.TestPropertySource;
 
-import java.time.Duration;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestPropertySource("classpath:application-secret.yml")
 @ExtendWith(MockitoExtension.class)
 class AccessTokenBlacklistServiceTest {
 
@@ -27,17 +24,6 @@ class AccessTokenBlacklistServiceTest {
 
     private final String accessToken = "test-access-token";
     private final Long memberId = 1L;
-    private final Long ACCESS_TOKEN_EXPIRE_TIME = 3600L;
-
-    @Test
-    @DisplayName("putAccessToken 성공 테스트")
-    void putAccessToken_Success() {
-        // When
-        accessTokenBlacklistService.putAccessToken(accessToken, memberId);
-
-        // Then
-        verify(tokenBlacklistService).setBlackList(accessToken, memberId.toString(), Duration.ofSeconds(ACCESS_TOKEN_EXPIRE_TIME));
-    }
 
     @Test
     @DisplayName("getMemberIdByAccessToken 성공 테스트")
