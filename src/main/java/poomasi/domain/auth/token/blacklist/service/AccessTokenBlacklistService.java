@@ -16,7 +16,7 @@ public class AccessTokenBlacklistService {
     private final TokenBlacklistService tokenBlacklistService;
 
     @Value("${jwt.access-token-expiration-time}")
-    long ACCESS_TOKEN_EXPIRE_TIME;
+    private long ACCESS_TOKEN_EXPIRE_TIME;
 
     @Transactional
     public void putAccessToken(final String accessToken, Long memberId) {
