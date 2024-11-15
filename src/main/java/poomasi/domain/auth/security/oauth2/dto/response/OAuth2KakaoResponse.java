@@ -33,4 +33,10 @@ public record OAuth2KakaoResponse(String id, Map<String, Object> attribute) impl
         return LoginType.KAKAO;
     }
 
+    @Override
+    public String getNickname(){
+        String nickname = String.valueOf(((Map<String, Object>) attribute.get("profile")).get("nickname"));
+        return nickname;
+    }
+
 }

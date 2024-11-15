@@ -2,6 +2,7 @@ package poomasi.domain.image.deleteLinker;
 
 import org.springframework.stereotype.Component;
 import poomasi.domain.image.entity.Image;
+import poomasi.domain.image.entity.ImageType;
 import poomasi.domain.member._profile.entity.MemberProfile;
 import poomasi.domain.member._profile.service.MemberProfileService;
 
@@ -12,6 +13,11 @@ public class MemberProfileDeleteLinker implements ImageDeleteLinker {
 
     public MemberProfileDeleteLinker(MemberProfileService memberProfileService) {
         this.memberProfileService = memberProfileService;
+    }
+
+    @Override
+    public boolean supports(ImageType type) {
+        return type == ImageType.MEMBER_PROFILE;
     }
 
     @Override

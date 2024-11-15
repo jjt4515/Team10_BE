@@ -1,10 +1,6 @@
 package poomasi.domain.product.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,15 +8,24 @@ import lombok.Setter;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import poomasi.domain.order.entity._product.OrderedProduct;
-import poomasi.domain.store.entity.Store;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.product._category.entity.Category;
+import poomasi.domain.product._intro.entity.ProductIntro;
+import poomasi.domain.order.entity.OrderedProduct;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
+import poomasi.domain.store.entity.Store;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
-//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE id = ?")
+//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE farmId = ?")
 public class Product {
 
     @Id
@@ -28,6 +33,7 @@ public class Product {
     private Long id;
 
     @Comment("카테고리 ID")
+    @Setter
     private Long categoryId;
 
     @Comment("등록한 사람")
@@ -40,14 +46,27 @@ public class Product {
     private String description;
 
     @Setter
-    @Comment("이미지 URL")
-    private String imageUrl;
+    @Comment("이미지")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Image> images;
 
     @Comment("재고")
     private Integer stock;
 
     @Comment("가격")
-    private Long price;
+    private BigDecimal price;
+
+    @Comment("재배 환경")
+    private String growEnv;
+
+    @Comment("배송비")
+    BigDecimal shippingFee;
+
+    @Comment("한줄 소개")
+    private String oneLineDescription;
+
+    @Comment("인당 최대 개수 제한")
+    private Integer orderLimit;
 
     @Comment("삭제 일시")
     private LocalDateTime deletedAt;
@@ -60,7 +79,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "entityId")
-    List<Review> reviewList = new ArrayList<>();
+    List<Review> reviewList;
 
     @ManyToOne
     @JoinColumn(name = "store_id")  // 외래 키 컬럼 지정
@@ -77,15 +96,18 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderedProduct> orderProductDetails;
+    private List<OrderedProduct> orderedProducts;
 
-//    @PreRemove
-//    public void preRemove() {
-//        // Product가 삭제되기 전에 연관된 이미지를 삭제
-//        for (Image image : images) {
-//            image.setDeletedAt(LocalDateTime.now());
-//        }
-//    }
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductIntro productIntro;
+
+    @PreRemove
+    public void preRemove() {
+        // Product가 삭제되기 전에 연관된 이미지를 삭제
+        for (Image image : images) {
+            image.setDeletedAt(LocalDateTime.now());
+        }
+    }
 
     @Builder
     public Product(Long productId,
@@ -95,26 +117,40 @@ public class Product {
             String description,
             String imageUrl,
             Integer stock,
-            Long price,
-            Store store) {
+            BigDecimal price,
+            Store store,
+            String growEnv,
+            BigDecimal shippingFee,
+            ProductIntro productIntro,
+            String oneLineDescription,
+            Integer orderLimit) {
         this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.images = new ArrayList<>();
         this.stock = stock;
         this.price = price;
         this.store = store;
+        this.productIntro = productIntro;
+        this.growEnv = growEnv;
+        this.shippingFee = shippingFee;
+        this.reviewList = new ArrayList<>();
+        this.oneLineDescription = oneLineDescription;
+        this.orderLimit = orderLimit;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
         this.categoryId = productRegisterRequest.categoryId();
         this.name = productRegisterRequest.name();
         this.description = productRegisterRequest.description();
-        this.imageUrl = productRegisterRequest.imageUrl();
         this.stock = productRegisterRequest.stock();
         this.price = productRegisterRequest.price();
+        this.growEnv = productRegisterRequest.growEnv();
+        this.shippingFee = productRegisterRequest.shippingFee();
+        this.oneLineDescription = productRegisterRequest.oneLineDescription();
+        this.orderLimit = productRegisterRequest.orderLimit();
         return this;
     }
 
@@ -135,4 +171,7 @@ public class Product {
     }
 
 
+    public void setCategory(Category category) {
+        this.categoryId = category.getId();
+    }
 }

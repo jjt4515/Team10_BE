@@ -1,6 +1,5 @@
 package poomasi.domain.review.controller.product;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,8 @@ import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
 import poomasi.domain.review.service.product.ProductReviewService;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class ProductReviewController {
@@ -28,14 +29,14 @@ public class ProductReviewController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/api/products/{productId}/reviews")
+    @PostMapping("/api/products/{orderedProductId}/reviews")
     public ResponseEntity<?> registerProductReview(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long productId,
+            @PathVariable Long orderedProductId,
             @RequestBody ReviewRequest reviewRequest) {
         Member member = userDetails.getMember();
         Long reviewId = productReviewService.registerProductReview(
-                member, productId, reviewRequest);
+                member, orderedProductId, reviewRequest);
         return new ResponseEntity<>(reviewId, HttpStatus.CREATED);
     }
 }

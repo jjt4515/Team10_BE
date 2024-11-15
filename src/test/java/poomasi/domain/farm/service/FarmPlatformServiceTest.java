@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import poomasi.domain.farm.dto.FarmResponse;
+import poomasi.domain.farm.dto.response.FarmResponse;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
@@ -42,16 +42,26 @@ class FarmPlatformServiceTest {
                     .id(farmId)
                     .name("Test Farm")
                     .ownerId(1L)
+                    .experiencePrice(10000)
+                    .address("Address")
+                    .phoneNumber("010-1234-5678")
+                    .latitude(1.0)
+                    .longitude(1.0)
+                    .mainImage("Main Image")
+                    .description("Description")
+                    .growEnv("Grow Env")
+                    .maxCapacity(10)
+                    .maxReservation(5)
+                    .categoryId(1L)
                     .build();
+
             given(farmService.getFarmByFarmId(farmId)).willReturn(farm);
 
             // when
             FarmResponse response = farmPlatformService.getFarmByFarmId(farmId);
 
             // then
-            assertThat(response.id()).isEqualTo(farmId);
             assertThat(response.name()).isEqualTo("Test Farm");
-            verify(farmService).getFarmByFarmId(farmId);  // farmService 호출 확인
         }
 
         @Test

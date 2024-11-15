@@ -1,12 +1,12 @@
 package poomasi.domain.store.dto;
 
-import jakarta.validation.constraints.Positive;
-import java.util.List;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 import org.jetbrains.annotations.NotNull;
-import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductResponse;
+import poomasi.domain.store.entity.Store;
+
+import java.util.List;
 
 @Builder
 public record StoreResponse(
@@ -18,17 +18,9 @@ public record StoreResponse(
 
         String phone,
 
-        @NotNull
-        String ownerPhone,
-
         @Comment("사업자 번호")
         @NotNull
         String businessNumber,
-
-        @Comment("배송비")
-        @NotNull
-        @Positive
-        Integer shipingFee,
 
         @NotNull
         String ownerName,
@@ -37,15 +29,13 @@ public record StoreResponse(
 ) {
 
     public static StoreResponse fromEntity(Store store) {
-        return  StoreResponse.builder()
+        return StoreResponse.builder()
                 .name(store.getName())
                 .address(store.getAddress())
                 .phone(store.getPhone())
-                .ownerPhone(store.getOwnerPhone())
                 .businessNumber(store.getBusinessNumber())
-                .shipingFee(store.getShipingFee())
                 //TODO 나중에 삼항연산자 삭제
-                .ownerName( store.getOwner().getMemberProfile() == null ? ""
+                .ownerName( store.getOwner().getName() == null ? ""
                                 : store.getOwner().getName())
                 .products(store.getProducts().stream().map(ProductResponse::fromEntity).toList())
                 .build();

@@ -22,11 +22,30 @@ spring:
       port: ${REDIS_PORT}
       host: ${REDIS_HOST}
 
+  security:
+    redirect_url: https://api.poomasi.shop/callback/kakao
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}
+            client-secret: ${KAKAO_CLIENT_SECRET}
+            scope: account_email, profile_nickname
+            client-name: Kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: client_secret_post
+            redirect-uri: https://api.poomasi.shop/login/oauth2/code/kakao
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize #카카오 로그인 화면
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: kakao_account, profile_nickname
   token:
     storage:
-      type: blacklist
-      blacklist:
-        type: redis
+      type: redis
+    blacklist:
+      type: redis
 
 logging:
   level:
@@ -50,3 +69,10 @@ imp:
   api:
     key: ${IMP_API_KEY}
     secretKey: ${IMP_SECRET_KEY}
+
+
+naver:
+  ocr:
+    secret: ${NAVER_OCR_SECRET}
+    invoke: ${NAVER_OCR_INVOKE}
+    template: ${NAVER_OCR_TEMPLATE}

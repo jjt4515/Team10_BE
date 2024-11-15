@@ -1,6 +1,5 @@
 package poomasi.domain.product.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 import poomasi.domain.product.dto.ProductResponse;
 import poomasi.domain.product.service.ProductService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;

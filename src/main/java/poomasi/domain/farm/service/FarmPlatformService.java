@@ -3,7 +3,11 @@ package poomasi.domain.farm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import poomasi.domain.farm.dto.FarmResponse;
+import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
+import poomasi.domain.farm._schedule.service.FarmScheduleService;
+import poomasi.domain.farm.dto.response.FarmDetailResponse;
+import poomasi.domain.farm.dto.response.FarmInfoAggregateResponse;
+import poomasi.domain.farm.dto.response.FarmResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +16,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FarmPlatformService {
     private final FarmService farmService;
+    private final FarmInfoService farmInfoService;
+    private final FarmScheduleService farmScheduleService;
+
+    public FarmDetailResponse getFarmDetailByFarmId(Long farmId) {
+        return FarmDetailResponse.builder()
+                .farmResponse(FarmResponse.fromEntity(farmService.getFarmByFarmId(farmId)))
+                .info(FarmInfoAggregateResponse.fromEntity(farmInfoService.getFarmInfoByFarmId(farmId)))
+                .schedules(farmScheduleService.getFarmScheduleByFarmId(farmId).stream()
+                        .map(FarmScheduleResponse::fromEntity)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 
     public FarmResponse getFarmByFarmId(Long farmId) {
         return FarmResponse.fromEntity(farmService.getFarmByFarmId(farmId));
@@ -24,7 +40,7 @@ public class FarmPlatformService {
     }
 
     public List<FarmResponse> getFarmsByFarmerId(Long farmerId) {
-        return  farmService.getFarmListByOwnerId(farmerId).stream()
+        return farmService.getFarmListByOwnerId(farmerId).stream()
                 .map(FarmResponse::fromEntity)
                 .collect(Collectors.toList());
     }

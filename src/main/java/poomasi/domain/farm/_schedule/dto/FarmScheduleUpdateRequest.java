@@ -2,7 +2,6 @@ package poomasi.domain.farm._schedule.dto;
 
 import jakarta.validation.constraints.NotNull;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,7 +21,6 @@ public record FarmScheduleUpdateRequest(
                 .startTime(startTime)
                 .endTime(endTime)
                 .date(date)
-                .status(ScheduleStatus.PENDING)
                 .build();
     }
 }

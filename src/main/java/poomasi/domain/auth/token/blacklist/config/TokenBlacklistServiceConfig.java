@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
-import poomasi.domain.auth.token.blacklist.service.TokenBlacklistService;
 import poomasi.domain.auth.token.blacklist.service.BlacklistRedisService;
+import poomasi.domain.auth.token.blacklist.service.TokenBlacklistService;
 
 @Configuration
 public class TokenBlacklistServiceConfig {

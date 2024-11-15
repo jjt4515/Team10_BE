@@ -1,5 +1,6 @@
 package poomasi.global.config.s3;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import poomasi.global.config.aws.AwsProperties;
 import poomasi.global.config.s3.dto.request.PresignedUrlPutRequest;
 import poomasi.global.config.s3.dto.response.PresignedPutUrlResponse;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,13 +25,15 @@ public class S3PresignedUrlController {
         return ResponseEntity.ok(presignedGetUrl);
     }
 
-    @PostMapping("/presigned-url-put")
+    @GetMapping("/presigned-url-put")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER", "ROLE_ADMIN"})
-    public ResponseEntity<?> presignedUrlPut(@RequestBody PresignedUrlPutRequest request) {
+    public ResponseEntity<?> presignedUrlPut(@RequestParam String keyPrefix,
+                                             @RequestParam Map<String, String> metadata) {
         PresignedPutUrlResponse presignedPutUrl = s3PresignedUrlService.createPresignedPutUrl(
                 awsProperties.getS3().getBucket(),
                 awsProperties.getS3().getRegion(),
-                request.keyPrefix(), request.metadata());
+                keyPrefix,
+                metadata);
         return ResponseEntity.ok(presignedPutUrl);
     }
 }

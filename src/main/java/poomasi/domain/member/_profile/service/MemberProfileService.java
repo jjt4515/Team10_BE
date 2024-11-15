@@ -17,7 +17,7 @@ public class MemberProfileService {
     private final MemberProfileRepository memberProfileRepository;
 
     public MemberProfile getMemberProfileById(Long id){
-        return memberProfileRepository.findById(id)
+        return memberProfileRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new BusinessException(MEMBER_PROFILE_NOT_FOUND));
     }
 
