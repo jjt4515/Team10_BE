@@ -19,6 +19,8 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     Optional<Cart> findByMemberIdAndProductId(Long memberId, Long productId);
 
+    List<Cart> findByMemberId(Long memberId);
+
     @Query("SELECT e FROM Cart e WHERE e.id IN :ids")
     List<Cart> getCartsByIdList(List<Long> ids);
 

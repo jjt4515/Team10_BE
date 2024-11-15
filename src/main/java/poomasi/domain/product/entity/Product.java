@@ -15,11 +15,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.product._intro.entity.ProductIntro;
-import poomasi.domain.order.entity._product.OrderedProduct;
+import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
-import poomasi.domain.store.entity.Store;
 
 @Entity
 @Getter
@@ -94,7 +93,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderedProduct> orderProductDetails;
+    private List<OrderedProduct> orderedProducts;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductIntro productIntro;

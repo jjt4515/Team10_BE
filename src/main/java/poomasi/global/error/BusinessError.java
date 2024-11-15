@@ -77,7 +77,6 @@ public enum BusinessError {
 
     //Cart
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니를 찾을 수 없습니다."),
-
     //ProductTag
     INVALID_TAG_NAME(HttpStatus.BAD_REQUEST, "존재하지 않는 태그명입니다."),
     TAG_NOT_FOUND(HttpStatus.NOT_FOUND, "태그가 존재하지 않습니다."),
@@ -103,6 +102,7 @@ public enum BusinessError {
     ORDERED_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 주문입니다."),
     COUNT_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "주문 가능 최대 개수 보다 많이 요청했습니다."),
     PORTONE_NOT_WORKING(HttpStatus.BAD_GATEWAY, "포트원 서버가 동작하지 않습니다."),
+    CART_PRODUCT_MISMATCHING(HttpStatus.BAD_REQUEST, "장바구니에 담겨 있지 않는 상품을 주문하려 합니다"),
 
     //Store
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "등록된 상점이 없습니다."),
@@ -118,6 +118,9 @@ public enum BusinessError {
     REFUND_NOT_ALLOWED_BEFORE_SHIPPING(HttpStatus.BAD_REQUEST, "배송 대기 전 상태에서는 환불을 요청할 수 없습니다."),
     REFUND_AFTER_SALES_NOT_FOUND(HttpStatus.NOT_FOUND, "찾을 수 없는 환불 요청입니다."),
     REFUND_AFTER_SALES_REQUEST_INVALID_OWNER(HttpStatus.BAD_REQUEST, "판매자의 환불 요청이 아닙니다."),
+    REFUND_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 환불 요청입니다."),
+
+
 
     //Product intro
     INTRO_NOT_FOUND(HttpStatus.NOT_FOUND, "제품 소개가 생성되지 않았습니다."),

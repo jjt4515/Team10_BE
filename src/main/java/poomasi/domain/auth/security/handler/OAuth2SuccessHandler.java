@@ -51,7 +51,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         //refresh token db에 저장
         refreshTokenService.putRefreshToken(refreshToken, memberId);
-        response.sendRedirect(redirectUrl+"/access=" + accessToken);
+        response.sendRedirect(redirectUrl+"?access=" + accessToken);
     }
 
     private Cookie createCookie(String key, String value) {

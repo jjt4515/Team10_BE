@@ -2,14 +2,16 @@ package poomasi.payment.entity;
 
 import jakarta.persistence.*;
 import jdk.jfr.Description;
+import lombok.Builder;
 import lombok.Getter;
 import poomasi.domain.order.entity.PaymentStatus;
-import poomasi.domain.order.entity._product.ProductOrder;
+import poomasi.domain.order.entity.Order;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
+@Builder
 public class Payment {
 
     @Id
@@ -21,23 +23,11 @@ public class Payment {
     private String impUid;
 
     @OneToOne(mappedBy = "payment")
-    private ProductOrder productOrder;
+    private Order order;
 
     @Description("포트원 결제 금액")
-    private BigDecimal totalPrice;
+    private BigDecimal totalAmount;
 
-    @Description("할인 가격")
-    private BigDecimal discountPrice;
-
-    @Description("사용 포인트")
-    private BigDecimal usedPoint;
-
-    @Description("배송비")
-    private BigDecimal deliveryFee;
-
-    @Description("최종 가격")
-    private BigDecimal finalPrice;
-        
     @Description("결제 방식")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
@@ -47,6 +37,12 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus = PaymentStatus.PAYMENT_PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private ItemType itemType;
+
+    public Payment(){
+    }
 
     public void setCheckSum(BigDecimal checksum) {
         this.checkSum = checksum;
@@ -59,6 +55,4 @@ public class Payment {
     public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
-
-
 }
