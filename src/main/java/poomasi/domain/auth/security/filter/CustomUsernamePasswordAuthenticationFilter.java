@@ -19,7 +19,6 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.auth.token.util.JwtUtil;
 import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Map;
@@ -87,6 +86,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
         cookie.setHttpOnly(true);
+        cookie.setDomain("https://poomasi.shop");
         return cookie;
     }
 

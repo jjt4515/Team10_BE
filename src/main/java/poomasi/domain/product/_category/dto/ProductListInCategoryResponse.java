@@ -6,6 +6,8 @@ import lombok.Builder;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.product.entity.Product;
 
+import java.math.BigDecimal;
+
 @Builder
 public record ProductListInCategoryResponse(
         Long categoryId,

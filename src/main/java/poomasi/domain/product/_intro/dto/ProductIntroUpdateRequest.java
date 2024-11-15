@@ -1,6 +1,5 @@
 package poomasi.domain.product._intro.dto;
 
-import poomasi.domain.image.entity.Image;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.entity.Product;
 

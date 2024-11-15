@@ -1,11 +1,6 @@
 package poomasi.domain.product.entity;
 
 import jakarta.persistence.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,12 +9,18 @@ import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import poomasi.domain.image.entity.Image;
+import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._intro.entity.ProductIntro;
-import poomasi.domain.order.entity._product.OrderedProduct;
-import poomasi.domain.store.entity.Store;
+import poomasi.domain.order.entity.OrderedProduct;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 import poomasi.domain.store.entity.Store;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,6 +33,7 @@ public class Product {
     private Long id;
 
     @Comment("카테고리 ID")
+    @Setter
     private Long categoryId;
 
     @Comment("등록한 사람")
@@ -94,7 +96,7 @@ public class Product {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_product_details_id")
-    private List<OrderedProduct> orderProductDetails;
+    private List<OrderedProduct> orderedProducts;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductIntro productIntro;
@@ -169,4 +171,7 @@ public class Product {
     }
 
 
+    public void setCategory(Category category) {
+        this.categoryId = category.getId();
+    }
 }

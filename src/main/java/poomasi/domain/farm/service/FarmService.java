@@ -9,7 +9,6 @@ import poomasi.domain.farm.repository.FarmRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 

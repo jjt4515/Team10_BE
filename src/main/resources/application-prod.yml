@@ -23,7 +23,7 @@ spring:
       host: ${REDIS_HOST}
 
   security:
-    redirect_url: https://localhost:3000/callback/kakao
+    redirect_url: https://api.poomasi.shop/callback/kakao
     oauth2:
       client:
         registration:
@@ -40,8 +40,7 @@ spring:
             authorization-uri: https://kauth.kakao.com/oauth/authorize #카카오 로그인 화면
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: kakao_account
-
+            user-name-attribute: kakao_account, profile_nickname
   token:
     storage:
       type: redis

@@ -18,9 +18,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
-import poomasi.domain.auth.security.filter.JwtLogoutFilter;
 import poomasi.domain.auth.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.filter.JwtAuthenticationFilter;
+import poomasi.domain.auth.security.filter.JwtLogoutFilter;
 import poomasi.domain.auth.security.handler.OAuth2FailureHandler;
 import poomasi.domain.auth.security.handler.OAuth2SuccessHandler;
 import poomasi.domain.auth.security.userdetail.OAuth2UserDetailServiceImpl;
@@ -50,14 +50,6 @@ public class SecurityConfig {
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
 
-
-
-    /*@Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers("/error");
-    }
-*/
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -87,36 +79,56 @@ public class SecurityConfig {
         //기본 로그아웃 비활성화
         http.logout(AbstractHttpConfigurer::disable);
 
-
         http.authorizeHttpRequests((authorize) -> authorize
-
 
                 // 기본 경로 및 테스트 경로
                 // 인증 및 인가가 필요한 부분을 "authenticated"로 표시해주세요
 
                 //건호 api
                 .requestMatchers("/oauth2/authentication/kakao").authenticated()
-                .requestMatchers("api/order/**").authenticated()
+                .requestMatchers("api/orders/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "api/logout").authenticated()
 
                 //진택 api
-                .requestMatchers(HttpMethod.POST, "/api/member/update/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/member/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/reiusse").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/reissue").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/summary").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/self").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer/address").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/members/delete").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/restore/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/suspend/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-get").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-put").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/images").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/images/multiple").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/images/delete/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/update/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/recover/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+
 
                 //지민 api
-                .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
+                .requestMatchers( "/api/v1/wishlist/**").authenticated()
+                .requestMatchers("/api/farmer/farms/**").authenticated()
+                .requestMatchers("/api/farmer/farms/info").authenticated()
+                .requestMatchers("/api/v1/farmer/reservations").authenticated()
+
 
                 //풍헌 api
+                .requestMatchers("/api/cart/**").authenticated()
+                .requestMatchers("/api/categories").authenticated()
+                .requestMatchers("/api/reviews/**").authenticated()
+                .requestMatchers("/api/products/**").authenticated()
+                .requestMatchers("/api/store/**").authenticated()
 
-                /*.requestMatchers(HttpMethod.POST, "/api/farm/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/health").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/image/**").permitAll()
-                .requestMatchers("/api/member/sign-up", "/api/login", "/api/reissue", "/api/payment/**", "/api/order/**", "api/reservation/**", "/api/v1/farmer/reservations").permitAll()
-                .requestMatchers("/api/need-auth/**").authenticated()
-                .requestMatchers("/api/logout").permitAll()*/
+
                 .anyRequest().permitAll()
         );
 

@@ -1,11 +1,12 @@
 package poomasi.domain.store.dto;
 
-import java.util.List;
 import lombok.Builder;
 import org.hibernate.annotations.Comment;
 import org.jetbrains.annotations.NotNull;
 import poomasi.domain.product.dto.ProductResponse;
 import poomasi.domain.store.entity.Store;
+
+import java.util.List;
 
 @Builder
 public record StoreResponse(

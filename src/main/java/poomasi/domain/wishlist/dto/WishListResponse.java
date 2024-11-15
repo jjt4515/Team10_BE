@@ -7,6 +7,8 @@ import poomasi.domain.image.entity.Image;
 import poomasi.domain.wishlist.entity.WishList;
 import poomasi.global.common.ServiceType;
 
+import java.math.BigDecimal;
+
 public record WishListResponse(
         Long objectId,
         ServiceType type,

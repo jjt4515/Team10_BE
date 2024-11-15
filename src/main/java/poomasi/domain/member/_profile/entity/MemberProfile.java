@@ -1,7 +1,10 @@
 package poomasi.domain.member._profile.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.image.entity.Image;
 
@@ -80,6 +83,4 @@ public class MemberProfile {
         if (coordinateY != null) this.coordinateY = coordinateY;
 
     }
-
-
 }

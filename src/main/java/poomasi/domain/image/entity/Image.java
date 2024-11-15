@@ -1,7 +1,10 @@
 package poomasi.domain.image.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import poomasi.domain.image.dto.request.ImageRequest;
 import poomasi.domain.image.dto.response.ImageResponse;

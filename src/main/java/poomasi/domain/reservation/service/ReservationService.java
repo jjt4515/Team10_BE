@@ -1,5 +1,6 @@
 package poomasi.domain.reservation.service;
 
+import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
@@ -10,6 +11,9 @@ import poomasi.domain.reservation.repository.ReservationRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -65,4 +69,22 @@ public class ReservationService {
     public Reservation save(Reservation reservation) {
         return reservationRepository.save(reservation);
     }
+
+
+    @Description("3일 이내 취소면 50%. 그 이후는 100%")
+    public BigDecimal calculateRefundAmount(Reservation reservation) {
+        LocalDate reservationDate = reservation.getReservationDate();
+        LocalDate today = LocalDate.now();
+        long daysUntilReservation = ChronoUnit.DAYS.between(today, reservationDate);
+        BigDecimal price = reservation.getPrice();
+
+        if (daysUntilReservation <= 3) {
+            return price.divide(BigDecimal.valueOf(2));
+        } else {
+            return price;
+        }
+
+    }
+
+
 }

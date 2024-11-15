@@ -1,15 +1,13 @@
 package poomasi.domain.review.service.product;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.order.entity._product.OrderedProduct;
-import poomasi.domain.order.entity._product.OrderedProductStatus;
+import poomasi.domain.order.entity.OrderedProduct;
+import poomasi.domain.order.entity.OrderedProductStatus;
 import poomasi.domain.order.repository.OrderedProductRepository;
 import poomasi.domain.product.entity.Product;
-import poomasi.domain.product.repository.ProductRepository;
 import poomasi.domain.product.service.ProductService;
 import poomasi.domain.review.dto.ReviewRequest;
 import poomasi.domain.review.dto.ReviewResponse;
@@ -18,6 +16,8 @@ import poomasi.domain.review.entity.Review;
 import poomasi.domain.review.repository.ReviewRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

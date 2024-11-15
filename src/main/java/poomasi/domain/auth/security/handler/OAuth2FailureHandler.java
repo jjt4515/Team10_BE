@@ -13,12 +13,10 @@ import java.io.IOException;
 @Component
 public class OAuth2FailureHandler  implements AuthenticationFailureHandler {
 
-    @Value("{http://localhost:3000}")
-    private String baseUrl;
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
-        String redirectUrl = baseUrl + "oauth2-fauiler";
+        String redirectUrl = "https://poomasi.shop";
         response.sendRedirect(redirectUrl);
     }
 }
