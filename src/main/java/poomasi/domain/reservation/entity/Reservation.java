@@ -84,8 +84,9 @@ public class Reservation {
     Review review;
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
+    public Reservation(Long id, Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
             int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
+        this.id = id;
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
