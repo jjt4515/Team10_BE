@@ -10,22 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
-import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
-import poomasi.domain.auth.token.blacklist.service.BlacklistRedisService;
-import poomasi.domain.auth.token.reissue.service.ReissueTokenService;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
 import poomasi.domain.auth.token.util.JwtUtil;
-import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.entity.Role;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
 
 @Description("access token을 검증하는 필터")
 @AllArgsConstructor
@@ -34,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
-    private final BlacklistJpaService blacklistRedisService;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
 
 
     @Override
@@ -76,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if(blacklistRedisService.hasKeyBlackList(accessToken)){
+        if(accessTokenBlacklistService.hasAccessToken(accessToken)){
             log.info("블랙리스트에 있는 토큰입니다.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"message\": \"" + "token is in Blacklist");

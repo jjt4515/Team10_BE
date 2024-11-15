@@ -1,4 +1,4 @@
-package poomasi.domain.auth.token.refreshtoken.service;
+package poomasi.domain.auth.token.whitelist.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import static poomasi.global.config.redis.error.RedisExceptionHandler.handleRedi
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TokenRedisService implements TokenStorageService {
+public class WhitelistRedisService implements TokenWhitelistService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final RedisConnectionFactory redisConnectionFactory;
 
