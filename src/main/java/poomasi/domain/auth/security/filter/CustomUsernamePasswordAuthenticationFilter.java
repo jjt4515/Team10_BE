@@ -86,7 +86,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
         cookie.setHttpOnly(true);
-        cookie.setDomain("https://poomasi.shop");
+        //cookie.setDomain("https://poomasi.shop");
         return cookie;
     }
 
