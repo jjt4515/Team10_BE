@@ -47,8 +47,8 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member reviewer;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private final List<Image> images = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private final Image image = new Image();
 
     @Builder
     public Review(Long id, Float rating, String content, Long entityId, EntityType entityType,

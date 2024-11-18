@@ -1,5 +1,6 @@
 package poomasi.domain.review.dto;
 
+import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.review.entity.Review;
 
@@ -11,7 +12,7 @@ public record ReviewResponse
          String reviewerName,
          Float rating,
          String content,
-         List<String> imageUrls
+         ImageResponse image
         ) {
 
     public static ReviewResponse fromEntity(Review review) {
@@ -21,7 +22,7 @@ public record ReviewResponse
                 review.getReviewer().getName() == null ? "" : review.getReviewer().getName(),
                 review.getRating(),
                 review.getContent(),
-                review.getImages().stream().map(Image::getImageUrl).toList()
+                ImageResponse.fromEntity(review.getImage())
         );
     }
 }
