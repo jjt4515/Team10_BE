@@ -218,10 +218,6 @@ public class OrderService {
         return orderRepository.findAllByUpdateAtBetween(startDate, endDate);
     }
 
-    public Page<CategoryMonthlySalesResponse> getCategoryMonthlySales(Long categoryId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable){
-        return orderRepository.findCategoryMonthlySales(categoryId, startDate, endDate, pageable);
-    }
-
 }
 
 

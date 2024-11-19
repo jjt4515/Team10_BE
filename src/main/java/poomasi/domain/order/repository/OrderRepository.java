@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import poomasi.domain.admin.statistics.dto.response.CategoryMonthlySalesResponse;
 import poomasi.domain.order.entity.Order;
 
 import java.time.LocalDateTime;
@@ -23,24 +22,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o WHERE o.updateAt BETWEEN :startDate AND :endDate")
     List<Order> findAllByUpdateAtBetween(@Param("startDate") LocalDateTime startDate,
                                          @Param("endDate") LocalDateTime endDate);
-
-    @Query("""
-        SELECT new poomasi.domain.admin.statistics.dto.response.CategoryMonthlySalesResponse(
-            p.category,
-            COUNT(op.id),
-            SUM(op.price * op.quantity)
-        )
-        FROM Order o
-        JOIN o.orderedProducts op
-        JOIN op.product p
-        WHERE p.category.id = :categoryId 
-          AND o.createdAt BETWEEN :startDate AND :endDate
-        GROUP BY p.category
-    """)
-    Page<CategoryMonthlySalesResponse> findCategoryMonthlySales(
-            @Param("categoryId") Long categoryId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            Pageable pageable
-    );
 }
