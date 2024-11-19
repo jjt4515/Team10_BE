@@ -22,6 +22,7 @@ public record ProductListInCategoryResponse(
         return ProductListInCategoryResponse.builder()
                 .categoryId(product.getCategoryId())
                 .name(product.getName())
+                .description(product.getDescription())
                 .images(product.getImages())
                 .quantity(product.getStock())
                 .price(product.getPrice())
