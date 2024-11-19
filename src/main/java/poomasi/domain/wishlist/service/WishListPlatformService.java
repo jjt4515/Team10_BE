@@ -34,12 +34,12 @@ public class WishListPlatformService {
 
     @Transactional(readOnly = true)
     public List<WishListResponse> findWishListByMemberIdAndServiceType(Long memberId, ServiceType type) {
-        if (type.equals(ServiceType.FARM)) {
+        if (type.equals(ServiceType.PRODUCT)) {
             return wishListService.findWishListByMemberId(memberId).stream()
                     .map(wishList -> WishListResponse.fromEntity(wishList, productService.findProductById(wishList.getObjectId()).getPrice(), productService.findProductById(wishList.getObjectId()).getImages().getFirst().getImageUrl(), productService.findProductById(wishList.getObjectId()).getDescription()))
                     .toList();
 
-        } else if (type.equals(ServiceType.PRODUCT)) {
+        } else if (type.equals(ServiceType.FARM)) {
             return wishListService.findWishListByMemberId(memberId).stream()
                     .map(wishList -> WishListResponse.fromEntity(wishList, farmService.getFarmByFarmId(wishList.getObjectId()).getExperiencePrice(), farmService.getFarmByFarmId(wishList.getObjectId()).getMainImage(), farmService.getFarmByFarmId(wishList.getObjectId()).getDescription()))
                     .toList();
