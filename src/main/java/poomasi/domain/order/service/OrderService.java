@@ -58,15 +58,12 @@ public class OrderService {
     private final PaymentUtil paymentUtil;
     private final OrderedProductRepository orderedProductRepository;
 
-    public List<OrderResponse> getOrders(int page, int size){
+    public List<OrderResponse> getOrders(){
         Member member = getMember();
         Long memberId = member.getId();
-        Page<Order> orders = orderRepository.findByMemberId(
-                memberId, PageRequest.
-                        of(page, size, Sort.by("createdAt")
-                                .descending()
-                        )
-        );
+
+        List<Order> orders = orderRepository.findByMemberId(memberId);
+
         return orders.stream()
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
@@ -203,7 +200,9 @@ public class OrderService {
         return orderedProduct;
     }
 
-
+    public void save(Order order){
+        orderRepository.save(order);
+    }
 
 
     @Description("security context에서 member 객체 가져오는 메서드")

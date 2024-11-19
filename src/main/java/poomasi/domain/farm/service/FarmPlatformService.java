@@ -2,6 +2,7 @@ package poomasi.domain.farm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.JpaEntityGraph;
 import org.springframework.stereotype.Service;
 import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
 import poomasi.domain.farm._schedule.service.FarmScheduleService;
@@ -41,6 +42,12 @@ public class FarmPlatformService {
 
     public List<FarmResponse> getFarmsByFarmerId(Long farmerId) {
         return farmService.getFarmListByOwnerId(farmerId).stream()
+                .map(FarmResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<FarmResponse> getFarmListByCategory(Long categoryId, Pageable pageable) {
+        return farmService.getFarmListByCategory(categoryId, pageable).stream()
                 .map(FarmResponse::fromEntity)
                 .collect(Collectors.toList());
     }

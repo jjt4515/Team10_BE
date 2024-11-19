@@ -142,5 +142,8 @@ public class Reservation {
         this.canceledAt = LocalDateTime.now();
     }
 
+    public void setImpUId(String impUId){
+        this.payment.setImpUid(impUId);
+    }
 
 }

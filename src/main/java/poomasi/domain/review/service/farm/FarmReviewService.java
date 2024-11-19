@@ -37,7 +37,6 @@ public class FarmReviewService {
 
     @Transactional
     public Long registerFarmReview(Member member, Long reservationId, ReviewRequest reviewRequest) {
-        // s3 이미지 저장하고 주소 받아와서 review에 추가해주기
         Reservation reservation = reservationService.getReservationById(reservationId);
 
         checkStatusAndDate(reservation);

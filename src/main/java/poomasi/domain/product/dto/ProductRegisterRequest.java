@@ -1,6 +1,8 @@
 package poomasi.domain.product.dto;
 
+import java.util.List;
 import org.hibernate.annotations.Comment;
+import poomasi.domain.image.entity.Image;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.entity.Product;
@@ -12,8 +14,6 @@ public record ProductRegisterRequest(
         //product
         Long categoryId,
         String name,
-        String description,
-        String imageUrl,
         Integer stock,
         BigDecimal price,
         @Comment("재배 환경")
@@ -32,11 +32,11 @@ public record ProductRegisterRequest(
         String subTitle3,
         String subDesc3,
 
-        String oneLineDescription,
-        Integer orderLimit
+        String description,
+        Integer orderLimit,
 
+        List<String> imageUrls
 ) {
-
     public Product toEntity(Member member, Store store) {
         ProductIntro productIntro = ProductIntro.builder()
                 .mainTitle(mainTitle)
@@ -49,6 +49,7 @@ public record ProductRegisterRequest(
 
                 .subTitle3(subTitle3)
                 .subDesc3(subDesc3)
+
                 .build();
 
         return Product.builder()
@@ -56,15 +57,13 @@ public record ProductRegisterRequest(
                 .farmerId(member.getId())
                 .name(name)
                 .stock(stock)
-                .description(description)
-                .imageUrl(imageUrl)
                 .stock(stock)
                 .price(price)
                 .store(store)
                 .growEnv(growEnv)
                 .shippingFee(shippingFee)
                 .productIntro(productIntro)
-                .oneLineDescription(oneLineDescription)
+                .description(description)
                 .orderLimit(orderLimit)
                 .build();
     }

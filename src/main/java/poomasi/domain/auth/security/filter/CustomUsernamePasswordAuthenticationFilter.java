@@ -10,6 +10,7 @@ import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -67,7 +68,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
         log.info("username password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
-        response.addCookie(createCookie("refresh", refreshToken));
+        createCookie("refresh", refreshToken, response);
         response.setStatus(HttpStatus.OK.value());
 
         refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
@@ -82,12 +83,16 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         response.setStatus(401);
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setHttpOnly(true);
-        cookie.setDomain("https://poomasi.shop");
-        return cookie;
+    private void createCookie(String key, String value, HttpServletResponse response){
+        ResponseCookie cookie = ResponseCookie.from(key, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain("poomasi.shop")
+                .maxAge(60*60*24*7)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
 }

@@ -32,12 +32,19 @@ public class FarmController {
         return ResponseEntity.ok(farmPlatformService.getFarmDetailByFarmId(farmId));
     }
 
-    @GetMapping("Farm 다건 조회")
+    @Description("Farm 카테고리로 조회")
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getFarmListByCategory(@PathVariable Long categoryId, Pageable pageable) {
+        return ResponseEntity.ok(farmPlatformService.getFarmListByCategory(categoryId, pageable));
+    }
+
+    @Description("Farm 다건 조회")
+    @GetMapping("")
     public ResponseEntity<?> getFarmList(Pageable pageable) {
         return ResponseEntity.ok(farmPlatformService.getFarmList(pageable));
     }
 
-    @GetMapping("byFarmer/{farmerId}")
+    @GetMapping("/byFarmer/{farmerId}")
     public ResponseEntity<?> getFarmsByFarmerId(@PathVariable Long farmerId) {
         return ResponseEntity.ok(farmPlatformService.getFarmsByFarmerId(farmerId));
     }

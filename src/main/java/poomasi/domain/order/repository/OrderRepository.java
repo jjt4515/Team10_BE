@@ -17,7 +17,8 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findByMerchantUid(String merchantUid);
     Page<Order> findById(Long id, Pageable pageable);
-    Page<Order> findByMemberId(Long memberId, Pageable pageable);
+    List<Order> findByMemberId(Long memberId);
+    //Page<Order> findByMemberId(Long memberId, Pageable pageable);
 
     @Query("SELECT o FROM Order o WHERE o.updateAt BETWEEN :startDate AND :endDate")
     List<Order> findAllByUpdateAtBetween(@Param("startDate") LocalDateTime startDate,
@@ -42,5 +43,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("endDate") LocalDateTime endDate,
             Pageable pageable
     );
-
 }

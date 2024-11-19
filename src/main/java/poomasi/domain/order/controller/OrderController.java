@@ -23,9 +23,8 @@ public class OrderController {
 
     @GetMapping("")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    public ResponseEntity<?> getAllOrders(@RequestParam(defaultValue = "1") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        List<OrderResponse> orders = orderService.getOrders(page, size);
+    public ResponseEntity<?> getAllOrders() {
+        List<OrderResponse> orders = orderService.getOrders();
         return ResponseEntity.ok(orders);
     }
 
