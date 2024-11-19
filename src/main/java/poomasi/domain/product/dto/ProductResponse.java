@@ -1,6 +1,7 @@
 package poomasi.domain.product.dto;
 
 import lombok.Builder;
+import poomasi.domain.image.dto.response.ImageResponse;
 import poomasi.domain.image.entity.Image;
 import poomasi.domain.product._intro.dto.ProductIntroResponse;
 import poomasi.domain.product.entity.Product;
@@ -16,7 +17,7 @@ public record ProductResponse(
         BigDecimal price,
         Integer stock,
         String description,
-        List<Image> images,
+        List<ImageResponse> images,
         Long categoryId,
         String storeName,
         List<String> tags,
@@ -29,19 +30,19 @@ public record ProductResponse(
 
     public static ProductResponse fromEntity(Product product) {
         List<String> tags = product.getTags().stream().map(ProductTagEnum::getKoreanName).toList();
+        List<ImageResponse> images = product.getImages().stream().map(ImageResponse::fromEntity).toList();
 
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .stock(product.getStock())
-                .description(product.getDescription())
-                .images(product.getImages())
+                .images(images)
                 .storeName(product.getStore().getName())
                 .categoryId(product.getCategoryId())
                 .growEnv(product.getGrowEnv())
                 .shippingFee(product.getShippingFee())
-                .oneLineDescription(product.getOneLineDescription())
+                .description(product.getDescription())
                 .orderLimit(product.getOrderLimit())
                 .tags(tags)
                 .productIntro(ProductIntroResponse.fromEntity(product.getProductIntro()))
