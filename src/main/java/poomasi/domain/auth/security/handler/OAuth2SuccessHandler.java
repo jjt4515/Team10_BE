@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -42,26 +43,24 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = jwtUtil.generateAccessTokenById(memberId);
         String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
-        response.addCookie(createCookie("refresh", refreshToken));
+        createCookie("refresh", refreshToken, response);
         response.setStatus(HttpStatus.OK.value());
 
         //refresh token db에 저장
-
         refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
         response.sendRedirect("https://poomasi.shop/callback/kakao"+"?access=" + accessToken);
     }
 
-    private Cookie createCookie(String key, String value) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60*60*60);
-        cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setDomain("https://poomasi.shop");
-
-
-        return cookie;
+    private void createCookie(String key, String value, HttpServletResponse response){
+        ResponseCookie cookie = ResponseCookie.from(key, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain("poomasi.shop")
+                .maxAge(60*60*24*7)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
 

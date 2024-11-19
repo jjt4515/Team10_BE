@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
@@ -51,6 +52,12 @@ public class SecurityConfig {
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/error", "/favicon.ico");
+    }
+
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
@@ -88,6 +95,9 @@ public class SecurityConfig {
                 .requestMatchers("/oauth2/authentication/kakao").authenticated()
                 .requestMatchers("api/orders/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "api/logout").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/payments/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/aftersales/**").authenticated()
+
 
                 //진택 api
                 .requestMatchers(HttpMethod.POST, "/api/reissue").authenticated()
@@ -122,12 +132,28 @@ public class SecurityConfig {
 
 
                 //풍헌 api
-                .requestMatchers("/api/cart/**").authenticated()
-                .requestMatchers("/api/categories").authenticated()
-                .requestMatchers("/api/reviews/**").authenticated()
-                .requestMatchers("/api/products/**").authenticated()
-                .requestMatchers("/api/store/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/cart/**").authenticated()   // GET 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.POST, "/api/cart/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/cart/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/cart/**").authenticated() // DELETE 요청에 대해 인증 필요
 
+                // /api/categories/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/categories/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/reviews/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/products/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/stores/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/stores/**").authenticated()   // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/stores/**").authenticated()    // PUT 요청에 대해 인증 필요
 
                 .anyRequest().permitAll()
         );
