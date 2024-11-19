@@ -52,9 +52,10 @@ public class ImageService {
                 .map(existingImage -> recoverImageOrThrow(existingImage, imageRequest))
                 .orElseGet(() -> imageRequest.toEntity(imageRequest));
 
+        image = imageRepository.save(image);
         imageLink(image);
 
-        return ImageResponse.fromEntity(imageRepository.save(image));
+        return ImageResponse.fromEntity(image);
     }
 
     // 이미지 주인이 맞는지 검증

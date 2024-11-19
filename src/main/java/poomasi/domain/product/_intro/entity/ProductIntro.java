@@ -47,21 +47,18 @@ public class ProductIntro {
     private Image subImage3;
 
     @Builder
-    public ProductIntro(Product product, String mainTitle, Image mainImage, String subTitle1,
-            String subDesc1, Image subImage1, String subTitle2, String subDesc2, Image subImage2,
-            String subTitle3, String subDesc3, Image subImage3) {
+    public ProductIntro(Product product, String mainTitle, String subTitle1,
+            String subDesc1, String subTitle2, String subDesc2,
+            String subTitle3, String subDesc3) {
         this.product = product;
+
         this.mainTitle = mainTitle;
-        this.mainImage = mainImage;
         this.subTitle1 = subTitle1;
         this.subDesc1 = subDesc1;
-        this.subImage1 = subImage1;
         this.subTitle2 = subTitle2;
         this.subDesc2 = subDesc2;
-        this.subImage2 = subImage2;
         this.subTitle3 = subTitle3;
         this.subDesc3 = subDesc3;
-        this.subImage3 = subImage3;
     }
 
     public void update(ProductIntroUpdateRequest productIntroUpdateRequest) {
@@ -75,13 +72,6 @@ public class ProductIntro {
 
         this.subTitle3 = productIntroUpdateRequest.subTitle3();
         this.subDesc3 = productIntroUpdateRequest.subDesc3();
-    }
-
-    public void updateImage(Image mainImage, Image subImage1, Image subImage2, Image subImage3){
-        this.mainImage = mainImage;
-        this.subImage1 = subImage1;
-        this.subImage2 = subImage2;
-        this.subImage3 = subImage3;
     }
 
     public Long getFarmerId() {

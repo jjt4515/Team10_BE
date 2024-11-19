@@ -12,7 +12,6 @@ import poomasi.domain.image.entity.Image;
 import poomasi.domain.product._category.entity.Category;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.order.entity.OrderedProduct;
-import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.review.entity.Review;
 import poomasi.domain.store.entity.Store;
@@ -25,7 +24,6 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor
-//@SQLDelete(sql = "UPDATE product SET deleted_at = current_timestamp WHERE farmId = ?")
 public class Product {
 
     @Id
@@ -48,7 +46,7 @@ public class Product {
     @Setter
     @Comment("이미지")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
 
     @Comment("재고")
     private Integer stock;
@@ -61,9 +59,6 @@ public class Product {
 
     @Comment("배송비")
     BigDecimal shippingFee;
-
-    @Comment("한줄 소개")
-    private String oneLineDescription;
 
     @Comment("인당 최대 개수 제한")
     private Integer orderLimit;
@@ -114,22 +109,18 @@ public class Product {
             Long categoryId,
             Long farmerId,
             String name,
-            String description,
-            String imageUrl,
             Integer stock,
             BigDecimal price,
             Store store,
             String growEnv,
             BigDecimal shippingFee,
             ProductIntro productIntro,
-            String oneLineDescription,
+            String description,
             Integer orderLimit) {
         this.id = productId;
         this.categoryId = categoryId;
         this.farmerId = farmerId;
         this.name = name;
-        this.description = description;
-        this.images = new ArrayList<>();
         this.stock = stock;
         this.price = price;
         this.store = store;
@@ -137,19 +128,18 @@ public class Product {
         this.growEnv = growEnv;
         this.shippingFee = shippingFee;
         this.reviewList = new ArrayList<>();
-        this.oneLineDescription = oneLineDescription;
+        this.description = description;
         this.orderLimit = orderLimit;
     }
 
     public Product modify(ProductRegisterRequest productRegisterRequest) {
         this.categoryId = productRegisterRequest.categoryId();
         this.name = productRegisterRequest.name();
-        this.description = productRegisterRequest.description();
         this.stock = productRegisterRequest.stock();
         this.price = productRegisterRequest.price();
         this.growEnv = productRegisterRequest.growEnv();
         this.shippingFee = productRegisterRequest.shippingFee();
-        this.oneLineDescription = productRegisterRequest.oneLineDescription();
+        this.description = productRegisterRequest.description();
         this.orderLimit = productRegisterRequest.orderLimit();
         return this;
     }
@@ -169,7 +159,6 @@ public class Product {
     public void subtractStock(Integer stock) {
         this.stock -= stock;
     }
-
 
     public void setCategory(Category category) {
         this.categoryId = category.getId();
