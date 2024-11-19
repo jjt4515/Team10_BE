@@ -86,5 +86,8 @@ public class Payment {
         return false;
     }
 
+    public void setImpUid(String impUid){
+        this.impUid = impUid;
+    }
 
 }

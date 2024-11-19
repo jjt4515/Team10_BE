@@ -79,20 +79,24 @@ public class PaymentPortoneService implements PaymentService {
 
     private void handleProductPayment(String impUid, String merchantUid) {
         Order order = orderService.findByMerchantUid(merchantUid);
-        List<OrderedProduct> orderedProductList = order.getOrderedProducts();
-        //수량 검증
-        for (OrderedProduct orderedProduct : orderedProductList) {
-            Product product = orderedProduct.getProduct();
-            Integer remainQuantity = product.getStock();
-            Integer orderQuantity = orderedProduct.getCount();
-
-            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
-            if (orderQuantity > remainQuantity) {
-                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
-            }
-        }
-        //결제 되어야 할 금액
         BigDecimal amountToBePaid = order.getTotalAmount();
+
+        if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
+            try {
+                order.setPaymentComplete();
+                order.setImpUid(impUid);
+                orderService.save(order);
+            } catch (BusinessException businessException) {
+                throw new ApplicationException(PAYMENT_BAD_REQUEST);
+            }
+        } else {
+            //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+            paymentUtil.cancelPaymentByImpUid(impUid);
+            order.cancel();
+            orderService.save(order);
+            throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+        }
+
     }
 
     private void handleFarmPayment(String impUid, String merchantUid) {
@@ -103,6 +107,7 @@ public class PaymentPortoneService implements PaymentService {
         if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
             try {
                 reservation.completePayment();
+                reservation.setImpUId(impUid);
                 reservationService.save(reservation);
             } catch (BusinessException businessException) {
                 throw new ApplicationException(PAYMENT_BAD_REQUEST);

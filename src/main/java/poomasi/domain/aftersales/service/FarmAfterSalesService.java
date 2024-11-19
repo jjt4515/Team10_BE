@@ -15,12 +15,15 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.domain.reservation.service.ReservationService;
 import poomasi.global.error.ApplicationException;
+import poomasi.global.error.BusinessError;
+import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.Payment;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
 
 import static poomasi.domain.reservation.entity.ReservationStatus.CANCELED;
+import static poomasi.domain.reservation.entity.ReservationStatus.PENDING;
 import static poomasi.global.error.ApplicationError.PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT;
 
 @Service
@@ -39,6 +42,13 @@ public class FarmAfterSalesService implements CancelService<FarmCancelResponse, 
         Long reservationId = farmCancelRequest.reservationId();
         Reservation reservation = reservationService.getReservation(reservationId);
         BigDecimal cancelAmount = reservationService.calculateRefundAmount(reservation);
+        
+        
+        //1.1 펜딩 상태가 아니라면
+        if(reservation.getStatus()!=PENDING){
+            throw new BusinessException(BusinessError.RESERVATION_CANCELLATION_PERIOD_EXPIRED);
+        }
+
         //2. farmaftersales 만들기
         FarmAfterSales farmAfterSales = FarmAfterSales
                 .builder()
@@ -60,8 +70,6 @@ public class FarmAfterSalesService implements CancelService<FarmCancelResponse, 
 
         return new FarmCancelResponse(reservationId, CANCELED, cancelAmount);
     }
-
-
 
 
     @Description("security context에서 member 객체 가져오는 메서드")

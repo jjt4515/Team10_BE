@@ -1,4 +1,6 @@
 package poomasi.payment.dto.request;
 
-public record PaymentValidateRequest(String merchantUid, String amount) {
+import java.math.BigDecimal;
+
+public record PaymentValidateRequest(String merchantUid, BigDecimal amount) {
 }
