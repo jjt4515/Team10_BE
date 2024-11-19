@@ -65,7 +65,7 @@ class S3PresignedUrlServiceTest {
                 .willReturn(mockPresignedRequest);
 
         // When
-        PresignedPutUrlResponse response = s3PresignedUrlService.createPresignedPutUrl(BUCKET_NAME, REGION, KEY_PREFIX, metadata);
+        PresignedPutUrlResponse response = s3PresignedUrlService.createPresignedPutUrl(BUCKET_NAME, REGION, KEY_PREFIX);
 
         // Then
         assertEquals("https://test-bucket.s3.us-west-2.amazonaws.com/test-key", response.presignedPutUrl());
