@@ -3,9 +3,6 @@ package poomasi.domain.order.service;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +30,7 @@ import poomasi.payment.entity.Payment;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -211,6 +209,9 @@ public class OrderService {
         return member;
     }
 
+    public List<Order> getOrdersByUpdateAtBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.findAllByUpdateAtBetween(startDate, endDate);
+    }
 
 }
 

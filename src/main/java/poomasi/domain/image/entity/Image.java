@@ -1,5 +1,6 @@
 package poomasi.domain.image.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @SQLDelete(sql = "UPDATE image SET deleted_at = current_timestamp WHERE id = ?")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Image {
 
     @Id
