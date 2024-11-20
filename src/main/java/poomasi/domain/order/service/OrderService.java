@@ -32,6 +32,7 @@ import poomasi.payment.entity.Payment;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -231,6 +232,9 @@ public class OrderService {
         return member;
     }
 
+    public List<Order> getOrdersByUpdateAtBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.findAllByUpdateAtBetween(startDate, endDate);
+    }
 
 }
 

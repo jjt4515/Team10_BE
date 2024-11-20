@@ -15,6 +15,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
+import java.time.Month;
+
 
 import jdk.jfr.Description;
 import lombok.Builder;
@@ -25,6 +27,7 @@ import poomasi.domain.aftersales.entity.ProductAfterSales;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.review.entity.Review;
+import poomasi.domain.store.entity.Store;
 import poomasi.payment.entity.Payment;
 
 import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
@@ -95,7 +98,6 @@ public class OrderedProduct {
     private Review review;
 
 
-
     @Builder
     public OrderedProduct(Product product, Order order, String productDescription,
                           String productName, BigDecimal price, Integer count, BigDecimal deliveryFee, String imageUrl, String growEnv) {
@@ -156,6 +158,22 @@ public class OrderedProduct {
     public BigDecimal calculateRefundAmount(){
         BigDecimal count = new BigDecimal(this.count);
         return this.price.multiply(count);
+    }
+
+    public Store getStore() {
+        return getProduct().getStore();
+    }
+
+    public Long getStoreId() {
+        return getStore().getId();
+    }
+
+    public Long getCategoryId() {
+        return getProduct().getCategoryId();
+    }
+
+    public Month getUpdateMonth() {
+        return getOrder().getUpdateAt().getMonth();
     }
 }
 
