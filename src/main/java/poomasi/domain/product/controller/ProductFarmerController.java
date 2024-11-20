@@ -1,5 +1,6 @@
 package poomasi.domain.product.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.ProductRegisterResponse;
+import poomasi.domain.product.dto.ProductResponse;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.service.ProductFarmerService;
 
@@ -30,6 +32,15 @@ public class ProductFarmerController {
         Member member = userDetails.getMember();
         ProductRegisterResponse response = productFarmerService.registerProduct(member, product);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Secured({"ROLE_FARMER", "ROLE_ADMIN"})
+    @GetMapping("/sold-out")
+    public ResponseEntity<?> registerProduct
+            (@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Member member = userDetails.getMember();
+        List<ProductResponse> response = productFarmerService.getSoldOut(member);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Secured({"ROLE_FARMER", "ROLE_ADMIN"})
