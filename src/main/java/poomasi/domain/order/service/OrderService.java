@@ -27,6 +27,7 @@ import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.ItemType;
 import poomasi.payment.entity.Payment;
+import poomasi.payment.entity.PaymentStatus;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static poomasi.domain.order.entity.OrderedProductStatus.DELIVERED;
 import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
+import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 import static poomasi.global.error.ApplicationError.PAYMENT_NOT_FOUND;
 import static poomasi.global.error.BusinessError.*;
 
@@ -63,7 +65,8 @@ public class OrderService {
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
     }
-    
+
+
     @Description("사전 주문 생성 메서드")
     @Transactional
     public PreOrderResponse productPreOrderRegister(PreOrderRequest preOrderRequest) {
@@ -245,7 +248,24 @@ public class OrderService {
         return orderRepository.findAllByUpdateAtBetween(startDate, endDate);
     }
 
+    public Order validating(String merchantUid, BigDecimal amount){
+        Order order = findByMerchantUid(merchantUid);
+        Payment payment = order.getPayment();
+
+        if(payment.getPaymentStatus()== PaymentStatus.PAYMENT_PENDING){
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        if (payment.getTotalAmount().compareTo(amount) != 0) {
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        return order;
+    }
+
+
 }
+
 
 
 

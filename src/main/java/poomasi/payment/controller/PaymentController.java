@@ -36,10 +36,20 @@ public class PaymentController {
         paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
 
-    @Description("결제 마지막 확인 api")
-    @GetMapping("/validate/{paymentsId}")
-    public void validatePayment(@RequestBody PaymentValidateRequest PaymentValidateRequest){
+    @Description("결제 마지막 order 확인 api")
+    @GetMapping("/validate/orders")
+    public ResponseEntity<?> validateOrderPayment(@RequestBody PaymentValidateRequest PaymentValidateRequest){
+        return ResponseEntity.ok(
+                paymentService.validateProductPayment(PaymentValidateRequest)
+        );
+    }
 
+    @Description("결제 마지막 reservation 확인 api")
+    @GetMapping("/validate/reservation")
+    public ResponseEntity<?> validateReservationPayment(@RequestBody PaymentValidateRequest PaymentValidateRequest){
+        return ResponseEntity.ok(
+                paymentService.validateFarmPayment(PaymentValidateRequest)
+        );
     }
 
 }

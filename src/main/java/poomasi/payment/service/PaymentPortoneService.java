@@ -4,6 +4,9 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 //import com.siot.IamportRestClient.response.Payment;
+import poomasi.domain.order.dto.response.OrderResponse;
+import poomasi.domain.reservation.dto.response.ReservationResponse;
+import poomasi.payment.dto.request.PaymentValidateRequest;
 import poomasi.payment.entity.Payment;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,6 +31,7 @@ import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.PaymentStatus;
 import poomasi.payment.repository.PaymentRepository;
 import poomasi.payment.util.PaymentUtil;
 
@@ -206,7 +210,34 @@ public class PaymentPortoneService implements PaymentService {
         }
     }
 
+    public OrderResponse validateProductPayment(PaymentValidateRequest paymentValidateRequest){
+        String merchantUid = paymentValidateRequest.merchantUid();
+        BigDecimal amount = paymentValidateRequest.amount();
 
+        Order order = orderService.validating(merchantUid, amount);
+        OrderResponse orderResponse = OrderResponse.fromEntity(order);
+        return orderResponse;
+    }
+
+    public ReservationResponse validateFarmPayment(PaymentValidateRequest PaymentValidateRequest){
+        String merchantUid = PaymentValidateRequest.merchantUid();
+        BigDecimal amount = PaymentValidateRequest.amount();
+
+        Reservation reservation = reservationService.findByMerchantUid(merchantUid);
+        Payment payment = reservation.getPayment();
+
+        if(payment.getPaymentStatus()== PaymentStatus.PAYMENT_PENDING){
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        if (payment.getTotalAmount().compareTo(amount) != 0) {
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        ReservationResponse reservationResponse = reservation.toResponse();
+
+        return reservationResponse;
+    }
 
 }
 
