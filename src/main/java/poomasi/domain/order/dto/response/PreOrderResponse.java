@@ -1,4 +1,6 @@
 package poomasi.domain.order.dto.response;
 
-public record PreOrderResponse(String merchantUid) {
+import java.math.BigDecimal;
+
+public record PreOrderResponse(String merchantUid, BigDecimal amount) {
 }

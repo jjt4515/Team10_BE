@@ -27,11 +27,11 @@ public class ProductAfterSales {
 
     @Column(name = "created_at")
     @UpdateTimestamp
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     @UpdateTimestamp
-    private LocalDateTime updateAt = LocalDateTime.now();
+    private LocalDateTime updateAt;
 
     @Column(name = "deleted_at")
     @Timestamp
@@ -43,5 +43,14 @@ public class ProductAfterSales {
     public ProductAfterSales(){
     }
 
+
+    @Builder
+    public ProductAfterSales(BigDecimal afterSalesAmount, AfterSalesType afterSalesType, OrderedProduct orderedProduct){
+        this.afterSalesAmount = afterSalesAmount;
+        this.afterSalesType = afterSalesType;
+        this.createdAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+        this.orderedProduct = orderedProduct;
+    }
 
 }

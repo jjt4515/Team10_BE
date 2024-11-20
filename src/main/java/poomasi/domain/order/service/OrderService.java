@@ -3,9 +3,6 @@ package poomasi.domain.order.service;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,8 +11,10 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.order.dto.request.PreOrderRequest;
 import poomasi.domain.order.dto.request.ProductOrderRequest;
+import poomasi.domain.order.dto.request.RegisterInvoiceRequest;
 import poomasi.domain.order.dto.response.OrderResponse;
 import poomasi.domain.order.dto.response.PreOrderResponse;
+import poomasi.domain.order.dto.response.RegisterInvoiceResponse;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.order.entity.OrderedProductStatus;
@@ -155,7 +154,7 @@ public class OrderService {
         orderRepository.save(order);
 
         paymentUtil.sendPrepareData(merchantUid, order.getTotalAmount());
-        return new PreOrderResponse(order.getMerchantUid());
+        return new PreOrderResponse(order.getMerchantUid(), order.getTotalAmount());
     }
 
 
@@ -199,6 +198,27 @@ public class OrderService {
 
     public void save(Order order){
         orderRepository.save(order);
+    }
+
+    public RegisterInvoiceResponse registerInvoice(RegisterInvoiceRequest registerInvoiceRequest){
+        String invoiceNumber = registerInvoiceRequest.invoiceNumber();
+        String deliveryService = registerInvoiceRequest.deliveryService();
+        Long orderedProductId = registerInvoiceRequest.orderedProductId();
+
+        OrderedProduct orderedProduct = orderedProductRepository.findById(orderedProductId)
+                .orElseThrow(()-> new BusinessException(ORDERED_PRODUCT_NOT_FOUND));
+
+        orderedProduct.setInvoice(invoiceNumber, deliveryService);
+        orderedProductRepository.save(orderedProduct);
+
+        return new RegisterInvoiceResponse(orderedProductId, deliveryService, invoiceNumber);
+
+    }
+
+    public OrderedProduct getOrderedProduct(Long orderedProductId){
+        OrderedProduct orderedProduct = orderedProductRepository.findById(orderedProductId)
+                .orElseThrow(()-> new BusinessException(ORDERED_PRODUCT_NOT_FOUND));
+        return orderedProduct;
     }
 
 

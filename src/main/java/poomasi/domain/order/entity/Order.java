@@ -117,8 +117,9 @@ public class Order {
         payment.setOrder(this);
     }
 
-    public void setPaymentComplete(){
+    public void setPaymentComplete(String impUid){
         this.payment.setPaymentStatus(PAYMENT_COMPLETE);
+        this.payment.setImpUid(impUid);
     }
 
     public void cancel(){

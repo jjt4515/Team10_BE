@@ -3,9 +3,11 @@ package poomasi.payment.service;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
-import com.siot.IamportRestClient.response.Payment;
+//import com.siot.IamportRestClient.response.Payment;
+import poomasi.payment.entity.Payment;
 import java.io.IOException;
-import java.util.Objects;
+import java.time.LocalDateTime;
+
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +28,14 @@ import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.entity.ItemType;
+import poomasi.payment.repository.PaymentRepository;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import static poomasi.domain.order.entity.OrderedProductStatus.ORDERED_CANCEL;
+import static poomasi.domain.order.entity.OrderedProductStatus.PAYMENT_CANCELLED;
 import static poomasi.global.error.ApplicationError.PAYMENT_AMOUNT_MISMATCH;
 import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 import static poomasi.payment.entity.PaymentStatus.*;
@@ -44,6 +49,7 @@ public class PaymentPortoneService implements PaymentService {
     private final OrderService orderService;
     private final ReservationService reservationService;
     private final IamportClient iamportClient;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
@@ -83,8 +89,7 @@ public class PaymentPortoneService implements PaymentService {
 
         if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
             try {
-                order.setPaymentComplete();
-                order.setImpUid(impUid);
+                order.setPaymentComplete(impUid);
                 orderService.save(order);
             } catch (BusinessException businessException) {
                 throw new ApplicationException(PAYMENT_BAD_REQUEST);
@@ -106,8 +111,7 @@ public class PaymentPortoneService implements PaymentService {
 
         if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
             try {
-                reservation.completePayment();
-                reservation.setImpUId(impUid);
+                reservation.completePayment(impUid);
                 reservationService.save(reservation);
             } catch (BusinessException businessException) {
                 throw new ApplicationException(PAYMENT_BAD_REQUEST);
@@ -145,7 +149,7 @@ public class PaymentPortoneService implements PaymentService {
 
     @Description("결제 내역 단건 조회")
     public String getPayment(String impUid) {
-        IamportResponse<Payment> response = null;
+        IamportResponse<com.siot.IamportRestClient.response.Payment> response = null;
         try {
             response = iamportClient.paymentByImpUid(impUid);
         } catch (IamportResponseException | IOException e) {
@@ -179,6 +183,31 @@ public class PaymentPortoneService implements PaymentService {
             reservation.getPayment().setPaymentStatus(PAYMENT_DECLINED);
         }
     }
+
+
+    @Transactional
+    public void cancelExpiredPendingPayments() {
+        List<Payment> payments = paymentRepository.findPendingPaymentsOlderThan(LocalDateTime.now().minusMinutes(10));
+        for (Payment payment : payments) {
+
+            if (payment.getOrder() != null) {
+                List<OrderedProduct> orderedProducts = payment.getOrder().getOrderedProducts();
+                for(OrderedProduct orderedProduct : orderedProducts){
+                    Integer cancelRequestQuantity = orderedProduct.getCount();
+                    orderedProduct.getProduct().addStock(cancelRequestQuantity);
+                    orderedProduct.setOrderedProductStatus(PAYMENT_CANCELLED);
+                }
+            }
+            if (payment.getReservation() != null) {
+                Reservation reservation = payment.getReservation();
+                reservationService.cancelReservation(reservation);
+            }
+            payment.setPaymentStatus(PAYMENT_DECLINED);
+        }
+    }
+
+
+
 }
 
 

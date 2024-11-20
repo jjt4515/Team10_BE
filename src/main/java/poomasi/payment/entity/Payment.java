@@ -10,11 +10,12 @@ import poomasi.domain.order.entity.Order;
 import poomasi.domain.reservation.entity.Reservation;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 import poomasi.domain.reservation.entity.Reservation;
 
 @Entity
 @Getter
-
 public class Payment {
 
     @Id
@@ -22,14 +23,17 @@ public class Payment {
     private Long id;
 
     @Column(name = "imp_uid")
+    @Setter
     @Description("아임포트 결제 imp_uid")
     private String impUid;
 
+    @Getter
     @Setter
     @OneToOne(mappedBy = "payment")
     private Order order;
 
     @Setter
+    @Getter
     @OneToOne(mappedBy = "payment")
     private Reservation reservation;
 
@@ -49,9 +53,16 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     public Payment(){
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     @Builder
     public Payment(String impUid, Order order,
@@ -86,8 +97,5 @@ public class Payment {
         return false;
     }
 
-    public void setImpUid(String impUid){
-        this.impUid = impUid;
-    }
 
 }
