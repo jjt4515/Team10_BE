@@ -10,6 +10,8 @@ import java.util.List;
 
 @Builder
 public record StoreResponse(
+        Long id,
+
         @NotNull
         String name,
 
@@ -19,7 +21,7 @@ public record StoreResponse(
         String phone,
 
         @Comment("사업자 번호")
-        @NotNull
+        // @NotNull
         String businessNumber,
 
         @NotNull
@@ -30,6 +32,7 @@ public record StoreResponse(
 
     public static StoreResponse fromEntity(Store store) {
         return StoreResponse.builder()
+                .id(store.getId())
                 .name(store.getName())
                 .address(store.getAddress())
                 .phone(store.getPhone())

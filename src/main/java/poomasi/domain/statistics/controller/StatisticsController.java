@@ -1,4 +1,4 @@
-package poomasi.domain.admin.statistics.controller;
+package poomasi.domain.statistics.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -6,15 +6,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import poomasi.domain.admin.statistics.dto.response.CategoryMonthlySalesResponse;
-import poomasi.domain.admin.statistics.dto.response.StoreMonthlySalesResponse;
-import poomasi.domain.admin.statistics.service.StatisticsService;
+import poomasi.domain.statistics.dto.response.CategoryMonthlySalesResponse;
+import poomasi.domain.statistics.dto.response.StoreMonthlySalesResponse;
+import poomasi.domain.statistics.service.StatisticsService;
 
 import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/statistics")
+@RequestMapping("/api/statistics")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -30,13 +30,14 @@ public class StatisticsController {
         return ResponseEntity.ok(salesResponses);
     }
 
-    @GetMapping("/categories/monthly-sales")
-    public ResponseEntity<Page<CategoryMonthlySalesResponse>> getCategoryMonthlySales(
+    @GetMapping("/stores/{storeId}/categories/six-month-sales")
+    public ResponseEntity<Page<CategoryMonthlySalesResponse>> getSixMonthCategorySales(
+            @PathVariable Long storeId,
             @RequestParam String startMonth,
             @PageableDefault(size = 10) Pageable pageable) {
 
         LocalDate startDate = LocalDate.parse(startMonth + "-01");
-        Page<CategoryMonthlySalesResponse> salesResponses = statisticsService.getCategoryMonthlySales(startDate, pageable);
+        Page<CategoryMonthlySalesResponse> salesResponses = statisticsService.getSixMonthCategorySales(storeId, startDate, pageable);
         return ResponseEntity.ok(salesResponses);
     }
 }

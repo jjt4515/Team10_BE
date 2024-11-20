@@ -15,6 +15,8 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
+import java.time.Month;
+
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
@@ -159,8 +161,16 @@ public class OrderedProduct {
         return getProduct().getStore();
     }
 
-    public Long getStoreId(){
+    public Long getStoreId() {
         return getStore().getId();
+    }
+
+    public Long getCategoryId() {
+        return getProduct().getCategoryId();
+    }
+
+    public Month getUpdateMonth() {
+        return getOrder().getUpdateAt().getMonth();
     }
 }
 
