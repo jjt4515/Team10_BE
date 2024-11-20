@@ -12,6 +12,7 @@ import poomasi.domain.product._category.service.CategoryService;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product._intro.repository.ProductIntroRepository;
 import poomasi.domain.product.dto.ProductRegisterResponse;
+import poomasi.domain.product.dto.ProductResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
@@ -95,5 +96,9 @@ public class ProductFarmerService {
         if (!product.getFarmerId().equals(member.getId())) {
             throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
         }
+    }
+
+    public List<ProductResponse> getSoldOut(Member member) {
+        return productRepository.findSoldOut(member.getId()).stream().map(ProductResponse::fromEntity).toList();
     }
 }
