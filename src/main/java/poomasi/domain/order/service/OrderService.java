@@ -12,9 +12,7 @@ import poomasi.domain.member.entity.Member;
 import poomasi.domain.order.dto.request.PreOrderRequest;
 import poomasi.domain.order.dto.request.ProductOrderRequest;
 import poomasi.domain.order.dto.request.RegisterInvoiceRequest;
-import poomasi.domain.order.dto.response.OrderResponse;
-import poomasi.domain.order.dto.response.PreOrderResponse;
-import poomasi.domain.order.dto.response.RegisterInvoiceResponse;
+import poomasi.domain.order.dto.response.*;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.order.entity.OrderedProductStatus;
@@ -221,6 +219,17 @@ public class OrderService {
                 .orElseThrow(()-> new BusinessException(ORDERED_PRODUCT_NOT_FOUND));
         return orderedProduct;
     }
+
+    public List<OrderedProductResponse> getStoreOrders(Long storeId){
+        List<OrderedProduct> orderedProducts = orderedProductRepository.findByStoreId(storeId);
+
+        List<OrderedProductResponse> orderedProductResponses = orderedProducts.stream()
+                .map(OrderedProductResponse::fromEntity)
+                .toList();
+
+        return orderedProductResponses;
+    }
+
 
 
     @Description("security context에서 member 객체 가져오는 메서드")

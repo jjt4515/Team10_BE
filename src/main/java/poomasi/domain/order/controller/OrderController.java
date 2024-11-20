@@ -47,6 +47,14 @@ public class OrderController {
         return ResponseEntity.ok(registerInvoiceResponse);
     }
 
+    @Secured({"ROLE_FARMER"})
+    @GetMapping("/{storeId}")
+    @Description("스토어 별 주문 조회")
+    public ResponseEntity<?> getStoreOrders(@PathVariable Long storeId){
+        return ResponseEntity.ok(
+                orderService.getStoreOrders(storeId)
+        );
+    }
 }
 
 
