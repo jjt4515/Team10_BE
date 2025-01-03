@@ -541,21 +541,21 @@ naver:
   <tr>
     <td align="center" width="200px">
       <a href="https://github.com/jasper200207" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/51306225?v=4" width="100px" alt="김건호 프로필" />
+        <img src="https://avatars.githubusercontent.com/u/51306225?v=4" width="100px" alt="김도균 프로필" />
       </a>
     </td>
     <td align="center" width="200px">
       <a href="https://github.com/rudtj" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/98938406?v=4" width="100px" alt="이풍헌 프로필" />
+        <img src="https://avatars.githubusercontent.com/u/98938406?v=4" width="100px" alt="이경서 프로필" />
       </a>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/amm0124" target="_blank">김도균</a>
+      <a href="https://github.com/jasper200207" target="_blank">김도균</a> 
     </td>
     <td align="center">
-      <a href="https://github.com/canyos" target="_blank">이경서</a>
+      <a href="https://github.com/rudtj" target="_blank">이경서</a>
     </td>
   </tr>
 </table>
