@@ -3,9 +3,14 @@ package poomasi.payment.service;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
-import com.siot.IamportRestClient.response.Payment;
+//import com.siot.IamportRestClient.response.Payment;
+import poomasi.domain.order.dto.response.OrderResponse;
+import poomasi.domain.reservation.dto.response.ReservationResponse;
+import poomasi.payment.dto.request.PaymentValidateRequest;
+import poomasi.payment.entity.Payment;
 import java.io.IOException;
-import java.util.Objects;
+import java.time.LocalDateTime;
+
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +31,15 @@ import poomasi.global.error.PaymentConfirmError;
 import poomasi.global.error.PaymentConfirmException;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.PaymentStatus;
+import poomasi.payment.repository.PaymentRepository;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+import static poomasi.domain.order.entity.OrderedProductStatus.ORDERED_CANCEL;
+import static poomasi.domain.order.entity.OrderedProductStatus.PAYMENT_CANCELLED;
 import static poomasi.global.error.ApplicationError.PAYMENT_AMOUNT_MISMATCH;
 import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 import static poomasi.payment.entity.PaymentStatus.*;
@@ -44,6 +53,7 @@ public class PaymentPortoneService implements PaymentService {
     private final OrderService orderService;
     private final ReservationService reservationService;
     private final IamportClient iamportClient;
+    private final PaymentRepository paymentRepository;
 
     @Override
     @Description("사전 결제 등록. 프론트엔드에게 서버 merchant uid를 return 해야 함")
@@ -79,20 +89,23 @@ public class PaymentPortoneService implements PaymentService {
 
     private void handleProductPayment(String impUid, String merchantUid) {
         Order order = orderService.findByMerchantUid(merchantUid);
-        List<OrderedProduct> orderedProductList = order.getOrderedProducts();
-        //수량 검증
-        for (OrderedProduct orderedProduct : orderedProductList) {
-            Product product = orderedProduct.getProduct();
-            Integer remainQuantity = product.getStock();
-            Integer orderQuantity = orderedProduct.getCount();
-
-            //주문 재고가 남은 재고보다 많다면 500 + cancelReason 보내야 함
-            if (orderQuantity > remainQuantity) {
-                throw new PaymentConfirmException(PaymentConfirmError.PAYMENT_PROUCT_CONFIRM_EXCEPTION);
-            }
-        }
-        //결제 되어야 할 금액
         BigDecimal amountToBePaid = order.getTotalAmount();
+
+        if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
+            try {
+                order.setPaymentComplete(impUid);
+                orderService.save(order);
+            } catch (BusinessException businessException) {
+                throw new ApplicationException(PAYMENT_BAD_REQUEST);
+            }
+        } else {
+            //실제 결제 된 금액과 결제 되어야 할 금액이 다르다면 -> 결제 취소 api를 호출해야 한다.
+            paymentUtil.cancelPaymentByImpUid(impUid);
+            order.cancel();
+            orderService.save(order);
+            throw new ApplicationException(PAYMENT_AMOUNT_MISMATCH);
+        }
+
     }
 
     private void handleFarmPayment(String impUid, String merchantUid) {
@@ -102,7 +115,7 @@ public class PaymentPortoneService implements PaymentService {
 
         if (paymentUtil.validatePaymentAmount(impUid, amountToBePaid)) {
             try {
-                reservation.completePayment();
+                reservation.completePayment(impUid);
                 reservationService.save(reservation);
             } catch (BusinessException businessException) {
                 throw new ApplicationException(PAYMENT_BAD_REQUEST);
@@ -140,7 +153,7 @@ public class PaymentPortoneService implements PaymentService {
 
     @Description("결제 내역 단건 조회")
     public String getPayment(String impUid) {
-        IamportResponse<Payment> response = null;
+        IamportResponse<com.siot.IamportRestClient.response.Payment> response = null;
         try {
             response = iamportClient.paymentByImpUid(impUid);
         } catch (IamportResponseException | IOException e) {
@@ -174,6 +187,58 @@ public class PaymentPortoneService implements PaymentService {
             reservation.getPayment().setPaymentStatus(PAYMENT_DECLINED);
         }
     }
+
+
+    @Transactional
+    public void cancelExpiredPendingPayments() {
+        List<Payment> payments = paymentRepository.findPendingPaymentsOlderThan(LocalDateTime.now().minusMinutes(10));
+        for (Payment payment : payments) {
+
+            if (payment.getOrder() != null) {
+                List<OrderedProduct> orderedProducts = payment.getOrder().getOrderedProducts();
+                for(OrderedProduct orderedProduct : orderedProducts){
+                    Integer cancelRequestQuantity = orderedProduct.getCount();
+                    orderedProduct.getProduct().addStock(cancelRequestQuantity);
+                    orderedProduct.setOrderedProductStatus(PAYMENT_CANCELLED);
+                }
+            }
+            if (payment.getReservation() != null) {
+                Reservation reservation = payment.getReservation();
+                reservationService.cancelReservation(reservation);
+            }
+            payment.setPaymentStatus(PAYMENT_DECLINED);
+        }
+    }
+
+    public OrderResponse validateProductPayment(PaymentValidateRequest paymentValidateRequest){
+        String merchantUid = paymentValidateRequest.merchantUid();
+        BigDecimal amount = paymentValidateRequest.amount();
+
+        Order order = orderService.validating(merchantUid, amount);
+        OrderResponse orderResponse = OrderResponse.fromEntity(order);
+        return orderResponse;
+    }
+
+    public ReservationResponse validateFarmPayment(PaymentValidateRequest PaymentValidateRequest){
+        String merchantUid = PaymentValidateRequest.merchantUid();
+        BigDecimal amount = PaymentValidateRequest.amount();
+
+        Reservation reservation = reservationService.findByMerchantUid(merchantUid);
+        Payment payment = reservation.getPayment();
+
+        if(payment.getPaymentStatus()== PaymentStatus.PAYMENT_PENDING){
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        if (payment.getTotalAmount().compareTo(amount) != 0) {
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        ReservationResponse reservationResponse = reservation.toResponse();
+
+        return reservationResponse;
+    }
+
 }
 
 

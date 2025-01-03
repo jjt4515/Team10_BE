@@ -7,5 +7,6 @@ import java.math.BigDecimal;
 public record ProductCancelResponse(
         Long orderedProductId,
         OrderedProductStatus orderedProductStatus,
-        BigDecimal finalCancelAmount) {
+        BigDecimal finalCancelAmount,
+        Long productAfterSalesId) {
 }

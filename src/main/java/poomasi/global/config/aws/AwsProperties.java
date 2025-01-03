@@ -3,7 +3,7 @@ package poomasi.global.config.aws;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
+// import poomasi.global.config.aws.AwsProperties.S3Properties;
 @Data
 @Component
 @ConfigurationProperties("aws")

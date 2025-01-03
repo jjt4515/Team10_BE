@@ -47,7 +47,7 @@ public class S3PresignedUrlService {
 
     }
 
-    public PresignedPutUrlResponse createPresignedPutUrl(String bucketName, String region, String keyPrefix, Map<String, String> metadata) {
+    public PresignedPutUrlResponse createPresignedPutUrl(String bucketName, String region, String keyPrefix) {
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DATE_FORMATTER);
         String encodedTime = encryptionUtil.encodeTime(now).substring(0, 10);
@@ -58,7 +58,6 @@ public class S3PresignedUrlService {
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(keyName)
-                .metadata(metadata)
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()

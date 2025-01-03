@@ -1,7 +1,9 @@
 package poomasi.domain.order.entity;
 
 public enum OrderedProductStatus {
-    
+
+    PAYMENT_CANCELLED,               // 결제 취소됨
+
     PENDING_SELLER_APPROVAL, // 판매자 수락 전 (주문 완료 후 대기 상태)
     SHIPMENT_STARTED,        // 배송 시작 (판매자 수락을 하면 바뀌는 상태)
     IN_TRANSIT,              // 배송 중
@@ -12,6 +14,6 @@ public enum OrderedProductStatus {
     REFUND_APPROVED,            // 환불 승인됨
 
     //주문 취소
-    CANCEL_PENDING           // 주문 취소 상태
+    ORDERED_CANCEL           // 주문 취소 상태
     ;
 }

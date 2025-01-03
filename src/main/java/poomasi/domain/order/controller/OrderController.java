@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.order.dto.request.PreOrderRequest;
+import poomasi.domain.order.dto.request.RegisterInvoiceRequest;
 import poomasi.domain.order.dto.response.OrderResponse;
 import poomasi.domain.order.dto.response.PreOrderResponse;
+import poomasi.domain.order.dto.response.RegisterInvoiceResponse;
 import poomasi.domain.order.service.OrderService;
 
 import java.util.List;
@@ -23,9 +25,8 @@ public class OrderController {
 
     @GetMapping("")
     @Secured({"ROLE_CUSTOMER", "ROLE_FARMER"})
-    public ResponseEntity<?> getAllOrders(@RequestParam(defaultValue = "1") int page,
-                                          @RequestParam(defaultValue = "10") int size) {
-        List<OrderResponse> orders = orderService.getOrders(page, size);
+    public ResponseEntity<?> getAllOrders() {
+        List<OrderResponse> orders = orderService.getOrders();
         return ResponseEntity.ok(orders);
     }
 
@@ -36,10 +37,24 @@ public class OrderController {
         PreOrderResponse preOrderResponse = orderService.productPreOrderRegister(preOrderRequest);
 
         return ResponseEntity.ok(preOrderResponse);
-
     }
 
+    @Secured({"ROLE_FARMER"})
+    @PostMapping("/register-invoice")
+    @Description("운송장 번호 등록")
+    public ResponseEntity<?> registerInvoice(@RequestBody RegisterInvoiceRequest registerInvoiceRequest){
+        RegisterInvoiceResponse registerInvoiceResponse = orderService.registerInvoice(registerInvoiceRequest);
+        return ResponseEntity.ok(registerInvoiceResponse);
+    }
 
+    @Secured({"ROLE_FARMER"})
+    @GetMapping("/{storeId}")
+    @Description("스토어 별 주문 조회")
+    public ResponseEntity<?> getStoreOrders(@PathVariable Long storeId){
+        return ResponseEntity.ok(
+                orderService.getStoreOrders(storeId)
+        );
+    }
 }
 
 

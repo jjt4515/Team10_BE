@@ -6,6 +6,7 @@ import jdk.jfr.Description;
 import jdk.jfr.Timestamp;
 import lombok.Builder;
 import lombok.Getter;
+import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +17,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static poomasi.payment.entity.PaymentStatus.PAYMENT_COMPLETE;
+import static poomasi.payment.entity.PaymentStatus.PAYMENT_DECLINED;
 
 @Entity
 @Table(name = "product_order")
@@ -42,6 +46,9 @@ public class Order {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updateAt = LocalDateTime.now();
+
+    @Comment("예약 취소 일자")
+    private LocalDateTime canceledAt;
 
     @Column(name = "deleted_at")
     @Timestamp
@@ -109,4 +116,20 @@ public class Order {
         this.payment=payment;
         payment.setOrder(this);
     }
+
+    public void setPaymentComplete(String impUid){
+        this.payment.setPaymentStatus(PAYMENT_COMPLETE);
+        this.payment.setImpUid(impUid);
+    }
+
+    public void cancel(){
+        this.payment.setPaymentStatus(PAYMENT_DECLINED);
+        this.canceledAt = LocalDateTime.now();
+    }
+
+
+    public void setImpUid(String impUid){
+        this.payment.setImpUid(impUid);
+    }
+
 }

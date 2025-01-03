@@ -22,5 +22,4 @@ public record ReservationResponse(
         String merchantUid,
         boolean isReviewed
 ) {
-
 }

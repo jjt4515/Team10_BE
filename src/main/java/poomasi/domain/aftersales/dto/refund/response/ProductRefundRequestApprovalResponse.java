@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public record ProductRefundRequestApprovalResponse(
         Long orderedProductId,
         OrderedProductStatus orderedProductStatus,
-        BigDecimal refundAmount
+        BigDecimal refundAmount,
+        Long productAfterSalesId
 ) {
 }

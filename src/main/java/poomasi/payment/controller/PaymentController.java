@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import poomasi.payment.dto.request.PaymentValidateRequest;
 import poomasi.payment.service.PaymentPortoneService;
 import poomasi.payment.dto.request.PaymentWebHookRequest;
 import poomasi.payment.service.PaymentPortoneService;
@@ -31,11 +32,25 @@ public class PaymentController {
 
     @Description("포트원 웹훅 수신 api")
     @PostMapping("/portone-webhook")
-    public void handleIamportWebhook(@RequestBody PaymentWebHookRequest paymentWebHookRequest)
-            throws IamportResponseException, IOException {
+    public void handleIamportWebhook(@RequestBody PaymentWebHookRequest paymentWebHookRequest) {
         paymentService.handlePortOneProductWebhookEvent(paymentWebHookRequest);
     }
 
+    @Description("결제 마지막 order 확인 api")
+    @GetMapping("/validate/orders")
+    public ResponseEntity<?> validateOrderPayment(@RequestBody PaymentValidateRequest PaymentValidateRequest){
+        return ResponseEntity.ok(
+                paymentService.validateProductPayment(PaymentValidateRequest)
+        );
+    }
+
+    @Description("결제 마지막 reservation 확인 api")
+    @GetMapping("/validate/reservation")
+    public ResponseEntity<?> validateReservationPayment(@RequestBody PaymentValidateRequest PaymentValidateRequest){
+        return ResponseEntity.ok(
+                paymentService.validateFarmPayment(PaymentValidateRequest)
+        );
+    }
 
 }
 

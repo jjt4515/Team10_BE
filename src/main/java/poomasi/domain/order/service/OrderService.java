@@ -3,9 +3,6 @@ package poomasi.domain.order.service;
 import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -14,8 +11,8 @@ import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.order.dto.request.PreOrderRequest;
 import poomasi.domain.order.dto.request.ProductOrderRequest;
-import poomasi.domain.order.dto.response.OrderResponse;
-import poomasi.domain.order.dto.response.PreOrderResponse;
+import poomasi.domain.order.dto.request.RegisterInvoiceRequest;
+import poomasi.domain.order.dto.response.*;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.order.entity.OrderedProduct;
 import poomasi.domain.order.entity.OrderedProductStatus;
@@ -30,14 +27,17 @@ import poomasi.global.error.ApplicationException;
 import poomasi.global.error.BusinessException;
 import poomasi.payment.entity.ItemType;
 import poomasi.payment.entity.Payment;
+import poomasi.payment.entity.PaymentStatus;
 import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static poomasi.domain.order.entity.OrderedProductStatus.DELIVERED;
 import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
+import static poomasi.global.error.ApplicationError.PAYMENT_BAD_REQUEST;
 import static poomasi.global.error.ApplicationError.PAYMENT_NOT_FOUND;
 import static poomasi.global.error.BusinessError.*;
 
@@ -55,20 +55,18 @@ public class OrderService {
     private final PaymentUtil paymentUtil;
     private final OrderedProductRepository orderedProductRepository;
 
-    public List<OrderResponse> getOrders(int page, int size){
+    public List<OrderResponse> getOrders(){
         Member member = getMember();
         Long memberId = member.getId();
-        Page<Order> orders = orderRepository.findByMemberId(
-                memberId, PageRequest.
-                        of(page, size, Sort.by("createdAt")
-                                .descending()
-                        )
-        );
+
+        List<Order> orders = orderRepository.findByMemberId(memberId);
+
         return orders.stream()
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
     }
-    
+
+
     @Description("사전 주문 생성 메서드")
     @Transactional
     public PreOrderResponse productPreOrderRegister(PreOrderRequest preOrderRequest) {
@@ -158,7 +156,7 @@ public class OrderService {
         orderRepository.save(order);
 
         paymentUtil.sendPrepareData(merchantUid, order.getTotalAmount());
-        return new PreOrderResponse(order.getMerchantUid());
+        return new PreOrderResponse(order.getMerchantUid(), order.getTotalAmount());
     }
 
 
@@ -200,6 +198,40 @@ public class OrderService {
         return orderedProduct;
     }
 
+    public void save(Order order){
+        orderRepository.save(order);
+    }
+
+    public RegisterInvoiceResponse registerInvoice(RegisterInvoiceRequest registerInvoiceRequest){
+        String invoiceNumber = registerInvoiceRequest.invoiceNumber();
+        String deliveryService = registerInvoiceRequest.deliveryService();
+        Long orderedProductId = registerInvoiceRequest.orderedProductId();
+
+        OrderedProduct orderedProduct = orderedProductRepository.findById(orderedProductId)
+                .orElseThrow(()-> new BusinessException(ORDERED_PRODUCT_NOT_FOUND));
+
+        orderedProduct.setInvoice(invoiceNumber, deliveryService);
+        orderedProductRepository.save(orderedProduct);
+
+        return new RegisterInvoiceResponse(orderedProductId, deliveryService, invoiceNumber);
+
+    }
+
+    public OrderedProduct getOrderedProduct(Long orderedProductId){
+        OrderedProduct orderedProduct = orderedProductRepository.findById(orderedProductId)
+                .orElseThrow(()-> new BusinessException(ORDERED_PRODUCT_NOT_FOUND));
+        return orderedProduct;
+    }
+
+    public List<OrderedProductResponse> getStoreOrders(Long storeId){
+        List<OrderedProduct> orderedProducts = orderedProductRepository.findByStoreId(storeId);
+
+        List<OrderedProductResponse> orderedProductResponses = orderedProducts.stream()
+                .map(OrderedProductResponse::fromEntity)
+                .toList();
+
+        return orderedProductResponses;
+    }
 
 
 
@@ -212,8 +244,28 @@ public class OrderService {
         return member;
     }
 
+    public List<Order> getOrdersByUpdateAtBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.findAllByUpdateAtBetween(startDate, endDate);
+    }
+
+    public Order validating(String merchantUid, BigDecimal amount){
+        Order order = findByMerchantUid(merchantUid);
+        Payment payment = order.getPayment();
+
+        if(payment.getPaymentStatus()== PaymentStatus.PAYMENT_PENDING){
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        if (payment.getTotalAmount().compareTo(amount) != 0) {
+            throw new ApplicationException(PAYMENT_BAD_REQUEST);
+        }
+
+        return order;
+    }
+
 
 }
+
 
 
 

@@ -66,9 +66,6 @@ dependencies {
     implementation(platform("software.amazon.awssdk:bom:2.27.21"))
     implementation("software.amazon.awssdk:s3")
 
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
-
     // 아임포트 및 아임포트 웹훅
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 

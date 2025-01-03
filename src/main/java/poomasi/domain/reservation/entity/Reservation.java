@@ -133,8 +133,10 @@ public class Reservation {
         return !isCanceled();
     }
 
-    public void completePayment() {
+    public void completePayment(String impUid) {
         this.status = ReservationStatus.ACCEPTED;
+        this.payment.setImpUid(impUid);
+
     }
 
     public void cancel() {
@@ -142,5 +144,8 @@ public class Reservation {
         this.canceledAt = LocalDateTime.now();
     }
 
+    public void setImpUId(String impUId){
+        this.payment.setImpUid(impUId);
+    }
 
 }

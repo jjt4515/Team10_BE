@@ -11,14 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import jakarta.persistence.*;
+import java.time.Month;
+
+
 import jdk.jfr.Description;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,9 +27,8 @@ import poomasi.domain.aftersales.entity.ProductAfterSales;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.review.entity.Review;
+import poomasi.domain.store.entity.Store;
 import poomasi.payment.entity.Payment;
-
-import java.math.BigDecimal;
 
 import static poomasi.domain.order.entity.OrderedProductStatus.PENDING_SELLER_APPROVAL;
 
@@ -45,6 +43,7 @@ public class OrderedProduct {
     @Column(name = "ordered_product_id")
     private Long id;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true, name = "product_after_sales_id")
     private ProductAfterSales productAfterSales;
@@ -113,8 +112,9 @@ public class OrderedProduct {
         this.growEnv = growEnv;
     }
 
-    public void setInvoiceNumber(String invoiceNumber) {
+    public void setInvoice(String invoiceNumber, String deliveryService) {
         this.invoiceNumber = invoiceNumber;
+        this.deliveryService = deliveryService;
     }
 
     public void setOrderedProductStatus(OrderedProductStatus orderedProductStatus) {
@@ -158,6 +158,22 @@ public class OrderedProduct {
     public BigDecimal calculateRefundAmount(){
         BigDecimal count = new BigDecimal(this.count);
         return this.price.multiply(count);
+    }
+
+    public Store getStore() {
+        return getProduct().getStore();
+    }
+
+    public Long getStoreId() {
+        return getStore().getId();
+    }
+
+    public Long getCategoryId() {
+        return getProduct().getCategoryId();
+    }
+
+    public Month getUpdateMonth() {
+        return getOrder().getUpdateAt().getMonth();
     }
 }
 

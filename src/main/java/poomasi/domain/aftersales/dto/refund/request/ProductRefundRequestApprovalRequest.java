@@ -1,4 +1,6 @@
 package poomasi.domain.aftersales.dto.refund.request;
 
-public record ProductRefundRequestApprovalRequest(Long productAfterSalesId) {
+import java.math.BigDecimal;
+
+public record ProductRefundRequestApprovalRequest(Long orderedProductId, BigDecimal refundAmount) {
 }

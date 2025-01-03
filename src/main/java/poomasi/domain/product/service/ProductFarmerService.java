@@ -1,5 +1,6 @@
 package poomasi.domain.product.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import poomasi.domain.product._category.service.CategoryService;
 import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product._intro.repository.ProductIntroRepository;
 import poomasi.domain.product.dto.ProductRegisterResponse;
+import poomasi.domain.product.dto.ProductResponse;
 import poomasi.domain.store.entity.Store;
 import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
@@ -43,13 +45,6 @@ public class ProductFarmerService {
         store.addProduct(saveProduct);
         saveProduct.getProductIntro().setProduct(saveProduct);
         return new ProductRegisterResponse(saveProduct.getId(), saveProduct.getProductIntro().getId());
-    }
-
-    private Image getImage(Long imageId) {
-        if(imageId == null)
-            return null;
-        return imageRepository.findById(imageId)
-                .orElseThrow(() -> new BusinessException(BusinessError.IMAGE_NOT_FOUND));
     }
 
     @Transactional
@@ -101,5 +96,9 @@ public class ProductFarmerService {
         if (!product.getFarmerId().equals(member.getId())) {
             throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
         }
+    }
+
+    public List<ProductResponse> getSoldOut(Member member) {
+        return productRepository.findSoldOut(member.getId()).stream().map(ProductResponse::fromEntity).toList();
     }
 }

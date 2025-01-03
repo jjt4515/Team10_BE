@@ -13,6 +13,7 @@ import poomasi.domain.aftersales.dto.refund.request.ProductRefundRequest;
 import poomasi.domain.aftersales.dto.refund.request.ProductRefundRequestApprovalRequest;
 import poomasi.domain.aftersales.dto.refund.response.ProductRefundRequestApprovalResponse;
 import poomasi.domain.aftersales.dto.refund.response.ProductRefundResponse;
+import poomasi.domain.aftersales.entity.AfterSalesType;
 import poomasi.domain.aftersales.entity.ProductAfterSales;
 import poomasi.domain.aftersales.repository.ProductAfterSalesRepository;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
@@ -29,11 +30,9 @@ import poomasi.payment.util.PaymentUtil;
 
 import java.math.BigDecimal;
 
-import static poomasi.domain.order.entity.OrderedProductStatus.CANCEL_PENDING;
-import static poomasi.domain.order.entity.OrderedProductStatus.REFUND_APPROVED;
+import static poomasi.domain.order.entity.OrderedProductStatus.*;
 import static poomasi.global.error.ApplicationError.PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT;
-import static poomasi.global.error.BusinessError.REFUND_AFTER_SALES_NOT_FOUND;
-import static poomasi.global.error.BusinessError.REFUND_AFTER_SALES_REQUEST_INVALID_OWNER;
+import static poomasi.global.error.BusinessError.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,18 +69,25 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
 
         //취소 요청 후, 주문 취소 상태로 변경
         paymentUtil.partialRefundByImpUid(impUid, checkSum, finalCancelAmount);
+        payment.subtractCheckSum(finalCancelAmount);
 
         // 취소 수량 증가
         Integer cancelRequestQuantity = orderedProduct.getCount();
         orderedProduct.getProduct().addStock(cancelRequestQuantity);
-        orderedProduct.setOrderedProductStatus(CANCEL_PENDING);
+        orderedProduct.setOrderedProductStatus(ORDERED_CANCEL);
+
+        // db에 취소 저장
+        ProductAfterSales productAfterSales = new ProductAfterSales(finalCancelAmount, AfterSalesType.CANCEL ,orderedProduct);
+        orderedProduct.setProductAfterSales(productAfterSales);
 
         orderedProductRepository.save(orderedProduct);
+        productAfterSalesRepository.save(productAfterSales);
 
         return new ProductCancelResponse(
                 orderedProductId,
                 orderedProduct.getOrderedProductStatus(),
-                finalCancelAmount
+                finalCancelAmount,
+                productAfterSales.getId()
         );
     }
 
@@ -101,14 +107,20 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
         OrderedProductStatus orderedProductStatus = orderedProduct.getOrderedProductStatus();
         BigDecimal finalRefundAmount = orderedProduct.calculateRefundAmount();
 
+        if(orderedProductStatus != DELIVERED){
+            throw new BusinessException(REFUND_BAD_REQUEST);
+        }
+
         // 체크섬 검증
         BigDecimal checkSum = payment.getCheckSum();
         if(payment.isCheckSumValid(finalRefundAmount)){
             throw new ApplicationException(PAYMENT_CHECKSUM_EXCESSIVE_REFUND_AMOUNT);
         }
 
-        //취소 요청 후, 주문 취소 상태로 변경
+        //취소 요청 후, 환불 요청 상태로 변경
         paymentUtil.partialRefundByImpUid(impUid, checkSum, finalRefundAmount);
+        orderedProduct.setOrderedProductStatus(REFUND_REQUESTED);
+        payment.subtractCheckSum(finalRefundAmount);
 
         //응답 반환
         return new ProductRefundResponse(
@@ -121,24 +133,33 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
     @Description("판매자 환불 확인 메서드")
     @Transactional
     public ProductRefundRequestApprovalResponse processRefundApproval(ProductRefundRequestApprovalRequest productRefundRequestApprovalRequest){
-        Long productAfterSalesId = productRefundRequestApprovalRequest.productAfterSalesId();
+        Long orderedProductId = productRefundRequestApprovalRequest.orderedProductId();
+        OrderedProduct orderedProduct = orderService.getOrderedProduct(orderedProductId);
 
-        //환불 요청이 존재하는지 그리고 자신의 환불 요청인지 검증하고
-        ProductAfterSales productAfterSales= validateProductRefundRequestByFarmerId(productAfterSalesId);
+        if(orderedProduct.getOrderedProductStatus() != REFUND_REQUESTED){
+            throw new BusinessException(REFUND_BAD_REQUEST);
+        }
+        
+        // 환불 검증
+        BigDecimal refundAmount = productRefundRequestApprovalRequest.refundAmount();
+        ProductAfterSales productAfterSales = new ProductAfterSales(refundAmount, AfterSalesType.REFUND ,orderedProduct);
+        orderedProduct.setProductAfterSales(productAfterSales);
+
+        //Long productAfterSalesId = productRefundRequestApprovalRequest.productAfterSalesId();
         productAfterSales.getOrderedProduct().setOrderedProductStatus(REFUND_APPROVED);
 
         //전달한다
         return new ProductRefundRequestApprovalResponse(
                 productAfterSales.getId(),
                 productAfterSales.getOrderedProduct().getOrderedProductStatus(),
-                productAfterSales.getAfterSalesAmount()
+                productAfterSales.getAfterSalesAmount(),
+                productAfterSales.getId()
         );
     }
 
-    @Description("환불 요청이 존재하고, 판매자 소유인지 확인하는 메서드")
-    private ProductAfterSales validateProductRefundRequestByFarmerId(Long productAfterSalesDetailId){
-        ProductAfterSales productAfterSales = productAfterSalesRepository.findById(productAfterSalesDetailId)
-                .orElseThrow(()-> new BusinessException(REFUND_AFTER_SALES_NOT_FOUND));
+    /*@Description("환불 요청이 존재하고, 판매자 소유인지 확인하는 메서드")
+    private ProductAfterSales validateProductRefundRequestByFarmerId(Long orderedProductId){
+
         Long farmerId = getMember().getId();
 
         if(farmerId != productAfterSales.getOrderedProduct().getStoreOwner().getId()){
@@ -146,7 +167,7 @@ public class ProductAfterSalesService implements CancelService<ProductCancelResp
         }
 
         return productAfterSales;
-    }
+    }*/
 
     @Description("security context에서 member 객체 가져오는 메서드")
     private Member getMember() {

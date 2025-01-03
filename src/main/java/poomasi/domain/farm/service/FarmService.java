@@ -9,6 +9,7 @@ import poomasi.domain.farm.repository.FarmRepository;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,5 +49,11 @@ public class FarmService {
     public void delete(Farm farm) {
         farm.delete();
         farmRepository.save(farm);
+    }
+
+    public Collection<Farm> getFarmListByCategory(Long categoryId, Pageable pageable) {
+        return farmRepository.findByCategoryIdAndDeletedAtIsNull(categoryId, pageable)
+                .stream()
+                .collect(Collectors.toList());
     }
 }

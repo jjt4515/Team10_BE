@@ -40,7 +40,7 @@ spring:
             authorization-uri: https://kauth.kakao.com/oauth/authorize #카카오 로그인 화면
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: kakao_account, profile_nickname
+            user-name-attribute: kakao_account
   token:
     storage:
       type: redis
