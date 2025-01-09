@@ -1,3 +1,5 @@
+기존의 팀 프로젝트 품앗이(https://github.com/kakao-tech-campus-2nd-step3/Team10_BE)를 기반으로 리팩토링한 작업물입니다.
+
 # Team10_BE
 
 ![배너 사진](docs/banner.png)
