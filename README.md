@@ -1,3 +1,7 @@
+#### 기존의 팀 프로젝트 품앗이(https://github.com/kakao-tech-campus-2nd-step3/Team10_BE) 를 리팩토링한 작업물입니다.
+
+<br>
+
 # Team10_BE
 
 ![배너 사진](docs/banner.png)
@@ -386,9 +390,14 @@ naver:
 
 </details>
 
+<br>
+
 ### ️✔️ 화이트리스트 방식 구현
 
 > 토큰 재발급 시 사용자 검증을 하기 위해 토큰 발급 때마다 `RefreshToken`을 화이트리스트에 저장합니다.
+
+![그림3](https://github.com/user-attachments/assets/f6e67aad-2bb1-4069-a9a7-d2a64e434220)
+
 
 #### 토큰 재발급 흐름
 
@@ -400,9 +409,14 @@ naver:
 
 화이트리스트 방식을 사용함으로써 사용자가 토큰을 탈취당했을 때, 공격자가 요청을 보내도 이를 허용하지 않습니다.
 
+<br>
+
 ### ✔️ 블랙리스트 방식 구현
 
 > 로그아웃한 사용자의 `AccessToken`을 사용하여 요청을 보내는 것을 방지하기 위해 로그아웃 시 `AccessToken`을 블랙리스트에 저장합니다.
+ 
+![그림1](https://github.com/user-attachments/assets/9c6278ef-23ca-4903-abaa-8a7e6ca2bf9c)
+
 
 #### 로그아웃 흐름
 
@@ -413,6 +427,8 @@ naver:
 	5. `AccessToken`이 블랙리스트에 포함되어 있으면, 서버는 요청을 무효화하고, 클라이언트에 인증 실패 응답을 반환합니다.
 
 블랙리스트 방식을 사용함으로써 로그아웃한 사용자가 요청을 보낼 때, 또는 공격자가 해당 사용자의 토큰으로 요청을 보낼 때, 요청을 허용하지 않습니다.
+
+<br>
 
 ## 💳 결제 시스템
 
@@ -440,6 +456,9 @@ naver:
 
 `presigned url`: 다른 사람(클라이언트)로 하여금 버킷에 객체를 업로드/조회할 수 있다. 해당 url을 사용할 경우 AWS 보안 자격 증명이나 권한이 없어도 접근 할 수 있다.
 
+![image](https://github.com/user-attachments/assets/0ff71f38-8cbc-47f4-af43-f71396b27f29)
+
+
 **이미지 업로드**
 
     1. Client 에서 presigned url을 백엔드 서버로 요청합니다.
@@ -450,6 +469,8 @@ naver:
 - 백엔드 서버에서 이미지를 직접 업로드하면 서버의 부하가 증가합니다.
 - presigned url을 사용하면 클라이언트에서 직접 이미지를 업로드할 수 있습니다.
 - 따라서, 이미지 업로드 처리 속도가 빨라집니다.
+
+<br>
 
 ## 🔄 지속적인 통합 및 배포
 
@@ -524,21 +545,21 @@ naver:
   <tr>
     <td align="center" width="200px">
       <a href="https://github.com/jasper200207" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/51306225?v=4" width="100px" alt="김건호 프로필" />
+        <img src="https://avatars.githubusercontent.com/u/51306225?v=4" width="100px" alt="김도균 프로필" />
       </a>
     </td>
     <td align="center" width="200px">
       <a href="https://github.com/rudtj" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/98938406?v=4" width="100px" alt="이풍헌 프로필" />
+        <img src="https://avatars.githubusercontent.com/u/98938406?v=4" width="100px" alt="이경서 프로필" />
       </a>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/amm0124" target="_blank">김도균</a>
+      <a href="https://github.com/jasper200207" target="_blank">김도균</a> 
     </td>
     <td align="center">
-      <a href="https://github.com/canyos" target="_blank">이경서</a>
+      <a href="https://github.com/rudtj" target="_blank">이경서</a>
     </td>
   </tr>
 </table>

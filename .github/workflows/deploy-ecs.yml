@@ -10,12 +10,12 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: poomasi-server
-  ECS_SERVICE: poomasi-server
-  ECS_CLUSTER: poomasi
+  ECR_REPOSITORY: ecr-test
+  ECS_SERVICE: ecs-service
+  ECS_CLUSTER: poomasi-server
   ECS_TASK_DEFINITION: tf-prod.json
-  CONTAINER_NAME: spring
-  PROGRESS_SLACK_CHANNEL: C080DMAE7MX
+  CONTAINER_NAME: container-test
+  PROGRESS_SLACK_CHANNEL: C0890BBABEG
 permissions:
   contents: read
 
@@ -114,8 +114,8 @@ jobs:
             JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}
             AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
             AWS_REGION=${{ secrets.AWS_REGION }}
-            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             IMP_API_KEY=${{ secrets.IMP_API_KEY }}
             IMP_SECRET_KEY=${{ secrets.IMP_SECRET_KEY }}
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
