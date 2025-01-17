@@ -1,9 +1,9 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:010928195795:task-definition/ecs-task-definition:1",
+  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:010928195795:task-definition/ecs-task-definition:2",
   "containerDefinitions": [
     {
       "name": "container-test",
-      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-test",
+      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-test:41ee80a3d32a6d0cbefd7508fac8083df008e504",
       "cpu": 0,
       "portMappings": [
         {
@@ -19,7 +19,6 @@
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
-      "ulimits": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -29,8 +28,7 @@
           "max-buffer-size": "25m",
           "awslogs-region": "ap-northeast-2",
           "awslogs-stream-prefix": "ecs"
-        },
-        "secretOptions": []
+        }
       },
       "systemControls": []
     }
@@ -38,7 +36,7 @@
   "family": "ecs-task-definition",
   "executionRoleArn": "arn:aws:iam::010928195795:role/ecsTaskExecutionRole",
   "networkMode": "bridge",
-  "revision": 1,
+  "revision": 2,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
