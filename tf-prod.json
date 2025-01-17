@@ -35,7 +35,7 @@
   "family": "ecs-task-definition",
   "executionRoleArn": "arn:aws:iam::010928195795:role/ecsTaskExecutionRole",
   "networkMode": "bridge",
-  "revision": 2,
+  "revision": 1,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [

@@ -10,11 +10,11 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: ecr-test
+  ECR_REPOSITORY: poomasi-ecr
   ECS_SERVICE: ecs-service
   ECS_CLUSTER: poomasi-server
   ECS_TASK_DEFINITION: tf-prod.json
-  CONTAINER_NAME: container-test
+  CONTAINER_NAME: poomasi-container
   PROGRESS_SLACK_CHANNEL: C0890BBABEG
 permissions:
   contents: read
