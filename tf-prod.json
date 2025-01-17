@@ -1,20 +1,27 @@
 {
   "containerDefinitions": [
     {
-      "name": "container-test",
-      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-test:latest",
-      "cpu": 0,
+      "name": "poomasi-container",
+      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/poomasi-ecr",
+      "cpu": 512,
+      "memory": 471,
+      "memoryReservation": 471,
       "portMappings": [
         {
-          "name": "container-test-80-tcp",
-          "containerPort": 80,
+          "name": "poomasi-container-8080-tcp",
+          "containerPort": 8080,
           "hostPort": 0,
           "protocol": "tcp",
           "appProtocol": "http"
         }
       ],
       "essential": true,
-      "environment": [],
+      "environment": [
+        {
+          "name": "TZ",
+          "value": "Asia/Seoul"
+        }
+      ],
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
@@ -33,6 +40,7 @@
     }
   ],
   "family": "ecs-task-definition",
+  "taskRoleArn": "arn:aws:iam::010928195795:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::010928195795:role/ecsTaskExecutionRole",
   "networkMode": "bridge",
   "revision": 1,
