@@ -1,9 +1,8 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:010928195795:task-definition/ecs-task-definition:2",
   "containerDefinitions": [
     {
       "name": "container-test",
-      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-test:41ee80a3d32a6d0cbefd7508fac8083df008e504",
+      "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-test:latest",
       "cpu": 0,
       "portMappings": [
         {
