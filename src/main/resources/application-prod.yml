@@ -21,7 +21,7 @@ spring:
   data:
     redis:
       port: ${REDIS_PORT}
-      host: ${REDIS_HOST} 
+      host: ${REDIS_HOST}
 
   security:
     redirect_url: https://api.poomasi2.shop/callback/kakao
