@@ -1,6 +1,6 @@
 spring:
-  #profiles:
-  #  active: prod
+  profiles:
+    active: prod
   config:
     import: optional:application-secret.yml
   token:
