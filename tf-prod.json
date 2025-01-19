@@ -10,7 +10,7 @@
           "containerPort": 8080,
           "hostPort": 0,
           "protocol": "tcp",
-          "appProtocol": "http"
+          "appProtocol": "http" 
         }
       ],
       "essential": true,
@@ -44,7 +44,7 @@
   "volumes": [],
   "placementConstraints": [],
   "cpu": "512",
-  "memory": "512", 
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
