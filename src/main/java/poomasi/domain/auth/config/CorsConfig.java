@@ -22,7 +22,10 @@ public class CorsConfig {
                 "https://*.poomasi.shop",
                 "http://*.poomasi.shop",
                 "http://localhost:3000",
-                "https://test.poomasi.shop:3000"
+                "https://test.poomasi.shop:3000",
+                "https://poomasi2.shop",
+                "https://*.poomasi2.shop",
+                "http://*.poomasi2.shop"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
