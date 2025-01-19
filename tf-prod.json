@@ -4,7 +4,7 @@
       "name": "poomasi-container",
       "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/poomasi-ecr",
       "cpu": 0,
-      "portMappings": [
+      "portMappings": [ 
         {
           "name": "poomasi-container-8080-tcp",
           "containerPort": 8080,
