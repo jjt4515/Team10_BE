@@ -27,7 +27,7 @@ spring:
     redirect_url: https://api.poomasi2.shop/callback/kakao
     oauth2:
       client:
-        registration: 
+        registration:
           kakao:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
