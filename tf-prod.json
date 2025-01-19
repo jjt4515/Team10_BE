@@ -19,7 +19,7 @@
           "name": "TZ",
           "value": "Asia/Seoul"
         }
-      ], 
+      ],
       "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
