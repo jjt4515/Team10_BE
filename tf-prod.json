@@ -1,6 +1,6 @@
 {
   "containerDefinitions": [
-    { 
+    {
       "name": "poomasi-container",
       "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/poomasi-ecr",
       "cpu": 0,
@@ -44,7 +44,7 @@
   "volumes": [],
   "placementConstraints": [],
   "cpu": "512",
-  "memory": "512",
+  "memory": "1024",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
