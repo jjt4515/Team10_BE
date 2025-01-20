@@ -43,10 +43,10 @@
   "networkMode": "bridge",
   "volumes": [],
   "placementConstraints": [],
-  "cpu": "512",
-  "memory": "1024",
+  "cpu": "256",
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
-    "operatingSystemFamily": "LINUX" 
+    "operatingSystemFamily": "LINUX"
   }
 }
