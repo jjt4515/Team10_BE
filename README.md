@@ -1,4 +1,4 @@
-#### 기존의 팀 프로젝트 품앗이(https://github.com/kakao-tech-campus-2nd-step3/Team10_BE) 를 리팩토링한 작업물입니다.
+#### 기존의 팀 프로젝트 품앗이(https://github.com/kakao-tech-campus-2nd-step3/Team10_BE) 를 리팩토링하기 위한 공간입니다.
 
 <br>
 
