@@ -18,6 +18,7 @@
     - [Cloud & Deployment](#Cloud-&-Deployment)
 - [📂 프로젝트 구조](#-프로젝트-구조)
 - [📄 API 명세서](#-API-명세서)
+- [🗼 BE 아키텍처](#-BE-아키텍처)
 - [📊 ERD](#-ERD)
 - [🚀 프로젝트 실행 방법](#-프로젝트-실행-방법)
 - [🌾 도메인 설명](#-도메인-설명)
@@ -179,6 +180,12 @@
 ## 📄 API 명세서
 
 [배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)
+
+<br>
+
+## 🗼 BE 아키텍처
+
+![poomasi-architecture drawio](https://github.com/user-attachments/assets/7dcb2a21-297d-44d3-a905-863acdda03d4)
 
 ## 📊 ERD 요약
 
