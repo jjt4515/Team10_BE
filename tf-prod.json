@@ -3,7 +3,7 @@
     {
       "name": "poomasi-container",
       "image": "010928195795.dkr.ecr.ap-northeast-2.amazonaws.com/poomasi-ecr",
-      "cpu": 0,
+      "cpu": "0",
       "portMappings": [
         {
           "name": "poomasi-container-8080-tcp",
@@ -43,7 +43,7 @@
   "networkMode": "bridge",
   "volumes": [],
   "placementConstraints": [],
-  "cpu": "512",
+  "cpu": "256",
   "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
