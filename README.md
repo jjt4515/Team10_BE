@@ -189,13 +189,13 @@
 ## 🖥️ 주요 화면 미리보기
 
 ### 메인 페이지
-![메인페이지](https://github.com/user-attachments/assets/8aea1b44-66bd-4038-ae72-9dd0466c8ab6)
+![메인페이지 (1)](https://github.com/user-attachments/assets/f5af9ff3-024a-4908-9e17-16d87d2c2528)
 
 ### 상점 페이지
-![상점 페이지](https://github.com/user-attachments/assets/50081760-d157-4bab-b7ee-a0fd8dce2a5d)
+![상점 페이지 (1)](https://github.com/user-attachments/assets/be2d69d6-941d-4bd7-b706-ace4a3807c70)
 
 ### 농장체험 페이지
-![농장체험 페이지](https://github.com/user-attachments/assets/4d5b187d-e416-44fd-8e13-d29602d4184e)
+![농장체험 페이지 (1)](https://github.com/user-attachments/assets/bd7177b7-7330-46d2-841f-31521d1054b3)
 
 ## 📊 ERD 요약
 
