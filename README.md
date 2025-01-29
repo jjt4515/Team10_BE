@@ -22,6 +22,7 @@
 - [📂 프로젝트 구조](#-프로젝트-구조)
 - [📄 API 명세서](#-API-명세서)
 - [🗼 BE 아키텍처](#-BE-아키텍처)
+- [🖥️ 주요 화면 미리보기](#-주요-화면-미리보기)
 - [📊 ERD](#-ERD)
 - [🚀 프로젝트 실행 방법](#-프로젝트-실행-방법)
 - [🌾 도메인 설명](#-도메인-설명)
@@ -184,11 +185,31 @@
 
 [배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)
 
-<br>
-
 ## 🗼 BE 아키텍처
 
 ![poomasi-architecture drawio](https://github.com/user-attachments/assets/7dcb2a21-297d-44d3-a905-863acdda03d4)
+
+## 🖥️ 주요 화면 미리보기
+
+### 메인 페이지
+<img src="https://github.com/user-attachments/assets/b7a4511d-4aec-4c97-82e4-e8ad5e11a4a2" width="1000">
+<br><br>
+<img src="https://github.com/user-attachments/assets/480669d8-5554-4c0d-b20f-b59f3e3adf1e" width="1000">
+
+### 상점 페이지
+<img src="https://github.com/user-attachments/assets/91869268-555d-4811-897e-73d712b58d7b" width="1000">
+<br>
+<img src="https://github.com/user-attachments/assets/279c8d9f-f3a6-4d1c-b4ab-e318b941c0f1" width="1000">
+
+### 농장체험 페이지
+<img src="https://github.com/user-attachments/assets/36889ab7-acde-4a62-8cde-afc2d41273a4" width="1000">
+<br>
+<img src="https://github.com/user-attachments/assets/c8310304-4b62-4fdb-b21b-da208040aa62" width="1000">
+
+
+
+
+
 
 ## 📊 ERD 요약
 
