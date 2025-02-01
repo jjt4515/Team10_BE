@@ -18,11 +18,11 @@ public class CorsConfig {
         // 허용할 origin 목록 설정
         config.setAllowedOrigins(Arrays.asList(
                 "https://localhost:3000",
-                "https://poomasi.shop",
-                "https://*.poomasi.shop",
-                "http://*.poomasi.shop",
+                "https://poomasi2.shop",
+                "https://*.poomasi2.shop",
+                "http://*.poomasi2.shop",
                 "http://localhost:3000",
-                "https://test.poomasi.shop:3000"
+                "https://test.poomasi2.shop:3000"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
