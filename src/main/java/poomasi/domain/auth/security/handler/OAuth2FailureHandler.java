@@ -16,7 +16,7 @@ public class OAuth2FailureHandler  implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
-        String redirectUrl = "https://poomasi.shop";
+        String redirectUrl = "https://poomasi2.shop";
         response.sendRedirect(redirectUrl);
     }
 }
