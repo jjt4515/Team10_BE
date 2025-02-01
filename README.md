@@ -70,7 +70,7 @@
 | **서비스** | **URL**                                              |
 |---------|------------------------------------------------------|
 | 백엔드     | [https://api.poomasi2.shop](https://api.poomasi2.shop) |
-| 프론트엔드   | [https://poomasi.shop](https://poomasi.shop)         |
+
 
 더 자세한 이야기는 [품앗이 소개 페이지](https://poomasi.shop/introduction)에서 확인하세요.
 
