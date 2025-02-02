@@ -33,7 +33,7 @@
           "awslogs-stream-prefix": "ecs"
         }
       },
-      "systemControls": [] 
+      "systemControls": []
     }
   ],
   "family": "ecs-task-definition",
@@ -42,8 +42,8 @@
   "networkMode": "bridge",
   "volumes": [],
   "placementConstraints": [],
-  "cpu": "128",
-  "memory": "256",
+  "cpu": "256",
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
