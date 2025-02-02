@@ -33,7 +33,7 @@
           "awslogs-stream-prefix": "ecs"
         }
       },
-      "systemControls": []
+      "systemControls": [] 
     }
   ],
   "family": "ecs-task-definition",
