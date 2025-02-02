@@ -8,5 +8,5 @@ spring:
       type: jpa
       #type: redis
     blacklist: #블랙리스트 저장소
-      type: jpa
+      type: jpa 
       #type: redis
