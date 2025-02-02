@@ -11,7 +11,7 @@ import poomasi.domain.auth.token.whitelist.service.TokenWhitelistService;
 public class TokenWhitelistServiceConfig {
 
     @Value("${spring.token.storage.type}")
-    private String tokenStorageType;
+    private String tokenStorageType; 
 
     @Bean
     public TokenWhitelistService tokenWhitelistService(WhitelistRedisService whitelistRedisService, WhitelistJpaService whitelistJpaService) {
