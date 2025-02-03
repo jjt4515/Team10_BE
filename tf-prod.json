@@ -42,8 +42,8 @@
   "networkMode": "bridge",
   "volumes": [],
   "placementConstraints": [],
-  "cpu": "450",
-  "memory": "450",
+  "cpu": "512",
+  "memory": "512",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
