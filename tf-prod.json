@@ -43,7 +43,7 @@
   "volumes": [],
   "placementConstraints": [],
   "cpu": "512",
-  "memory": "400",
+  "memory": "450",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
