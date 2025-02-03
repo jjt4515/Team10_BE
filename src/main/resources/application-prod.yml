@@ -20,7 +20,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      port: ${REDIS_PORT}
+      port: ${REDIS_PORT} 
       host: ${REDIS_HOST}
 
   security:
