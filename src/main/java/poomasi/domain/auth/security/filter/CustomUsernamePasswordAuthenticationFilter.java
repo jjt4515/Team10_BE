@@ -89,7 +89,7 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
                 .sameSite("None")
                 .httpOnly(true)
                 .secure(true)
-                .domain("poomasi.shop")
+                .domain("poomasi2.shop")
                 .maxAge(60*60*24*7)
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
