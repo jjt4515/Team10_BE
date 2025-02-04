@@ -34,7 +34,7 @@
         }
       },
       "systemControls": []
-    }
+    } 
   ],
   "family": "ecs-task-definition",
   "taskRoleArn": "arn:aws:iam::010928195795:role/ecsTaskExecutionRole",
