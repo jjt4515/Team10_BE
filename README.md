@@ -67,9 +67,12 @@
 
 ### **배포 URL**
 
+(비용 문제로 배포 중단)
+
 | **서비스** | **URL**                                              |
 |---------|------------------------------------------------------|
 | 백엔드     | [https://api.poomasi2.shop](https://api.poomasi2.shop) |
+| 프론트엔드 | [https://api.poomasi](https://api.poomasi) |
 
 
 더 자세한 이야기는 [품앗이 소개 페이지](https://poomasi.shop/introduction)에서 확인하세요.
