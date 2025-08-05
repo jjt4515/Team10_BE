@@ -135,7 +135,7 @@
   - 회원, 이미지, 인증 도메인에 대해 **JUnit 기반 단위 테스트 40개 작성**, 회원 도메인 **테스트 커버리지 73% 확보**
 
 - **기타 개발**
-  - Store 및 카테고리별 매출 통계 API 개발, 대용량 데이터 대응을 위한 페이지네이션 적용
+  - 스토어 및 카테고리별 매출 통계 API 구현, 대용량 데이터 대응을 위한 페이지네이션 적용
   - 탈퇴 계정 복구 기능을 구현하기 위해 Soft Delete 설계 적용
 
 - **협업 기여**
@@ -144,7 +144,7 @@
   - 시장 분석, 요구사항 정의 등 프로젝트 기획 단계 참여   
 &nbsp;  
 
-### 💥 Trouble Shooting
+### 💥 Trouble Shooting 1
 
 #### 🚨 문제 상황
 
@@ -172,6 +172,29 @@ JWT 화이트리스트와 블랙리스트를 관리하는 시스템을 구축하
 - 저장소 교체 및 확장이 용이한 **유연한 구조 확보**
 - 저장소 변경 시 필요한 **코드 수정량을 9줄 → 2줄로** 줄이며, 유지보수 효율성 향상
 
+&nbsp;  
+
+### 💥 Trouble Shooting 2
+
+#### 🚨 문제 상황
+
+Refresh Token 화이트리스트를 Redis에 저장 시 초기에는 (key, value)를 (Refresh Token, MemberId)로 구성하였습니다.
+이는 Refresh Token 검증 시 해당 토큰으로부터 MemberId를 **O(1)**로 조회하기 위함이었습니다.
+그러나 로그아웃 시 화이트리스트 내 해당 사용자의 Refresh Token을 삭제해야 하는 요구사항이 발생했습니다.
+이때 Redis의 KEYS 명령어를 사용해 모든 키를 조회한 뒤, 각 키를 통해 값을 조회하여 MemberId를 찾는 방식은 심각한 성능 저하를 야기할 가능성이 있었습니다.
+Redis는 싱글 스레드로 동작하기 때문에 KEYS 명령어는 전체 키를 탐색하는 동안 서버를 블로킹하며, 다른 요청을 처리하지 못하게 합니다. 이는 대규모 데이터 환경에서 큰 성능 저하를 유발합니다.
+
+#### ⭐ 해결 방법
+
+- SCAN 명령어를 사용하여 Blocking 없이 작은 배치 단위로 키를 탐색
+- (key, value)를 (RefreshToken + MemberId, MemberId)로 구성
+ → 값 조회 없이 키만으로도 MemberId 식별 및 삭제 가능하도록 하기 위함 
+
+#### ✅ 효과
+
+- 동시 접속자 수 50만 명 환경에서, 로그아웃 시 Refresh Token 삭제 시간 3.8s -> 2.8s로 약 26.5% 단축
+- Redis 서버 Blocking 문제 완화
+  
 <br>
 
 ## 🛠️ 기술 스택
@@ -462,7 +485,7 @@ naver:
 <details>
 <summary>JWT token</summary>
 
-- `로그인에 성공`하면 JWT(Json Web ToKen)을 발행합니다.
+- `로그인에 성공`하면 JWT(Json Web Token)을 발행합니다.
 - Http Header에 Bearer `<accessToken>` 형태로 access token을 전달합니다.
 - JWT를 발행하기 위해 `jjwt 0.11.5`을 사용하였습니다.
 - `OAuth2.0` 로그인이 성공하면 자체 서버로 `redirect`를 시킵니다.
