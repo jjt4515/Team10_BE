@@ -19,13 +19,13 @@
     - [Backend](#-backend)
     - [Trouble Shooting](#-trouble-shooting)
 - [🛠️ 기술 스택](#%EF%B8%8F-기술-스택)
-- [📂 프로젝트 구성](#프로젝트-구성)
+- [📂 프로젝트 구조](#프로젝트-구조)
 - [📄 API 명세서](#-API-명세서)
 - [🗼 BE 아키텍처](#-BE-아키텍처)
-- [🖥️ 주요 화면 미리보기](#B8%8F-주요-화면-미리보기)
-- [📊 ERD](#-erd-요약)
+- [🖥️ 주요 화면 미리보기](%EF%B8%8F-주요-화면-미리보기)
+- [📊 ERD 요약](#-erd-요약)
 - [🚀 프로젝트 실행 방법](#-프로젝트-실행-방법)
-- [🌾 feature](#-feature)
+- [🌾 Feature](#-Feature) 
     - [농장 도메인](#농장-도메인)
     - [상품 도메인](#상품-도메인)
 - [🔒 보안 설정](#-security-설정)
@@ -217,7 +217,7 @@ JWT 화이트리스트와 블랙리스트를 관리하는 시스템을 구축하
 
 </details>
 
-## 📂프로젝트 구성
+## 📂프로젝트 구조
 
 ```
 .
@@ -275,12 +275,12 @@ JWT 화이트리스트와 블랙리스트를 관리하는 시스템을 구축하
 
 ## 📄 API 명세서
 
-[배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)
-
+[배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)  
+&nbsp;  
 ## 🗼 BE 아키텍처
 
-![poomasi-architecture drawio](https://github.com/user-attachments/assets/7dcb2a21-297d-44d3-a905-863acdda03d4)
-
+![poomasi-architecture drawio](https://github.com/user-attachments/assets/7dcb2a21-297d-44d3-a905-863acdda03d4)  
+&nbsp;  
 ## 🖥️ 주요 화면 미리보기
 
 ### 메인 페이지
@@ -300,8 +300,9 @@ JWT 화이트리스트와 블랙리스트를 관리하는 시스템을 구축하
 | 상품    | 상품 관련 정보와 카테고리   | ![상품 ERD](docs/product-erd.png) |
 | 장바구니  | 상품과 사용자의 연관 관계   | ![장바구니](docs/cart-erd.png)      |
 | 농장    | 농장 정보와 예약 시스템    | ![농장 ERD](docs/farm-erd.png)    |
-| 위시리스트 | 사용자의 관심 상품 저장 정보 | ![위시리스트](docs/wishlist-erd.png) |
-
+| 위시리스트 | 사용자의 관심 상품 저장 정보 | ![위시리스트](docs/wishlist-erd.png) |   
+    
+&nbsp;   
 ## 🚀 프로젝트 실행 방법
 
 1. 프로젝트를 클론하고 디렉토리로 이동합니다.
@@ -398,19 +399,19 @@ naver:
 ## 🌾 Feature
 
 > 개발한 API들의 핵심 특성을 서술합니다.
-
+&nbsp;  
 ### 상품 도메인
 
 > 상품 도메인은 상품 정보를 관리하는 도메인입니다.
 
-![상품 도메인](docs/product-domain.png)
-
+![상품 도메인](docs/product-domain.png)  
+&nbsp;  
 ### 농장 도메인
 
 > 농장 도메인은 농장 정보를 관리하는 도메인입니다.
 
-![농장 도메인](docs/farm-domain.png)
-
+![농장 도메인](docs/farm-domain.png)  
+&nbsp;  
 #### 1. 농장 사업자 등록
 
 > 농장 사업자 등록은 농장을 등록하는 기능입니다.
@@ -419,14 +420,14 @@ naver:
 - 원래는 Document OCR이 사업자 등록증 인증을 지원하지만, 비용문제로 Template OCR로 대체하였습니다.
 - 또한, 동작 오류를 방지하고자 사업자등록증 인증 실패 시 관리자가 직접 확인하도록 구현하였습니다.
 
-![Naver OCR 예제](docs/naver-ocr.png)
-
+![Naver OCR 예제](docs/naver-ocr.png)  
+&nbsp;  
 #### 2. 농장 체험 예약
 
 > 농장 체험 예약은 농장에서 진행하는 체험 프로그램을 예약하는 기능입니다.
 
-동 시간대 수용가능한 팀 및 최대 수용가능한 팀원을 확인하여 예약을 진행합니다.
-
+동 시간대 수용가능한 팀 및 최대 수용가능한 팀원을 확인하여 예약을 진행합니다.    
+&nbsp;  
 ## 🔒 Security 설정
 
 > Spring Security 6.3.1 버전을 사용하여 인증 및 인가를 진행하였습니다.  
@@ -555,8 +556,8 @@ naver:
 **환불 정책**
 
     - 농장 체험일 3일 전에는 환불 수수료 50%를 부과합니다.
-    - 상품 구매 후 환불 할 때 배송비 3,000원을 부과합니다.
-
+    - 상품 구매 후 환불 할 때 배송비 3,000원을 부과합니다.   
+   
 ## 🌃 이미지 관리 (S3: Presigned URL)
 
 > `presigned url`을 사용하여 이미지를 관리합니다.
