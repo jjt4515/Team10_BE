@@ -1,5 +1,4 @@
-#### 기존의 팀 프로젝트 품앗이(https://github.com/kakao-tech-campus-2nd-step3/Team10_BE) 를 리팩토링하기 위한 공간입니다.
-<hr>
+#### 기존 Repository: https://github.com/kakao-tech-campus-2nd-step3/Team10_BE
 
 # Team10_BE
 
@@ -15,6 +14,8 @@
 <summary>📑 목차</summary>
 
 - [📌 프로젝트 소개](#프로젝트-소개)
+- [⭐ 주요 기능](#주요-기능)
+- [👤 내 역할](#내-역할)
 - [🛠️ 기술 스택](#-기술-스택)
     - [Backend](#Backend)
     - [Build & Database](#Build-&-Database)
@@ -44,14 +45,14 @@
 ## 📌 프로젝트 소개
 
 품앗이는 농민과 소비자를 직접 연결하는 `온라인 직거래 플랫폼`입니다. 경매 법인의 독점과 과도한 유통비용으로 인한 기존 도매시장의 문제를 해결하고자, 농산물 유통 과정을 간소화하여 중소 농민들이 정당한 가격을 받을
-수 있도록 지원합니다. 직관적인 UI와 신뢰성 높은 프로필 정보 제공을 통해, 소비자는 합리적인 가격에 고품질 농산물을 구매할 수 있습니다.
+수 있도록 지원합니다. 직관적인 UI와 신뢰성 높은 프로필 정보 제공을 통해, 소비자는 합리적인 가격에 고품질 농산물을 구매할 수 있습니다.  
+&nbsp;  
+### **기존 도매 유통 시장의 문제점**
 
-**기존 도매 유통 시장의 문제점**
-
-    - 농산물의 가격이 농민에게 공정하지 않습니다.
-    - 서울시 가락시장 도매 법인의 가락시장: 국내 농산물 유통량의 약 30%를 차지하는 중요한 역할
-    - 가락시장과 같은 공영 도매시장의 경매법인은 일부 대기업에 의해 독과점화
-    - 서울 가락시장에서 6개 도매법인이 90% 이상의 농산물 유통량을 차지
+- 농산물의 가격이 농민에게 공정하지 않습니다.
+- 서울시 가락시장 도매 법인의 가락시장: 국내 농산물 유통량의 약 30%를 차지하는 중요한 역할
+- 가락시장과 같은 공영 도매시장의 경매법인은 일부 대기업에 의해 독과점화
+- 서울 가락시장에서 6개 도매법인이 90% 이상의 농산물 유통량을 차지
 
 ![가락시장 유통구조](docs/grak.png)
 
@@ -59,12 +60,12 @@
 
 ![도매법](docs/domae.png)
 
-**품앗이의 목표**
+### **품앗이의 목표**
 
-    - 농산물 유통 과정을 간소화하여 농민과 소비자를 직접 연결
-    - 농민이 직접 농산물을 판매할 수 있는 플랫폼 제공
-    - 소비자가 농산물을 구매할 때 농민에게 공정한 가격을 지불
-
+- 농산물 유통 과정을 간소화하여 농민과 소비자를 직접 연결
+- 농민이 직접 농산물을 판매할 수 있는 플랫폼 제공
+- 소비자가 농산물을 구매할 때 농민에게 공정한 가격을 지불  
+&nbsp;  
 ### **배포 URL**
 
 (비용 문제로 배포 중단)
@@ -77,26 +78,118 @@
 
 더 자세한 이야기는 [품앗이 소개 페이지](https://poomasi.shop/introduction)에서 확인하세요.
 
+<br>
+
+## ⭐ **주요 기능**
+
+### **농산물 거래**
+- 농부: 등록, 삭제 등
+- 구매자: 구매, 장바구니, 위시리스트, 리뷰 작성, 환불 등
+  
+### **농장 체험**
+- 농부: 등록, 삭제 등
+- 체험자: 예약, 리뷰 작성, 환불 등
+
+### **store 관리**
+- 등록, 상품 조회, 매출 조회 등
+
+### **결제**
+- 아임포트(Iamport) 이용한 결제 기능 구현
+
+### **사업자 등록**
+- Naver OCR 이용한 사업자 등록증 인식 기능 구현
+
+### **인증/인가**
+- Spring Security 및 JWT 활용한 인증/인가 구현
+- OAuth 2.0 프로토콜 활용한 카카오 로그인 기능 구현
+
+### **이미지 관리**
+- S3 Presigned Url 이용한 이미지 업로드 기능
+
+### **지속적인 통합 및 배포**
+- GitHub Actions 활용한 CI/CD 파이프라인 구축
+- AWS ECS 및 ALB 활용한 무중단 배포 구현
+  
+<br>
+
+## 👤 내 역할
+
+### ✅ Backend
+
+- **JWT 기반 인증 시스템 구축**
+  - 기존 Refresh Token 방식의 보안 취약점 해결을 위해 **RTR (Refresh Token Rotation)** 기법과 **화이트/블랙리스트 기반 토큰 검증 시스템**을 도입
+    → Refresh Token 탈취 시, 신속한 감지 및 차단
+  - 서버 부하를 줄이기 위해 **화이트/블랙리스트 저장소를 MySQL → Redis로 전환**    
+    → 토큰 조회 성능 개선  
+    → **인증 처리 시간 146ms → 45ms로 약 69% 감소**
+  
+- **CI/CD 파이프라인 구축**
+  - 수동 배포의 반복 작업과 오류 발생 가능성을 줄이기 위해 **Docker, GitHub Actions**를 활용해 빌드, 테스트, 배포 자동화 파이프라인을 구축
+    → **배포 시간 60% 이상 단축**, 사전 오류 검출을 통한 코드 품질 향상
+  - **AWS ECS + ALB 기반 무중단 배포 환경 구축**
+    → 재배포시 요청 손실 0건, 트래픽 분산으로 인한 서비스 가용성 향상
+
+- **이미지 업로드 기능 개발**
+  - **S3 Presigned URL** 방식 도입
+    → 기존 서버 중계 방식 대비 **10개 이미지 동시 업로드 속도 54% 개선**, 서버 부하 감소
+
+- **테스트 및 품질 관리**
+  - 회원, 이미지, 인증 도메인에 대해 **JUnit 기반 단위 테스트 40개 작성**, 회원 도메인 **테스트 커버리지 73% 확보**
+
+- **기타 개발**
+  - store 및 카테고리별 매출 통계 API 개발, 대용량 데이터 대응을 위한 페이지네이션 적용
+  - 탈퇴 계정 복구 기능을 구현하기 위해 Soft Delete 설계 적용
+
+- **협업 기여**
+  - Git Flow 전략을 도입하여 협업 효율성 및 코드 품질 향상 
+  - 초기에 중복 개발 문제가 발생, 이후 매주 2회 회의 진행 제안하여 팀 내 소통 강화
+  - 시장 분석, 요구사항 정의 등 프로젝트 기획 단계 참여 
+
+### 💥 Trouble Shooting
+
+#### 🚨 문제 상황
+
+JWT 화이트리스트와 블랙리스트를 관리하는 시스템을 구축하면서, 배포 환경과 로컬 환경에서 서로 다른 요구사항이 발생했습니다.
+- 배포 환경: 고성능 처리가 요구되어 **Redis** 사용이 적합
+- 로컬 환경: 별도의 **Redis** 서버 설정 없이 간편한 개발 및 테스트 환경 필요
+
+이로 인해, 저장소 방식 차이에 따른 코드 중복과 유지보수의 어려움이 발생했습니다.
+
+#### ⭐ 해결 방법
+
+- **인터페이스 기반 설계 + 환경별 DI 구성**
+  - 배포 환경: Redis 사용
+  - 로컬 환경: MySQL 사용, 만료된 토큰 삭제를 위한 스케줄러 구현
+  - 환경별 설정 파일 분리(application.yml / application-prod.yml)
+  - 인터페이스 기반 설계를 통해 DI 방식으로 구현체 주입
+
+#### ✅ 효과
+
+- 저장소 교체가 용이한 유연한 구조 확보
+- 유지보수 시간 **50% 이상 절감**
+
+<br>
+
 ## 🛠️ 기술 스택
 
 <div align="center">
 
 ### Backend
 
-<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=Java&logoColor=white" />
+<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=OpenJDK&logoColor=white" />
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=flat-square&logo=Spring&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=Spring Security&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=flat-square&logo=Spring Data JPA&logoColor=white" />
-<img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=Java&logoColor=white" />
-<img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white" />
-<img src="https://img.shields.io/badge/Kakao oauth2.0-FFCD00?style=flat-square&logo=Kakao&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=SpringBoot&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=SpringSecurity&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=flat-square&logo=Hibernate&logoColor=white" />
+<img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=Hibernate&logoColor=white" />
+<img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JsonWebTokens&logoColor=white" />
+<img src="https://img.shields.io/badge/Kakao OAuth2.0-FFCD00?style=flat-square&logo=KakaoTalk&logoColor=white" />
 
 ### Build & Database
 
 <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white" />
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white" />
-<img src="https://img.shields.io/badge/RDS-527FFF?style=flat-square&logo=Amazon RDS&logoColor=white" />
+<img src="https://img.shields.io/badge/AWS RDS-527FFF?style=flat-square&logo=AmazonAWS&logoColor=white" />
 <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white" />
 
 ### Test
@@ -107,10 +200,10 @@
 ### Cloud & Deployment
 
 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon ECS-FF9900?style=flat-square&logo=Amazon ECS&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=Amazon EC2&logoColor=white" />
-<img src="https://img.shields.io/badge/ELB-FF9900?style=flat-square&logo=Amazon AWS&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=Amazon S3&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon ECS-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/ELB-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=AmazonAWS&logoColor=white" />
 
 ### AI & OCR
 
