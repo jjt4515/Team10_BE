@@ -3,6 +3,7 @@ package poomasi.global.config.s3;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import poomasi.global.config.s3.dto.response.PresignedPutUrlResponse;
 import poomasi.global.util.EncryptionUtil;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -16,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,6 @@ public class S3PresignedUrlService {
     private final EncryptionUtil encryptionUtil;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private static final Long SIGNATURE_DURATION = 10L;
-
 
     public String createPresignedGetUrl(String bucketName, String keyName) {
         GetObjectRequest objectRequest = GetObjectRequest.builder()
@@ -46,18 +47,17 @@ public class S3PresignedUrlService {
 
     }
 
-    public String createPresignedPutUrl(String bucketName, String keyPrefix, Map<String, String> metadata) {
+    public PresignedPutUrlResponse createPresignedPutUrl(String bucketName, String region, String keyPrefix) {
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DATE_FORMATTER);
         String encodedTime = encryptionUtil.encodeTime(now).substring(0, 10);
 
-        String keyName = String.format("%s/%s/%s.jpg", keyPrefix, date, encodedTime);
-
+        String uniqueIdentifier = UUID.randomUUID().toString();
+        String keyName = String.format("%s/%s/%s_%s.jpg", keyPrefix, date, uniqueIdentifier, encodedTime);
 
         PutObjectRequest objectRequest = PutObjectRequest.builder()
                 .bucket(bucketName)
                 .key(keyName)
-                .metadata(metadata)
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
@@ -65,16 +65,13 @@ public class S3PresignedUrlService {
                 .putObjectRequest(objectRequest)
                 .build();
 
-
         PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
         String myURL = presignedRequest.url().toString();
         log.info("Presigned URL to upload a file to: [{}]", myURL);
         log.info("HTTP method: [{}]", presignedRequest.httpRequest().method());
 
-        return presignedRequest.url().toExternalForm();
+        String objectUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, keyName);
+
+        return new PresignedPutUrlResponse(presignedRequest.url().toExternalForm(), keyName, objectUrl);
     }
-
-
 }
-
-// reference: https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/example_s3_Scenario_PresignedUrl_section.html

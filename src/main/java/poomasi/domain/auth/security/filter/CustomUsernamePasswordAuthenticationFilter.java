@@ -10,6 +10,7 @@ import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,11 +18,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
 import poomasi.domain.auth.token.util.JwtUtil;
-
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 @Slf4j
@@ -30,10 +30,11 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Description("인증 시도 메서드")
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException{
 
         log.info("email - password 기반으로 인증을 시도 합니다 : CustomUsernamePasswordAuthenticationFilter");
         ObjectMapper loginRequestMapper = new ObjectMapper();
@@ -63,18 +64,17 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         String role = customUserDetails.getAuthority();
         Long memberId = customUserDetails.getMember().getId();
 
-        String accessToken = jwtUtil.generateTokenInFilter(username, role, "access", memberId);
-        String refreshToken = jwtUtil.generateTokenInFilter(username, role, "refresh", memberId);
+        String accessToken = jwtUtil.generateAccessTokenById(memberId);
+        String refreshToken = jwtUtil.generateRefreshTokenById(memberId);
 
-        log.info("usename password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
-        response.setHeader("access", accessToken);
-        response.addCookie(createCookie("refresh", refreshToken));
+        log.info("username password 기반 로그인 성공 . cookie에 토큰을 넣어 발급합니다.");
+        createCookie("refresh", refreshToken, response);
         response.setStatus(HttpStatus.OK.value());
 
-        // 나중에 주석 해야 함
-        PrintWriter out = response.getWriter();
-        out.println("access : " + accessToken + ", refresh : " + refreshToken);
-        out.close();
+        refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
+
+        response.setContentType("application/json");  // Content-Type 설정
+        response.getWriter().write("{\"access\": \"" + accessToken + "\", \"refresh\": \"" + refreshToken + "\"}");
     }
 
     @Override
@@ -83,11 +83,16 @@ public class CustomUsernamePasswordAuthenticationFilter extends UsernamePassword
         response.setStatus(401);
     }
 
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        cookie.setHttpOnly(true);
-        return cookie;
+    private void createCookie(String key, String value, HttpServletResponse response){
+        ResponseCookie cookie = ResponseCookie.from(key, value)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .domain("poomasi.shop")
+                .maxAge(60*60*24*7)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
 }

@@ -3,38 +3,58 @@ package poomasi.domain.farm.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import poomasi.domain.farm.dto.FarmRegisterRequest;
-import poomasi.domain.farm.dto.FarmUpdateRequest;
+import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.farm.dto.request.FarmInfoUpdateRequest;
+import poomasi.domain.farm.dto.request.FarmRegisterRequest;
+import poomasi.domain.farm.dto.request.FarmUpdateRequest;
 import poomasi.domain.farm.service.FarmFarmerService;
-import poomasi.domain.farm._schedule.service.FarmScheduleService;
+import poomasi.domain.member.entity.Member;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/farm")
+@RequestMapping("/api/farmer/farms")
 public class FarmFarmerController {
     private final FarmFarmerService farmFarmerService;
-    private final FarmScheduleService farmScheduleService;
 
-    // TODO: 판매자만 접근가능하도록 인증/인가 annotation 추가
+    @Secured("ROLE_FARMER")
     @PostMapping("")
-    public ResponseEntity<?> registerFarm(@RequestBody FarmRegisterRequest request) {
-        return ResponseEntity.ok(farmFarmerService.registerFarm(request));
+    public ResponseEntity<?> registerFarm(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody FarmRegisterRequest request) {
+        Member member = userDetails.getMember();
+        return ResponseEntity.ok(farmFarmerService.registerFarm(member, request));
     }
 
+    @Secured("ROLE_FARMER")
+    @PostMapping("/info/update")
+    public ResponseEntity<?> updateFarmInfo(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody FarmInfoUpdateRequest request) {
+        Member member = userDetails.getMember();
+        return ResponseEntity.ok(farmFarmerService.updateFarmInfo(member, request));
+    }
+
+
+    @Secured("ROLE_FARMER")
     @PostMapping("/update")
-    public ResponseEntity<?> updateFarm(@Valid @RequestBody FarmUpdateRequest request) {
-        // TODO: 판매자 ID(Spring Security Context)로 대체
-        Long farmerId = 1L;
-        return ResponseEntity.ok(farmFarmerService.updateFarm(farmerId, request));
+    public ResponseEntity<?> updateFarm(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @Valid @RequestBody FarmUpdateRequest request) {
+        Member member = userDetails.getMember();
+        return ResponseEntity.ok(farmFarmerService.updateFarm(member.getId(), request));
     }
 
+    @Secured("ROLE_FARMER")
     @DeleteMapping("/{farmId}")
-    public ResponseEntity<?> deleteFarm(@PathVariable Long farmId) {
-        // TODO: 판매자 ID
-        Long farmerId = 1L;
+    public ResponseEntity<?> deleteFarm(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long farmId) {
+        Member member = userDetails.getMember();
 
-        farmFarmerService.deleteFarm(farmerId, farmId);
+        farmFarmerService.deleteFarm(member.getId(), farmId);
         return ResponseEntity.ok().build();
     }
 

@@ -1,7 +1,9 @@
 package poomasi.domain.wishlist.dto;
 
+import poomasi.global.common.ServiceType;
+
 public record WishListDeleteRequest(
-        Long memberId,
-        Long productId
+        Long objectId,
+        ServiceType type
 ) {
 }

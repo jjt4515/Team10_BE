@@ -11,123 +11,174 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 import poomasi.domain.auth.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import poomasi.domain.auth.security.filter.JwtAuthenticationFilter;
-import poomasi.domain.auth.security.handler.CustomSuccessHandler;
+import poomasi.domain.auth.security.filter.JwtLogoutFilter;
+import poomasi.domain.auth.security.handler.OAuth2FailureHandler;
+import poomasi.domain.auth.security.handler.OAuth2SuccessHandler;
 import poomasi.domain.auth.security.userdetail.OAuth2UserDetailServiceImpl;
-import poomasi.domain.auth.security.handler.*;
+import poomasi.domain.auth.security.userdetail.UserDetailsServiceImpl;
+import poomasi.domain.auth.token.blacklist.service.AccessTokenBlacklistService;
+import poomasi.domain.auth.token.blacklist.service.BlacklistJpaService;
 import poomasi.domain.auth.token.util.JwtUtil;
+import poomasi.domain.auth.token.whitelist.service.RefreshTokenWhitelistService;
 
 
 @AllArgsConstructor
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true , prePostEnabled = false) // 인가 처리에 대한 annotation
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = false) // 인가 처리에 대한 annotation
 public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
     private final MvcRequestMatcher.Builder mvc;
-    private final CustomSuccessHandler customSuccessHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final CorsConfigurationSource corsConfigurationSource;
+    private final AccessTokenBlacklistService accessTokenBlacklistService;
+    private final RefreshTokenWhitelistService refreshTokenWhitelistService;
 
     @Autowired
     private OAuth2UserDetailServiceImpl oAuth2UserDetailServiceImpl;
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers("/error", "/favicon.ico");
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
-    @Description("순서 : Oauth2 -> jwt -> login -> logout")
+    @Description("순서 : logout -> Oauth2 -> jwt -> login ")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        //form login disable
+        //기본 폼로그인 비활성화
         http.formLogin(AbstractHttpConfigurer::disable);
 
-        //basic login disable
+        //http basic 비활성화
         http.httpBasic(AbstractHttpConfigurer::disable);
 
         //csrf 해제
         http.csrf(AbstractHttpConfigurer::disable);
 
-        //cors 해제
-        http.cors(AbstractHttpConfigurer::disable);
+        //cors 설정
+        http.cors(cors -> cors
+                .configurationSource(corsConfigurationSource));
 
         //세션 해제
         http.sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        //기본 로그아웃 해제
+        //기본 로그아웃 비활성화
         http.logout(AbstractHttpConfigurer::disable);
 
-        /*
-        // 기본 경로 및 테스트 경로
         http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers(HttpMethod.GET, "/api/farm/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/product/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
-                .requestMatchers("/api/sign-up", "/api/login", "api/reissue").permitAll()
-                .requestMatchers("/api/need-auth/**").authenticated()
-                .anyRequest().
-                authenticated()
-        );*/
+
+                // 기본 경로 및 테스트 경로
+                // 인증 및 인가가 필요한 부분을 "authenticated"로 표시해주세요
+
+                //건호 api
+                .requestMatchers("/oauth2/authentication/kakao").authenticated()
+                .requestMatchers("api/orders/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/logout").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/payments/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/aftersales/**").authenticated()
 
 
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/**").permitAll()
-                .requestMatchers("/api/need-auth/**").authenticated()
-                .anyRequest()
-                .authenticated()
+                //진택 api
+                .requestMatchers(HttpMethod.POST, "/api/reissue").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-farmer").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/summary").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/members/self").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/update/customer/address").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/members/delete").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/restore/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/suspend/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-get").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/s3/presigned-url-put").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/images").authenticated()
+                .requestMatchers(HttpMethod.POST, "api/images/multiple").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/images/delete/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/update/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/images/recover/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
+
+
+                //지민 api
+                .requestMatchers( "/api/v1/wishlist/**").authenticated()
+                .requestMatchers("/api/farmer/farms/**").authenticated()
+                .requestMatchers("/api/farmer/farms/info").authenticated()
+                .requestMatchers("/api/v1/farmer/reservations").authenticated()
+
+
+                //풍헌 api
+                .requestMatchers(HttpMethod.GET, "/api/cart/**").authenticated()   // GET 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.POST, "/api/cart/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/cart/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/cart/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/categories/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/categories/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/categories/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/reviews/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.PUT, "/api/reviews/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/reviews/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/products/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()  // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()   // PUT 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated() // DELETE 요청에 대해 인증 필요
+
+                // /api/stores/** 경로에 대한 인증 요구
+                .requestMatchers(HttpMethod.POST, "/api/stores/**").authenticated()   // POST 요청에 대해 인증 필요
+                .requestMatchers(HttpMethod.PUT, "/api/stores/**").authenticated()    // PUT 요청에 대해 인증 필요
+
+                .anyRequest().permitAll()
         );
 
-        /*
-        로그아웃 필터 등록하기
-        LogoutHandler[] handlers = {
-                new CookieClearingLogoutHandler(),
-                new ClearAuthenticationHandler()
-        };
-        CustomLogoutFilter customLogoutFilter = new CustomLogoutFilter(jwtUtil, new CustomLogoutSuccessHandler(), handlers);
-        customLogoutFilter.setFilterProcessesUrl("/api/logout");
-        customLogoutFilter.
-        http.addFilterAt(customLogoutFilter, LogoutFilter.class);
-
-        http.logout( (logout) ->
-                logout.
-                        logoutSuccessHandler(new CustomLogoutSuccessHandler())
-                        .addLogoutHandler(new CookieClearingLogoutHandler())
-                        .addLogoutHandler(new ClearAuthenticationHandler())
-        );
-        */
-
-        /*
-        oauth2 인증은 현재 해제해놨습니다 -> 차후 code를 front에서 어떤 경로로 받을 것인지
-        아니면 kakao에서 바로 redirect를 백엔드로 할 지 정해지면
-        processing url 작성하겠습니다
-
+        //oauth2 filter
         http
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(oAuth2UserDetailServiceImpl))
-                        .successHandler(customSuccessHandler)
+                                .userService(oAuth2UserDetailServiceImpl)
+                        )
+                        .successHandler(oAuth2SuccessHandler)
+                        .failureHandler(oAuth2FailureHandler)
                 );
-         */
-        http.oauth2Login(AbstractHttpConfigurer::disable);
 
+        //username password filter
         CustomUsernamePasswordAuthenticationFilter customUsernameFilter =
-                new CustomUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil);
+                new CustomUsernamePasswordAuthenticationFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshTokenWhitelistService);
         customUsernameFilter.setFilterProcessesUrl("/api/login");
-
         http.addFilterAt(customUsernameFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        //http.addFilterAfter(customLogoutFilter, JwtAuthenticationFilter.class);
+
+        //jwt filter
+        http.addFilterAfter(new JwtAuthenticationFilter(jwtUtil, userDetailsService, accessTokenBlacklistService),
+                OAuth2LoginAuthenticationFilter.class);
+
+        //logout filter
+        JwtLogoutFilter customLogoutFilter = new JwtLogoutFilter(jwtUtil, accessTokenBlacklistService, refreshTokenWhitelistService);
+        http.addFilterAfter(customLogoutFilter, JwtAuthenticationFilter.class);
 
         return http.build();
     }

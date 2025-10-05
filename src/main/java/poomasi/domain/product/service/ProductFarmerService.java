@@ -1,14 +1,26 @@
 package poomasi.domain.product.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.image.repository.ImageRepository;
+import poomasi.domain.member.entity.Member;
 import poomasi.domain.product._category.entity.Category;
-import poomasi.domain.product._category.repository.CategoryRepository;
+import poomasi.domain.product._category.service.CategoryService;
+import poomasi.domain.product._intro.entity.ProductIntro;
+import poomasi.domain.product._intro.repository.ProductIntroRepository;
+import poomasi.domain.product.dto.ProductRegisterResponse;
+import poomasi.domain.product.dto.ProductResponse;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.repository.StoreRepository;
 import poomasi.domain.product.dto.ProductRegisterRequest;
 import poomasi.domain.product.dto.UpdateProductQuantityRequest;
 import poomasi.domain.product.entity.Product;
 import poomasi.domain.product.repository.ProductRepository;
+import poomasi.domain.store.entity.Store;
+import poomasi.domain.store.service.StoreService;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
 
@@ -17,23 +29,30 @@ import poomasi.global.error.BusinessException;
 public class ProductFarmerService {
 
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    //private final MemberService memberService;
-
-    public Long registerProduct(ProductRegisterRequest request) {
-        //memberService.isFarmer(request.farmerId());
-        Category category = getCategory(request.categoryId());
-
-        Product saveProduct = productRepository.save(request.toEntity());
-        category.addProduct(saveProduct);
-        return saveProduct.getId();
-    }
-
+    private final CategoryService categoryService;
+    private final StoreService storeService;
+    private final ImageRepository imageRepository;
+    private final ProductIntroRepository productIntroRepository;
 
     @Transactional
-    public void modifyProduct(ProductRegisterRequest productRequest, Long productId) {
-        // TODO: 주인인지 알아보기
-        Product product = getProductByProductId(productId);
+    public ProductRegisterResponse registerProduct(Member member, ProductRegisterRequest request) {
+        Category category = getCategory(request.categoryId());
+        Store store = member.getStore();
+
+        Product saveProduct = productRepository.save(request.toEntity(member,store));
+
+        category.addProduct(saveProduct);
+        store.addProduct(saveProduct);
+        saveProduct.getProductIntro().setProduct(saveProduct);
+        return new ProductRegisterResponse(saveProduct.getId(), saveProduct.getProductIntro().getId());
+    }
+
+    @Transactional
+    public void modifyProduct(Member member, ProductRegisterRequest productRequest,
+            Long productId) {
+        Product product = getProduct(productId);
+        checkAuth(member, product);
+
         Long categoryId = product.getCategoryId();
         Category oldCategory = getCategory(categoryId);
 
@@ -46,9 +65,10 @@ public class ProductFarmerService {
     }
 
     @Transactional
-    public void deleteProduct(Long productId) {
-        //TODO: 주인인지 알아보기
-        Product product = getProductByProductId(productId);
+    public void deleteProduct(Member member, Long productId) {
+        Product product = getProduct(productId);
+        checkAuth(member, product);
+
         Long categoryId = product.getCategoryId();
         Category category = getCategory(categoryId);
 
@@ -57,20 +77,28 @@ public class ProductFarmerService {
     }
 
     @Transactional
-    public void addQuantity(Long productId, UpdateProductQuantityRequest request) {
-        Product productByProductId = getProductByProductId(productId);
-        productByProductId.addStock(request.quantity());
-
-        productRepository.save(productByProductId);
+    public void addQuantity(Member member, Long productId, UpdateProductQuantityRequest request) {
+        Product product = getProduct(productId);
+        checkAuth(member, product);
+        product.addStock(request.quantity());
     }
 
-    private Product getProductByProductId(Long productId) {
+    private Product getProduct(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
+                .orElseThrow(()->new BusinessException(BusinessError.PRODUCT_NOT_FOUND));
     }
 
     private Category getCategory(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new BusinessException(BusinessError.CATEGORY_NOT_FOUND));
+        return categoryService.getCategory(categoryId);
+    }
+
+    private void checkAuth(Member member, Product product) {
+        if (!product.getFarmerId().equals(member.getId())) {
+            throw new BusinessException(BusinessError.MEMBER_ID_MISMATCH);
+        }
+    }
+
+    public List<ProductResponse> getSoldOut(Member member) {
+        return productRepository.findSoldOut(member.getId()).stream().map(ProductResponse::fromEntity).toList();
     }
 }

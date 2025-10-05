@@ -1,0 +1,232 @@
+name: Deploy to Amazon ECS
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ "prod" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: poomasi-server
+  ECS_SERVICE: poomasi-server
+  ECS_CLUSTER: poomasi
+  ECS_TASK_DEFINITION: tf-prod.json
+  CONTAINER_NAME: spring
+  PROGRESS_SLACK_CHANNEL: C080DMAE7MX
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post Slack Channel that Build Start
+        id: slack-build-start
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ env.PROGRESS_SLACK_CHANNEL }}
+          payload: |
+            {
+              "text": ":seedling: *Poomasi Spring ${{ github.ref_name }}* 배포가 시작되었습니다.",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":loudspeaker: *Poomasi Spring ${{ github.ref_name }}* 배포가 시작되었습니다."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "emoji": true,
+                        "text": "깃허브액션에서 확인하기."
+                      },
+                      "value": "click_me_123",
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.PROGRESS_SLACK_CHANNEL_TOKEN }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: List build directory
+        run: ls -R build/libs
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker build & Push Docker image to Amazon ECR
+        id: build-image
+        uses: docker/build-push-action@v5
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          build-args: |
+            SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            REDIS_HOST=${{ secrets.REDIS_HOST }}
+            REDIS_PORT=${{ secrets.REDIS_PORT }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            JWT_ACCESS_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRATION_TIME }}
+            JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}
+            AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+            IMP_API_KEY=${{ secrets.IMP_API_KEY }}
+            IMP_SECRET_KEY=${{ secrets.IMP_SECRET_KEY }}
+            KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+            KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+            NAVER_OCR_SECRET=${{ secrets.NAVER_OCR_SECRET }}
+            NAVER_OCR_INVOKE=${{ secrets.NAVER_OCR_INVOKE }}
+            NAVER_OCR_TEMPLATE=${{ secrets.NAVER_OCR_TEMPLATE }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=min,ignore-error=true
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Deploy Amazon ECS task definition
+        id: ecs-deploy
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+          wait-for-minutes: 10
+
+      - name: Verify New Task Definition is Deployed
+        run: |
+          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --query services[0].deployments[0].taskDefinition | jq -r ".")
+          NEW_TASK_DEF_ARN=${{ steps.ecs-deploy.outputs.task-definition-arn }}
+          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
+          echo "New task arn: $NEW_TASK_DEF_ARN"
+          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+            echo "Deployment failed."
+            exit 1
+          fi
+
+      - name: Post Slack Channel that Build Success
+        if: success()
+        id: slack-build-success
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ env.PROGRESS_SLACK_CHANNEL }}
+          payload: |
+            {
+              "text": ":white_check_mark: *Poomasi Spring ${{ github.ref_name }}* 배포가 성공했습니다.",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":white_check_mark: *Poomasi Spring ${{ github.ref_name }}* 배포가 성공했습니다."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "emoji": true,
+                        "text": "깃허브액션에서 확인하기."
+                      },
+                      "style": "primary",
+                      "value": "click_me_123",
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.PROGRESS_SLACK_CHANNEL_TOKEN }}
+
+      - name: Post Slack Channel that Build Fail
+        if: failure()
+        id: slack-build-fail
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: ${{ env.PROGRESS_SLACK_CHANNEL }}
+          payload: |
+            {
+              "text": ":x: *Poomasi Spring ${{ github.ref_name }}* 배포가 실패했습니다.",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":x: *Poomasi Spring ${{ github.ref_name }}* 배포가 실패했습니다."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "emoji": true,
+                        "text": "깃허브액션에서 확인하기."
+                      },
+                      "style": "danger",
+                      "value": "click_me_123",
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.PROGRESS_SLACK_CHANNEL_TOKEN }}

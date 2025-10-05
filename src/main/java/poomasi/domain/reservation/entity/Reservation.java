@@ -1,26 +1,29 @@
 package poomasi.domain.reservation.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import poomasi.domain.aftersales.entity.FarmAfterSales;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.member.entity.Member;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
+import poomasi.domain.review.entity.Review;
+import poomasi.payment.entity.Payment;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import poomasi.domain.review.entity.Review;
 
 @Entity
 @Getter
 @Table(name = "reservation", indexes = {
         @Index(name = "idx_farm_id", columnList = "farm_id"),
-        @Index(name = "idx_user_id", columnList = "user_id")
+        @Index(name = "idx_member_id", columnList = "member_id")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Reservation {
@@ -60,6 +63,13 @@ public class Reservation {
     @Column(nullable = false)
     private String request;
 
+    @Column(nullable = false)
+    private String merchantUid;
+
+    @Comment("결제 예정 금액")
+    @Column(nullable = false)
+    private BigDecimal price;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -69,9 +79,22 @@ public class Reservation {
     @Comment("예약 취소 일자")
     private LocalDateTime canceledAt;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
+    private Review review;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Payment payment;
+
+    @OneToOne
+    @Setter
+    @Getter
+    private FarmAfterSales farmAfterSales;
 
     @Builder
-    public Reservation(Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate, int memberCount, ReservationStatus status, String request) {
+    public Reservation(Long id, Farm farm, Member member, FarmSchedule scheduleId, LocalDate reservationDate,
+                       int memberCount, ReservationStatus status, String request, BigDecimal price, String merchantUid) {
+        this.id = id;
         this.farm = farm;
         this.member = member;
         this.scheduleId = scheduleId;
@@ -79,10 +102,15 @@ public class Reservation {
         this.memberCount = memberCount;
         this.status = status;
         this.request = request;
+        this.price = price;
+        this.review = null;
+        this.merchantUid = merchantUid;
+        this.payment = payment;
     }
 
     public ReservationResponse toResponse() {
         return ReservationResponse.builder()
+                .id(id)
                 .farmId(farm.getId())
                 .memberId(member.getId())
                 .scheduleId(scheduleId.getId())
@@ -90,6 +118,10 @@ public class Reservation {
                 .memberCount(memberCount)
                 .status(status)
                 .request(request)
+                .price(price.intValue())
+                .isReviewed(review != null)
+                .price(price.intValue())
+                .merchantUid(merchantUid)
                 .build();
     }
 
@@ -97,8 +129,23 @@ public class Reservation {
         return status == ReservationStatus.CANCELED;
     }
 
+    public boolean isNotCancelled() {
+        return !isCanceled();
+    }
+
+    public void completePayment(String impUid) {
+        this.status = ReservationStatus.ACCEPTED;
+        this.payment.setImpUid(impUid);
+
+    }
+
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
         this.canceledAt = LocalDateTime.now();
     }
+
+    public void setImpUId(String impUId){
+        this.payment.setImpUid(impUId);
+    }
+
 }

@@ -6,14 +6,13 @@ import poomasi.domain.farm._schedule.dto.FarmScheduleRequest;
 import poomasi.domain.farm._schedule.dto.FarmScheduleResponse;
 import poomasi.domain.farm._schedule.dto.FarmScheduleUpdateRequest;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 import poomasi.domain.farm._schedule.repository.FarmScheduleRepository;
 import poomasi.global.error.BusinessException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static poomasi.global.error.BusinessError.*;
 
@@ -22,27 +21,44 @@ import static poomasi.global.error.BusinessError.*;
 public class FarmScheduleService {
     private final FarmScheduleRepository farmScheduleRepository;
 
-    public void addFarmSchedule(FarmScheduleUpdateRequest request) {
-        List<FarmSchedule> existingSchedules = farmScheduleRepository.findByFarmIdAndDateRange(request.farmId(), request.startDate(), request.endDate());
+    public void addFarmSchedule(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, Long farmId) {
+        List<FarmSchedule> farmSchedules = farmScheduleRepository.findByFarmIdAndDateRange(farmId, startDate, endDate);
 
-        if (request.startDate().isAfter(request.endDate())) {
-            throw new BusinessException(START_DATE_SHOULD_BE_BEFORE_END_DATE);
-        }
-
-        Set<LocalDate> existingDates = existingSchedules.stream()
-                .map(FarmSchedule::getDate)
-                .collect(Collectors.toSet());
-
-        for (LocalDate date = request.startDate(); !date.isAfter(request.endDate()); date = date.plusDays(1)) {
-            if (request.availableDays().contains(date.getDayOfWeek())) {
-                if (existingDates.contains(date)) {
-                    throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
-                }
-
-                FarmSchedule newSchedule = request.toEntity(date);
-                farmScheduleRepository.save(newSchedule);
+        // 같은 날짜에 동일한 시간에 스케줄이 있는지 확인
+        for (FarmSchedule farmSchedule : farmSchedules) {
+            if (startTime.isBefore(farmSchedule.getEndTime()) && endTime.isAfter(farmSchedule.getStartTime())) {
+                throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
             }
         }
+        // 등록
+        for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
+            FarmSchedule farmSchedule = FarmSchedule.builder()
+                    .farmId(farmId)
+                    .date(date)
+                    .startTime(startTime)
+                    .endTime(endTime)
+                    .build();
+
+            farmScheduleRepository.save(farmSchedule);
+        }
+    }
+
+    public void addFarmSchedule(FarmScheduleUpdateRequest request) {
+        if (request.startTime().isAfter(request.endTime())) {
+            throw new BusinessException(START_TIME_SHOULD_BE_BEFORE_END_TIME);
+        }
+
+        List<FarmSchedule> farmSchedules = farmScheduleRepository.findByFarmIdAndDate(request.farmId(), request.date());
+        if (farmSchedules.stream().anyMatch(farmSchedule ->
+                (request.startTime().isBefore(farmSchedule.getEndTime()) && request.endTime().isAfter(farmSchedule.getStartTime())) ||
+                        (request.startTime().equals(farmSchedule.getStartTime()) || request.endTime().equals(farmSchedule.getEndTime()))
+        )) {
+            throw new BusinessException(FARM_SCHEDULE_ALREADY_EXISTS);
+        }
+
+        // 등록
+        FarmSchedule farmSchedule = request.toEntity();
+        farmScheduleRepository.save(farmSchedule);
     }
 
     public List<FarmScheduleResponse> getFarmSchedulesByYearAndMonth(FarmScheduleRequest request) {
@@ -54,26 +70,17 @@ public class FarmScheduleService {
                 .toList();
     }
 
-    public FarmSchedule getFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
-        return farmScheduleRepository.findByFarmIdAndDate(farmId, date)
-                .orElseThrow(() -> new BusinessException(FARM_SCHEDULE_NOT_FOUND));
+    public List<FarmSchedule> getFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
+        return farmScheduleRepository.findByFarmIdAndDate(farmId, date);
     }
 
-    public FarmSchedule getValidFarmScheduleByFarmIdAndDate(Long farmId, LocalDate date) {
-        FarmSchedule farmSchedule = getFarmScheduleByFarmIdAndDate(farmId, date);
-
-        if (farmSchedule.getStatus() == ScheduleStatus.RESERVED) {
-            throw new BusinessException(FARM_SCHEDULE_ALREADY_RESERVED);
-        }
-
-        return farmSchedule;
+    public FarmSchedule getFarmScheduleByScheduleId(Long id) {
+        return farmScheduleRepository.findById(id).orElseThrow(
+                () -> new BusinessException(FARM_SCHEDULE_NOT_FOUND)
+        );
     }
 
-    public void updateFarmScheduleStatus(Long farmScheduleId, ScheduleStatus status) {
-        FarmSchedule farmSchedule = farmScheduleRepository.findById(farmScheduleId)
-                .orElseThrow(() -> new BusinessException(FARM_SCHEDULE_NOT_FOUND));
-
-        farmSchedule.setStatus(status);
-        farmScheduleRepository.save(farmSchedule);
+    public List<FarmSchedule> getFarmScheduleByFarmId(Long farmId) {
+        return farmScheduleRepository.findByFarmId(farmId);
     }
 }

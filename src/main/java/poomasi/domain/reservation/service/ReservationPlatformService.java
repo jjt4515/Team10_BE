@@ -2,55 +2,78 @@ package poomasi.domain.reservation.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import poomasi.domain.farm._schedule.entity.FarmSchedule;
-import poomasi.domain.farm._schedule.entity.ScheduleStatus;
 import poomasi.domain.farm._schedule.service.FarmScheduleService;
 import poomasi.domain.farm.entity.Farm;
 import poomasi.domain.farm.service.FarmService;
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.member.service.MemberService;
 import poomasi.domain.reservation.dto.request.ReservationRequest;
 import poomasi.domain.reservation.dto.response.ReservationResponse;
 import poomasi.domain.reservation.entity.Reservation;
 import poomasi.global.error.BusinessError;
 import poomasi.global.error.BusinessException;
+import poomasi.payment.entity.ItemType;
+import poomasi.payment.entity.Payment;
+import poomasi.payment.service.PaymentPortoneService;
+import poomasi.payment.util.PaymentUtil;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReservationPlatformService {
     private final ReservationService reservationService;
-    private final MemberService memberService;
     private final FarmService farmService;
     private final FarmScheduleService farmScheduleService;
+    private final PaymentUtil paymentUtil;
+    private final PaymentPortoneService paymentPortoneService;
 
     private final int RESERVATION_CANCELLATION_PERIOD = 3;
 
-    public ReservationResponse createReservation(ReservationRequest request) {
-        Member member = memberService.findMemberById(request.memberId());
+    @Transactional
+    public ReservationResponse createReservation(Member member, ReservationRequest request) {
         Farm farm = farmService.getValidFarmByFarmId(request.farmId());
-        FarmSchedule farmSchedule = farmScheduleService.getValidFarmScheduleByFarmIdAndDate(request.farmId(), request.reservationDate());
+        FarmSchedule farmSchedule = farmScheduleService.getFarmScheduleByScheduleId(request.scheduleId());
 
-        // TODO: 예약 가능한지 확인하는 로직 추가
-
-        Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule));
-
-
-        return reservation.toResponse();
-    }
-
-    public ReservationResponse getReservation(Long memberId, Long reservationId) {
-        Reservation reservation = reservationService.getReservationById(reservationId);
-        if (!reservation.getMember().getId().equals(memberId) || !memberService.isAdmin(memberId)) {
-            throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
+        // 1. 농장에 최대 수용 가능 팀 확인
+        int reservationCount = reservationService.getValidReservationsByFarmIdAndScheduleId(farm.getId(), farmSchedule).size();
+        if (reservationCount >= farm.getMaxReservation()) {
+            throw new BusinessException(BusinessError.RESERVATION_FULL);
         }
 
+        // 2. 농장에서 최대 수용 가능 인원 확인
+        if (request.memberCount() > farm.getMaxCapacity()) {
+            throw new BusinessException(BusinessError.RESERVATION_MEMBER_EXCEED);
+        }
+
+        // 3. 사전 결제 생성
+        String merchantUid = paymentUtil.createMerchantUid(ItemType.PRODUCT);
+        Reservation reservation = reservationService.createReservation(request.toEntity(member, farm, farmSchedule, merchantUid));
+        Payment payment = Payment
+                        .builder()
+                        .reservation(reservation)
+                        .totalAmount(reservation.getPrice())
+                        .checkSum(reservation.getPrice())
+                        .itemType(ItemType.FARM)
+                        .build();
+
+        paymentPortoneService.prepaymentRegister(merchantUid, reservation.getPrice());
         return reservation.toResponse();
     }
 
-    public void cancelReservation(Long memberId, Long reservationId) {
+    public ReservationResponse getReservation(Member member, Long reservationId) {
+        Reservation reservation = reservationService.getReservationById(reservationId);
+        if (!reservation.getMember().getId().equals(member.getId()) && !member.isAdmin() && !reservation.getFarm().getOwnerId().equals(member.getId())) {
+            throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
+        }
+        return reservation.toResponse();
+    }
+
+    @Transactional
+    public void cancelReservation(Member member, Long reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
 
-        if (!reservation.getMember().getId().equals(memberId) || !memberService.isAdmin(memberId)) {
+        if (!reservation.getMember().getId().equals(member.getId()) && !member.isAdmin()) {
             throw new BusinessException(BusinessError.RESERVATION_NOT_ACCESSIBLE);
         }
 
@@ -64,6 +87,7 @@ public class ReservationPlatformService {
         }
 
         reservationService.cancelReservation(reservation);
-        farmScheduleService.updateFarmScheduleStatus(reservation.getScheduleId().getId(), ScheduleStatus.PENDING);
+
+
     }
 }

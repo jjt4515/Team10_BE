@@ -1,17 +1,18 @@
 package poomasi.domain.wishlist.dto.request;
 
 import poomasi.domain.member.entity.Member;
-import poomasi.domain.product.entity.Product;
 import poomasi.domain.wishlist.entity.WishList;
+import poomasi.global.common.ServiceType;
 
 public record WishListAddRequest(
-        Long memberId,
-        Long productId
+        Long objectId,
+        ServiceType type
 ) {
-    public WishList toEntity(Member member, Product product) {
+    public WishList toEntity(Member member) {
         return WishList.builder()
                 .member(member)
-                .product(product)
+                .objectId(objectId)
+                .type(type)
                 .build();
     }
 }

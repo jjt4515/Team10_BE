@@ -1,27 +1,70 @@
 package poomasi.domain.product.dto;
 
+import java.util.List;
+import org.hibernate.annotations.Comment;
+import poomasi.domain.image.entity.Image;
+import poomasi.domain.member.entity.Member;
+import poomasi.domain.product._intro.entity.ProductIntro;
 import poomasi.domain.product.entity.Product;
+import poomasi.domain.store.entity.Store;
+
+import java.math.BigDecimal;
 
 public record ProductRegisterRequest(
+        //product
         Long categoryId,
-        Long farmerId, //등록한 사람
         String name,
-        String description,
-        String imageUrl,
         Integer stock,
-        Long price
-) {
+        BigDecimal price,
+        @Comment("재배 환경")
+        String growEnv,
+        BigDecimal shippingFee,
 
-    public Product toEntity() {
+        //product intro
+        String mainTitle,
+
+        String subTitle1,
+        String subDesc1,
+
+        String subTitle2,
+        String subDesc2,
+
+        String subTitle3,
+        String subDesc3,
+
+        String description,
+        Integer orderLimit,
+
+        List<String> imageUrls
+) {
+    public Product toEntity(Member member, Store store) {
+        ProductIntro productIntro = ProductIntro.builder()
+                .mainTitle(mainTitle)
+
+                .subTitle1(subTitle1)
+                .subDesc1(subDesc1)
+
+                .subTitle2(subTitle2)
+                .subDesc2(subDesc2)
+
+                .subTitle3(subTitle3)
+                .subDesc3(subDesc3)
+
+                .build();
+
         return Product.builder()
                 .categoryId(categoryId)
-                .farmerId(farmerId)
+                .farmerId(member.getId())
                 .name(name)
                 .stock(stock)
-                .description(description)
-                .imageUrl(imageUrl)
                 .stock(stock)
                 .price(price)
+                .store(store)
+                .growEnv(growEnv)
+                .shippingFee(shippingFee)
+                .productIntro(productIntro)
+                .description(description)
+                .orderLimit(orderLimit)
                 .build();
     }
 }

@@ -1,76 +1,100 @@
 package poomasi.global.config.s3;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import poomasi.global.config.aws.AwsProperties;
-import poomasi.global.util.EncryptionUtil;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
+import poomasi.global.config.s3.dto.response.PresignedPutUrlResponse;
+import poomasi.global.util.EncryptionUtil;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
+
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+@ExtendWith(MockitoExtension.class)
+class S3PresignedUrlServiceTest {
 
-@SpringBootTest
-public class S3PresignedUrlServiceTest {
+    @Mock
+    private S3Presigner s3Presigner;
 
+    @Mock
+    private EncryptionUtil encryptionUtil;
+
+    @InjectMocks
     private S3PresignedUrlService s3PresignedUrlService;
 
-    @Autowired
-    private AwsProperties awsProperties;
-
-    @BeforeEach
-    public void setUp() {
-        String accessKey = awsProperties.getAccess();
-        String secretKey = awsProperties.getSecret();
-        String region = awsProperties.getS3().getRegion();
-
-        // 자격 증명 설정
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
-                accessKey,
-                secretKey
-        );
-
-        // S3Presigner 인스턴스 생성
-        S3Presigner presigner = S3Presigner.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.of(region))
-                .build();
-
-        // S3PresignedUrlService 초기화
-        s3PresignedUrlService = new S3PresignedUrlService(presigner, new EncryptionUtil());
-    }
+    private static final String BUCKET_NAME = "test-bucket";
+    private static final String REGION = "us-west-2";
+    private static final String KEY_PREFIX = "test-prefix";
+    private static final String KEY_NAME = "test-key";
 
     @Test
-    public void testCreatePresignedGetUrl() {
-        String objectKey = "object_key";
-        String bucketName = awsProperties.getS3().getBucket();
-
-        String presignedUrl = s3PresignedUrlService.createPresignedGetUrl(bucketName, objectKey);
-
-        assertNotNull(presignedUrl);
-        System.out.println("Presigned GET URL: " + presignedUrl);
-    }
-
-    @Test
-    public void testCreatePresignedPutUrl() {
-        String keyPrefix = "uploads";
-        String bucketName = awsProperties.getS3().getBucket();
-
-        // 메타데이터 생성
+    @DisplayName("Presigned Put URL 생성 성공 테스트")
+    void createPresignedPutUrl_Success() throws MalformedURLException {
+        // Given
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("Content-Type", "image/jpg");
-        metadata.put("x-amz-meta-title", "Test Image");
+        metadata.put("key1", "value1");
 
-        // presigned PUT URL 생성
-        String presignedUrl = s3PresignedUrlService.createPresignedPutUrl(bucketName, keyPrefix, metadata);
+        given(encryptionUtil.encodeTime(any())).willReturn("encodedTimeString");
 
-        assertNotNull(presignedUrl);
-        System.out.println("Presigned PUT URL: " + presignedUrl);
+        PresignedPutObjectRequest mockPresignedRequest = mock(PresignedPutObjectRequest.class);
+        SdkHttpRequest mockHttpRequest = mock(SdkHttpRequest.class);
+
+        // Mock httpRequest method() to return PUT
+        when(mockPresignedRequest.url()).thenReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        when(mockPresignedRequest.httpRequest()).thenReturn(mockHttpRequest);
+        when(mockHttpRequest.method()).thenReturn(SdkHttpMethod.PUT);
+
+        given(s3Presigner.presignPutObject(any(PutObjectPresignRequest.class)))
+                .willReturn(mockPresignedRequest);
+
+        // When
+        PresignedPutUrlResponse response = s3PresignedUrlService.createPresignedPutUrl(BUCKET_NAME, REGION, KEY_PREFIX);
+
+        // Then
+        assertEquals("https://test-bucket.s3.us-west-2.amazonaws.com/test-key", response.presignedPutUrl());
+        assertEquals("https://test-bucket.s3.us-west-2.amazonaws.com/" + response.keyName(), response.objectUrl());
+
+        verify(s3Presigner).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    @Test
+    @DisplayName("Presigned Get URL 생성 성공 테스트")
+    void createPresignedGetUrl_Success() throws MalformedURLException {
+        // Given
+        PresignedGetObjectRequest mockPresignedRequest = mock(PresignedGetObjectRequest.class);
+        SdkHttpRequest mockHttpRequest = mock(SdkHttpRequest.class);
+
+        // Mock httpRequest method() to return GET
+        when(mockPresignedRequest.url()).thenReturn(URI.create("https://test-bucket.s3.us-west-2.amazonaws.com/test-key").toURL());
+        when(mockPresignedRequest.httpRequest()).thenReturn(mockHttpRequest);
+        when(mockHttpRequest.method()).thenReturn(SdkHttpMethod.GET);
+
+        given(s3Presigner.presignGetObject(any(GetObjectPresignRequest.class)))
+                .willReturn(mockPresignedRequest);
+
+        // When
+        String presignedUrl = s3PresignedUrlService.createPresignedGetUrl(BUCKET_NAME, KEY_NAME);
+
+        // Then
+        assertEquals("https://test-bucket.s3.us-west-2.amazonaws.com/test-key", presignedUrl);
+
+        verify(s3Presigner).presignGetObject(any(GetObjectPresignRequest.class));
     }
 }
