@@ -85,8 +85,93 @@ public class WhitelistRedisService implements TokenWhitelistService {
         return keys != null ? new ArrayList<>(keys) : Collections.emptyList();
     }
 
+    public List<String> getKeysByPatternAndGetValues(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        List<String> result = new ArrayList<>();
+        if (keys != null) {
+            ValueOperations<String, Object> ops = redisTemplate.opsForValue();
+            for (String key : keys) {
+                Object value = ops.get(key);  // 실제 값 조회
+                // 필요 시 value.toString() 확인 가능
+                result.add(key); // 값은 안 써도 되면 키만 추가
+            }
+        }
+        return result;
+    }
+
     private String generateKey(String memberId, String token) {
         return "refreshToken:" + memberId + ":" + token;
     }
 
+    // ✅ 성능 비교용 메서드들 추가
+
+    @Transactional
+    public void insertDummyRefreshTokens(int count) {
+        log.info("🧪 더미 토큰 {}개 삽입 시작", count);
+        ValueOperations<String, Object> ops = redisTemplate.opsForValue();
+        for (int i = 0; i < count; i++) {
+            String token = "dummyToken" + i;
+            String memberId = String.valueOf(i % 100); // 중복된 멤버 ID
+            String redisKey = generateKey(memberId, token);
+            ops.set(redisKey, memberId, Duration.ofHours(1));
+        }
+        log.info("✅ 더미 토큰 삽입 완료");
+    }
+
+    public void compareScanAndKeysPerformance() {
+        String pattern = "refreshToken:*";
+
+        // KEYS 방식
+        long startKeys = System.currentTimeMillis();
+        List<String> keysResult = getKeysByPatternAndGetValues(pattern);
+        long endKeys = System.currentTimeMillis();
+        log.info("🔑 KEYS 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", keysResult.size(), (endKeys - startKeys));
+
+        // SCAN 방식
+        long startScan = System.currentTimeMillis();
+        List<String> scanResult = scanKeysByPattern(pattern);
+        long endScan = System.currentTimeMillis();
+        log.info("🔍 SCAN 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", scanResult.size(), (endScan - startScan));
+    }
+
+    // KEYS 방식으로 로그아웃 시 토큰 삭제
+    @Transactional
+    public void removeRefreshTokenByIdUsingKeys(Long memberId) {
+        String pattern = generateKey(String.valueOf(memberId), "*");
+        Set<String> keys = redisTemplate.keys(pattern);
+        if (keys != null) {
+            for (String key : keys) {
+                redisTemplate.delete(key);
+            }
+        }
+    }
+
+    // SCAN 방식으로 로그아웃 시 토큰 삭제 (기존 방식)
+    @Transactional
+    public void removeRefreshTokenByIdUsingScan(Long memberId) {
+        List<String> keys = scanKeysByPattern(generateKey(String.valueOf(memberId), "*"));
+        for (String key : keys) {
+            redisTemplate.delete(key);
+        }
+    }
+
+    // KEYS 방식 성능 측정
+    public long measureRemoveUsingKeys(Long memberId) {
+        long start = System.currentTimeMillis();
+        removeRefreshTokenByIdUsingKeys(memberId);
+        long end = System.currentTimeMillis();
+        long duration = end - start;
+        log.info("🔑 KEYS 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
+        return duration;
+    }
+
+    // SCAN 방식 성능 측정
+    public long measureRemoveUsingScan(Long memberId) {
+        long start = System.currentTimeMillis();
+        removeRefreshTokenByIdUsingScan(memberId);
+        long end = System.currentTimeMillis();
+        long duration = end - start;
+        log.info("🔍 SCAN 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
+        return duration;
+    }
 }

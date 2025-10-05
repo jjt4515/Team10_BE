@@ -120,8 +120,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/images/update/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/images/recover/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/members/to-customer/**").authenticated()
 
 
                 //지민 api

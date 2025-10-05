@@ -1,11 +1,13 @@
 package poomasi.domain.statistics.service;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import poomasi.domain.order.repository.OrderRepository;
 import poomasi.domain.statistics.dto.response.StoreMonthlySalesResponse;
 import poomasi.domain.order.entity.Order;
 import poomasi.domain.order.entity.OrderedProduct;
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class StatisticsService {
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     private List<OrderedProduct> getDeliveredProducts(List<Order> orders) {
         return orders.stream()
@@ -82,6 +86,52 @@ public class StatisticsService {
 
                     return new CategoryMonthlySalesResponse(storeId, entry.getKey(), totalSales);
                 })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(categorySales, pageable, categorySales.size());
+    }
+
+
+    // 성능 최적화한 코드
+    public Page<StoreMonthlySalesResponse> getMonthlyStoreSalesOptimized(
+            Long storeId, String startMonth, String endMonth, Pageable pageable) {
+
+        LocalDate start = LocalDate.parse(startMonth + "-01");
+        LocalDate end = LocalDate.parse(endMonth + "-01")
+                .withDayOfMonth(LocalDate.parse(endMonth + "-01").lengthOfMonth());
+
+        LocalDateTime startDate = start.atStartOfDay();
+        LocalDateTime endDate = end.atTime(23, 59, 59);
+
+        List<Map<String, Object>> results =
+                orderRepository.findMonthlyStoreSalesOptimized(storeId, startDate, endDate);
+
+        List<StoreMonthlySalesResponse> monthlySales = results.stream()
+                .map(row -> new StoreMonthlySalesResponse(
+                        storeId,
+                        (String) row.get("month"),
+                        (BigDecimal) row.get("totalSales")
+                ))
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(monthlySales, pageable, monthlySales.size());
+    }
+
+    public Page<CategoryMonthlySalesResponse> getSixMonthCategorySalesOptimized(
+            Long storeId, LocalDate startDate, Pageable pageable) {
+
+        LocalDateTime[] dateRange = calculateDateRange(startDate, 5);
+
+        List<Map<String, Object>> results =
+                orderRepository.findCategorySalesOptimized(storeId, dateRange[0], dateRange[1]);
+
+        // Map을 DTO로 변환
+        List<CategoryMonthlySalesResponse> categorySales = results.stream()
+                .map(row -> new CategoryMonthlySalesResponse(
+                        storeId,
+                        ((Number) row.get("categoryId")).longValue(),
+                        (BigDecimal) row.get("totalSales")
+                ))
                 .collect(Collectors.toList());
 
         return new PageImpl<>(categorySales, pageable, categorySales.size());

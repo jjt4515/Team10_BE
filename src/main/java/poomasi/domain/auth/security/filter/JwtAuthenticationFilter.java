@@ -34,6 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("[JwtAuthenticationFilter] - jwt 인증 필터입니다");
+        long start = System.currentTimeMillis();
+
         String requestHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         String accessToken = null;
 
@@ -101,6 +103,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // (ID, password, auth)
         Authentication authToken = new UsernamePasswordAuthenticationToken(userDetailsImpl, null, userDetailsImpl.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
+        long end = System.currentTimeMillis();
+        log.info("jwt 인증 처리 시간: {} ms", end - start);
 
         filterChain.doFilter(request, response);
         return;

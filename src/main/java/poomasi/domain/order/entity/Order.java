@@ -62,8 +62,7 @@ public class Order {
     @Description("서버 내부 주문 id(아임포트 id)")
     private String merchantUid;
 
-    @Column(name = "ordered_products_id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderedProduct> orderedProducts = new ArrayList<>();
 
     @Column(name = "address")

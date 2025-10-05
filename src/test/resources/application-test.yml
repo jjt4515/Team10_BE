@@ -1,15 +1,13 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/poomasi
+    username: root
+    password: wjdwlsxor77
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
-
-imp:
-  api:
-    key: ${IMP_API_KEY}
-    secretKey: ${IMP_SECRET_KEY}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
