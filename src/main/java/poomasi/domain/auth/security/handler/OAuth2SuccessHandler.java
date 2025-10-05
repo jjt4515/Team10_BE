@@ -48,7 +48,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         //refresh token db에 저장
         refreshTokenWhitelistService.putRefreshToken(refreshToken, memberId);
-        response.sendRedirect("https://poomasi.shop/callback/kakao"+"?access=" + accessToken);
+        response.sendRedirect("https://poomasi2.shop/callback/kakao"+"?access=" + accessToken);
     }
 
     private void createCookie(String key, String value, HttpServletResponse response){
@@ -57,7 +57,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .sameSite("None")
                 .httpOnly(true)
                 .secure(true)
-                .domain("poomasi.shop")
+                .domain("poomasi2.shop")
                 .maxAge(60*60*24*7)
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());

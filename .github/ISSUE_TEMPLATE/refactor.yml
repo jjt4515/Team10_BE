@@ -1,0 +1,25 @@
+name: "🔧 Refactor"
+description: "리팩토링 template"
+labels: "🔧 Refactor"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔍 리팩토링 목적
+        리팩토링을 통해 코드의 가독성, 유지보수성, 또는 성능을 개선합니다.
+  - type: textarea
+    attributes:
+      label: 🛠️ 현재 문제점
+      description: 코드에서 수정이 필요한 문제점을 간략히 설명하세요.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 📋 리팩토링 계획
+      description: 리팩토링 방법 및 기대 효과를 설명하세요.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 🙋🏻 More
+      description: 더 하고 싶은 말이 있다면 작성해 주세요~

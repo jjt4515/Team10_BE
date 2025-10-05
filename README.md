@@ -1,3 +1,5 @@
+#### 기존 Repository: https://github.com/kakao-tech-campus-2nd-step3/Team10_BE
+
 # Team10_BE
 
 ![배너 사진](docs/banner.png)
@@ -11,27 +13,24 @@
 <details>
 <summary>📑 목차</summary>
 
-- [📌 프로젝트 소개](#프로젝트-소개)
-- [🛠️ 기술 스택](#-기술-스택)
-    - [Backend](#Backend)
-    - [Build & Database](#Build-&-Database)
-    - [Cloud & Deployment](#Cloud-&-Deployment)
-- [📂 프로젝트 구조](#-프로젝트-구조)
+- [📌 프로젝트 소개](#-프로젝트-소개)
+- [⭐ 주요 기능 요약](#-주요-기능-요약약)
+- [🛠️ 기술 스택](#%EF%B8%8F-기술-스택)
+- [📂 프로젝트 구조](#프로젝트-구조)
 - [📄 API 명세서](#-API-명세서)
-- [📊 ERD](#-ERD)
+- [🗼 BE 아키텍처](#-BE-아키텍처)
+- [🖥️ 주요 화면 미리보기](%EF%B8%8F-주요-화면-미리보기)
+- [📊 ERD 요약](#-erd-요약)
 - [🚀 프로젝트 실행 방법](#-프로젝트-실행-방법)
-- [🌾 도메인 설명](#-도메인-설명)
+- [🌾 Feature](#-Feature) 
     - [농장 도메인](#농장-도메인)
     - [상품 도메인](#상품-도메인)
-- [🔒 보안 설정](#-보안-설정)
+- [🔒 보안 설정](#-security-설정)
     - [◻️ 화이트리스트 방식 구현](#-화이트리스트-방식-구현)
     - [⬛️ 블랙리스트 방식 구현](#-블랙리스트-방식-구현)
-- [💳 결제 시스템 설정](#-결제-시스템-설정)
-- [🌃 이미지 관리(S3: PresignedUrl)](#-이미지-관리s3-presignedurl)
+- [💳 결제 시스템](#-결제-시스템)
+- [🌃 이미지 관리(S3: PresignedUrl)](#-이미지-관리-s3-presigned-url)
 - [🔄 지속적인 통합 및 배포](#-지속적인-통합-및-배포)
-    - [배포 개요](#배포-개요)
-    - [배포 프로세스](#배포-프로세스)
-    - [알림 및 모니터링](#알림-및-모니터링)
 - [👥 Collaborators](#-Collaborators)
 
 </details>
@@ -39,14 +38,14 @@
 ## 📌 프로젝트 소개
 
 품앗이는 농민과 소비자를 직접 연결하는 `온라인 직거래 플랫폼`입니다. 경매 법인의 독점과 과도한 유통비용으로 인한 기존 도매시장의 문제를 해결하고자, 농산물 유통 과정을 간소화하여 중소 농민들이 정당한 가격을 받을
-수 있도록 지원합니다. 직관적인 UI와 신뢰성 높은 프로필 정보 제공을 통해, 소비자는 합리적인 가격에 고품질 농산물을 구매할 수 있습니다.
+수 있도록 지원합니다. 직관적인 UI와 신뢰성 높은 프로필 정보 제공을 통해, 소비자는 합리적인 가격에 고품질 농산물을 구매할 수 있습니다.  
+&nbsp;  
+### **기존 도매 유통 시장의 문제점**
 
-**기존 도매 유통 시장의 문제점**
-
-    - 농산물의 가격이 농민에게 공정하지 않습니다.
-    - 서울시 가락시장 도매 법인의 가락시장: 국내 농산물 유통량의 약 30%를 차지하는 중요한 역할
-    - 가락시장과 같은 공영 도매시장의 경매법인은 일부 대기업에 의해 독과점화
-    - 서울 가락시장에서 6개 도매법인이 90% 이상의 농산물 유통량을 차지
+- 농산물의 가격이 농민에게 공정하지 않습니다.
+- 서울시 가락시장 도매 법인의 가락시장: 국내 농산물 유통량의 약 30%를 차지하는 중요한 역할
+- 가락시장과 같은 공영 도매시장의 경매법인은 일부 대기업에 의해 독과점화
+- 서울 가락시장에서 6개 도매법인이 90% 이상의 농산물 유통량을 차지
 
 ![가락시장 유통구조](docs/grak.png)
 
@@ -54,20 +53,57 @@
 
 ![도매법](docs/domae.png)
 
-**품앗이의 목표**
+### **품앗이의 목표**
 
-    - 농산물 유통 과정을 간소화하여 농민과 소비자를 직접 연결
-    - 농민이 직접 농산물을 판매할 수 있는 플랫폼 제공
-    - 소비자가 농산물을 구매할 때 농민에게 공정한 가격을 지불
-
+- 농산물 유통 과정을 간소화하여 농민과 소비자를 직접 연결
+- 농민이 직접 농산물을 판매할 수 있는 플랫폼 제공
+- 소비자가 농산물을 구매할 때 농민에게 공정한 가격을 지불  
+&nbsp;  
 ### **배포 URL**
+
+(비용 문제로 배포 중단)
 
 | **서비스** | **URL**                                              |
 |---------|------------------------------------------------------|
-| 백엔드     | [https://api.poomasi.shop](https://api.poomasi.shop) |
-| 프론트엔드   | [https://poomasi.shop](https://poomasi.shop)         |
+| 백엔드     | [https://api.poomasi2.shop](https://api.poomasi2.shop) |
+| 프론트엔드 | [https://api.poomasi](https://api.poomasi) |
+
 
 더 자세한 이야기는 [품앗이 소개 페이지](https://poomasi.shop/introduction)에서 확인하세요.
+
+<br>
+
+## ⭐ **주요 기능 요약** 
+
+### **농산물 거래**
+- 농부: 등록, 삭제 등
+- 구매자: 구매, 장바구니, 위시리스트, 리뷰 작성, 환불 등
+  
+### **농장 체험**
+- 농부: 등록, 삭제 등
+- 체험자: 예약, 리뷰 작성, 환불 등
+
+### **store 관리**
+- 등록, 상품 조회, 매출 조회 등
+
+### **결제**
+- 아임포트(Iamport) 이용한 결제 기능 구현
+
+### **사업자 등록**
+- Naver OCR 이용한 사업자 등록증 인식 기능 구현
+
+### **인증/인가**
+- Spring Security 및 JWT 활용한 인증/인가 구현
+- OAuth 2.0 프로토콜 활용한 카카오 로그인 기능 구현
+
+### **이미지 관리**
+- S3 Presigned Url 이용한 이미지 업로드 기능
+
+### **지속적인 통합 및 배포**
+- GitHub Actions 활용한 CI/CD 파이프라인 구축
+- AWS ECS 및 ALB 활용한 무중단 배포 구현
+  
+<br>
 
 ## 🛠️ 기술 스택
 
@@ -75,20 +111,20 @@
 
 ### Backend
 
-<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=Java&logoColor=white" />
+<img src="https://img.shields.io/badge/Java-007396?style=flat-square&logo=OpenJDK&logoColor=white" />
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=flat-square&logo=Spring&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=Spring Security&logoColor=white" />
-<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=flat-square&logo=Spring Data JPA&logoColor=white" />
-<img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=Java&logoColor=white" />
-<img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JSON Web Tokens&logoColor=white" />
-<img src="https://img.shields.io/badge/Kakao oauth2.0-FFCD00?style=flat-square&logo=Kakao&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=SpringBoot&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=SpringSecurity&logoColor=white" />
+<img src="https://img.shields.io/badge/Spring Data JPA-6DB33F?style=flat-square&logo=Hibernate&logoColor=white" />
+<img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=Hibernate&logoColor=white" />
+<img src="https://img.shields.io/badge/JWT-000000?style=flat-square&logo=JsonWebTokens&logoColor=white" />
+<img src="https://img.shields.io/badge/Kakao OAuth2.0-FFCD00?style=flat-square&logo=KakaoTalk&logoColor=white" />
 
 ### Build & Database
 
 <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white" />
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white" />
-<img src="https://img.shields.io/badge/RDS-527FFF?style=flat-square&logo=Amazon RDS&logoColor=white" />
+<img src="https://img.shields.io/badge/AWS RDS-527FFF?style=flat-square&logo=AmazonAWS&logoColor=white" />
 <img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=Redis&logoColor=white" />
 
 ### Test
@@ -99,10 +135,10 @@
 ### Cloud & Deployment
 
 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon ECS-FF9900?style=flat-square&logo=Amazon ECS&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=Amazon EC2&logoColor=white" />
-<img src="https://img.shields.io/badge/ELB-FF9900?style=flat-square&logo=Amazon AWS&logoColor=white" />
-<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=Amazon S3&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon ECS-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/ELB-FF9900?style=flat-square&logo=AmazonAWS&logoColor=white" />
+<img src="https://img.shields.io/badge/Amazon S3-569A31?style=flat-square&logo=AmazonAWS&logoColor=white" />
 
 ### AI & OCR
 
@@ -120,7 +156,7 @@
 
 </details>
 
-## 📂프로젝트 구성
+## 📂프로젝트 구조
 
 ```
 .
@@ -178,7 +214,22 @@
 
 ## 📄 API 명세서
 
-[배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)
+[배포용 품앗이 명세서](https://bubble-pick-143.notion.site/1e48cc52884d4df993857a1e8f58ff26?pvs=4)  
+&nbsp;  
+## 🗼 BE 아키텍처
+
+![poomasi-architecture drawio](https://github.com/user-attachments/assets/7dcb2a21-297d-44d3-a905-863acdda03d4)  
+&nbsp;  
+## 🖥️ 주요 화면 미리보기
+
+### 메인 페이지
+![메인페이지 (1)](https://github.com/user-attachments/assets/f5af9ff3-024a-4908-9e17-16d87d2c2528)
+
+### 상점 페이지
+![상점 페이지 (1)](https://github.com/user-attachments/assets/be2d69d6-941d-4bd7-b706-ace4a3807c70)
+
+### 농장체험 페이지
+![농장체험 페이지 (1)](https://github.com/user-attachments/assets/bd7177b7-7330-46d2-841f-31521d1054b3)
 
 ## 📊 ERD 요약
 
@@ -188,8 +239,9 @@
 | 상품    | 상품 관련 정보와 카테고리   | ![상품 ERD](docs/product-erd.png) |
 | 장바구니  | 상품과 사용자의 연관 관계   | ![장바구니](docs/cart-erd.png)      |
 | 농장    | 농장 정보와 예약 시스템    | ![농장 ERD](docs/farm-erd.png)    |
-| 위시리스트 | 사용자의 관심 상품 저장 정보 | ![위시리스트](docs/wishlist-erd.png) |
-
+| 위시리스트 | 사용자의 관심 상품 저장 정보 | ![위시리스트](docs/wishlist-erd.png) |   
+    
+&nbsp;   
 ## 🚀 프로젝트 실행 방법
 
 1. 프로젝트를 클론하고 디렉토리로 이동합니다.
@@ -286,19 +338,19 @@ naver:
 ## 🌾 Feature
 
 > 개발한 API들의 핵심 특성을 서술합니다.
-
+&nbsp;  
 ### 상품 도메인
 
 > 상품 도메인은 상품 정보를 관리하는 도메인입니다.
 
-![상품 도메인](docs/product-domain.png)
-
+![상품 도메인](docs/product-domain.png)  
+&nbsp;  
 ### 농장 도메인
 
 > 농장 도메인은 농장 정보를 관리하는 도메인입니다.
 
-![농장 도메인](docs/farm-domain.png)
-
+![농장 도메인](docs/farm-domain.png)  
+&nbsp;  
 #### 1. 농장 사업자 등록
 
 > 농장 사업자 등록은 농장을 등록하는 기능입니다.
@@ -307,14 +359,14 @@ naver:
 - 원래는 Document OCR이 사업자 등록증 인증을 지원하지만, 비용문제로 Template OCR로 대체하였습니다.
 - 또한, 동작 오류를 방지하고자 사업자등록증 인증 실패 시 관리자가 직접 확인하도록 구현하였습니다.
 
-![Naver OCR 예제](docs/naver-ocr.png)
-
+![Naver OCR 예제](docs/naver-ocr.png)  
+&nbsp;  
 #### 2. 농장 체험 예약
 
 > 농장 체험 예약은 농장에서 진행하는 체험 프로그램을 예약하는 기능입니다.
 
-동 시간대 수용가능한 팀 및 최대 수용가능한 팀원을 확인하여 예약을 진행합니다.
-
+동 시간대 수용가능한 팀 및 최대 수용가능한 팀원을 확인하여 예약을 진행합니다.    
+&nbsp;  
 ## 🔒 Security 설정
 
 > Spring Security 6.3.1 버전을 사용하여 인증 및 인가를 진행하였습니다.  
@@ -341,7 +393,7 @@ naver:
 <details>
 <summary>JWT token</summary>
 
-- `로그인에 성공`하면 JWT(Json Web ToKen)을 발행합니다.
+- `로그인에 성공`하면 JWT(Json Web Token)을 발행합니다.
 - Http Header에 Bearer `<accessToken>` 형태로 access token을 전달합니다.
 - JWT를 발행하기 위해 `jjwt 0.11.5`을 사용하였습니다.
 - `OAuth2.0` 로그인이 성공하면 자체 서버로 `redirect`를 시킵니다.
@@ -443,8 +495,8 @@ naver:
 **환불 정책**
 
     - 농장 체험일 3일 전에는 환불 수수료 50%를 부과합니다.
-    - 상품 구매 후 환불 할 때 배송비 3,000원을 부과합니다.
-
+    - 상품 구매 후 환불 할 때 배송비 3,000원을 부과합니다.   
+   
 ## 🌃 이미지 관리 (S3: Presigned URL)
 
 > `presigned url`을 사용하여 이미지를 관리합니다.

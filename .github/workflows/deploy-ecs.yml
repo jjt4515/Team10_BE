@@ -10,12 +10,12 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: poomasi-server
-  ECS_SERVICE: poomasi-server
-  ECS_CLUSTER: poomasi
+  ECR_REPOSITORY: poomasi-ecr
+  ECS_SERVICE: ecs-service
+  ECS_CLUSTER: poomasi-server
   ECS_TASK_DEFINITION: tf-prod.json
-  CONTAINER_NAME: spring
-  PROGRESS_SLACK_CHANNEL: C080DMAE7MX
+  CONTAINER_NAME: poomasi-container
+  PROGRESS_SLACK_CHANNEL: C0890BBABEG
 permissions:
   contents: read
 
@@ -114,8 +114,8 @@ jobs:
             JWT_REFRESH_TOKEN_EXPIRATION_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRATION_TIME }}
             AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
             AWS_REGION=${{ secrets.AWS_REGION }}
-            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
-            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+            AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
             IMP_API_KEY=${{ secrets.IMP_API_KEY }}
             IMP_SECRET_KEY=${{ secrets.IMP_SECRET_KEY }}
             KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
@@ -146,11 +146,28 @@ jobs:
 
       - name: Verify New Task Definition is Deployed
         run: |
-          CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --query services[0].deployments[0].taskDefinition | jq -r ".")
+          TASK_ARNS=$(aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --service-name ${{ env.ECS_SERVICE }} --desired-status RUNNING --query "taskArns" --output text)
+          
+          if [ -z "$TASK_ARNS" ]; then
+            echo "No running tasks found."
+            exit 1
+          fi
+          
+          echo "Running task ARNs: $TASK_ARNS"
+
+          LATEST_TASK_DEF_ARN=""
+          for TASK_ARN in $TASK_ARNS; do
+            TASK_DEF_ARN=$(aws ecs describe-tasks --cluster ${{ env.ECS_CLUSTER }} --tasks $TASK_ARN --query "tasks[0].taskDefinitionArn" --output text)
+            echo "Task ARN: $TASK_ARN -> Task Definition ARN: $TASK_DEF_ARN"
+            LATEST_TASK_DEF_ARN=$TASK_DEF_ARN
+          done
+          
           NEW_TASK_DEF_ARN=${{ steps.ecs-deploy.outputs.task-definition-arn }}
-          echo "Current task arn: $CURRENT_TASK_DEF_ARN"
-          echo "New task arn: $NEW_TASK_DEF_ARN"
-          if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
+          
+          echo "Latest running task definition ARN: $LATEST_TASK_DEF_ARN"
+          echo "New task definition ARN: $NEW_TASK_DEF_ARN"
+
+          if [ "$LATEST_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
             echo "Deployment failed."
             exit 1
           fi
