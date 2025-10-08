@@ -10,6 +10,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import poomasi.domain.auth.security.userdetail.UserDetailsImpl;
+import poomasi.domain.auth.token.whitelist.service.WhitelistRedisService;
 import poomasi.domain.member.dto.response.*;
 import poomasi.domain.member._profile.dto.request.AddressUpdateRequest;
 import poomasi.domain.member.dto.request.CustomerUpdateRequest;

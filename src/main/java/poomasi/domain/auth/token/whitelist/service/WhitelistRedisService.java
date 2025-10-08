@@ -61,12 +61,13 @@ public class WhitelistRedisService implements TokenWhitelistService {
     public List<String> scanKeysByPattern(String pattern) {
         return handleRedisException(() -> {
             List<String> keys = new ArrayList<>();
-            ScanOptions options = ScanOptions.scanOptions().match(pattern).count(100).build();
+            ScanOptions options = ScanOptions.scanOptions().match(pattern).count(10000).build();
 
             try (RedisConnection connection = redisConnectionFactory.getConnection()) {
-                Cursor<byte[]> cursor = connection.scan(options);
-                while (cursor.hasNext()) {
-                    keys.add(new String(cursor.next()));
+                try (Cursor<byte[]> cursor = connection.scan(options)) {
+                    while (cursor.hasNext()) {
+                        keys.add(new String(cursor.next()));
+                    }
                 }
             } catch (Exception e) {
                 throw new RedisOperationException("Redis SCAN 중 오류 발생");
@@ -103,19 +104,19 @@ public class WhitelistRedisService implements TokenWhitelistService {
         return "refreshToken:" + memberId + ":" + token;
     }
 
-    // ✅ 성능 비교용 메서드들 추가
+    // 성능 비교용 메서드들 추가
 
     @Transactional
     public void insertDummyRefreshTokens(int count) {
-        log.info("🧪 더미 토큰 {}개 삽입 시작", count);
+        log.info("더미 토큰 {}개 삽입 시작", count);
         ValueOperations<String, Object> ops = redisTemplate.opsForValue();
         for (int i = 0; i < count; i++) {
             String token = "dummyToken" + i;
-            String memberId = String.valueOf(i % 100); // 중복된 멤버 ID
+            String memberId = String.valueOf(i);
             String redisKey = generateKey(memberId, token);
             ops.set(redisKey, memberId, Duration.ofHours(1));
         }
-        log.info("✅ 더미 토큰 삽입 완료");
+        log.info("더미 토큰 삽입 완료");
     }
 
     public void compareScanAndKeysPerformance() {
@@ -125,13 +126,13 @@ public class WhitelistRedisService implements TokenWhitelistService {
         long startKeys = System.currentTimeMillis();
         List<String> keysResult = getKeysByPatternAndGetValues(pattern);
         long endKeys = System.currentTimeMillis();
-        log.info("🔑 KEYS 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", keysResult.size(), (endKeys - startKeys));
+        log.info("KEYS 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", keysResult.size(), (endKeys - startKeys));
 
         // SCAN 방식
         long startScan = System.currentTimeMillis();
         List<String> scanResult = scanKeysByPattern(pattern);
         long endScan = System.currentTimeMillis();
-        log.info("🔍 SCAN 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", scanResult.size(), (endScan - startScan));
+        log.info("SCAN 방식 - 조회된 키 개수: {}, 소요 시간: {}ms", scanResult.size(), (endScan - startScan));
     }
 
     // KEYS 방식으로 로그아웃 시 토큰 삭제
@@ -140,9 +141,7 @@ public class WhitelistRedisService implements TokenWhitelistService {
         String pattern = generateKey(String.valueOf(memberId), "*");
         Set<String> keys = redisTemplate.keys(pattern);
         if (keys != null) {
-            for (String key : keys) {
-                redisTemplate.delete(key);
-            }
+            redisTemplate.delete(keys);
         }
     }
 
@@ -150,8 +149,8 @@ public class WhitelistRedisService implements TokenWhitelistService {
     @Transactional
     public void removeRefreshTokenByIdUsingScan(Long memberId) {
         List<String> keys = scanKeysByPattern(generateKey(String.valueOf(memberId), "*"));
-        for (String key : keys) {
-            redisTemplate.delete(key);
+        if (!keys.isEmpty()) {
+            redisTemplate.delete(keys);
         }
     }
 
@@ -161,7 +160,7 @@ public class WhitelistRedisService implements TokenWhitelistService {
         removeRefreshTokenByIdUsingKeys(memberId);
         long end = System.currentTimeMillis();
         long duration = end - start;
-        log.info("🔑 KEYS 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
+        log.info("KEYS 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
         return duration;
     }
 
@@ -171,7 +170,22 @@ public class WhitelistRedisService implements TokenWhitelistService {
         removeRefreshTokenByIdUsingScan(memberId);
         long end = System.currentTimeMillis();
         long duration = end - start;
-        log.info("🔍 SCAN 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
+        log.info("SCAN 방식 removeRefreshTokenById({}) 소요 시간: {}ms", memberId, duration);
         return duration;
+    }
+
+    public long countAllRefreshTokens() {
+        return scanKeysByPattern("refreshToken:*").size();
+    }
+
+    @Transactional
+    public void deleteAllRefreshTokens() {
+        List<String> keys = scanKeysByPattern("refreshToken:*");
+        if (!keys.isEmpty()) {
+            redisTemplate.delete(keys);
+            log.info("삭제된 리프레시 토큰 키 개수: {}", keys.size());
+        } else {
+            log.info("삭제할 리프레시 토큰이 없습니다.");
+        }
     }
 }

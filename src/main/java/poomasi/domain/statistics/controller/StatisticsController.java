@@ -26,7 +26,7 @@ public class StatisticsController {
             @RequestParam String endMonth,
             @PageableDefault(size = 10) Pageable pageable) {
 
-        Page<StoreMonthlySalesResponse> salesResponses = statisticsService.getMonthlyStoreSales(storeId, startMonth, endMonth, pageable);
+        Page<StoreMonthlySalesResponse> salesResponses = statisticsService.getMonthlyStoreSalesOptimized(storeId, startMonth, endMonth, pageable);
         return ResponseEntity.ok(salesResponses);
     }
 
@@ -37,7 +37,7 @@ public class StatisticsController {
             @PageableDefault(size = 10) Pageable pageable) {
 
         LocalDate startDate = LocalDate.parse(startMonth + "-01");
-        Page<CategoryMonthlySalesResponse> salesResponses = statisticsService.getSixMonthCategorySales(storeId, startDate, pageable);
+        Page<CategoryMonthlySalesResponse> salesResponses = statisticsService.getSixMonthCategorySalesOptimized(storeId, startDate, pageable);
         return ResponseEntity.ok(salesResponses);
     }
 }

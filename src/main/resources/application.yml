@@ -5,8 +5,8 @@ spring:
     import: optional:application-secret.yml
   token:
     storage: #리프레시 토큰 저장소
-      type: jpa
-      #type: redis
+      #type: jpa
+      type: redis
     blacklist: #블랙리스트 저장소
-      type: jpa
-      #type: redis
+      #type: jpa
+      type: redis

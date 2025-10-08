@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import poomasi.domain.auth.token.blacklist.entity.Blacklist;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository

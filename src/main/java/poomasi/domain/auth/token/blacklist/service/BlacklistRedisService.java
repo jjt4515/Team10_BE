@@ -43,4 +43,10 @@ public class BlacklistRedisService implements TokenBlacklistService {
         return handleRedisException(() -> Boolean.TRUE.equals(redisBlackListTemplate.hasKey(key)), "블랙리스트에서 키 존재 여부 확인 중 오류 발생: " + key);
     }
 
+    public long countAll() {
+        return handleRedisException(() -> {
+            var keys = redisBlackListTemplate.keys("*");
+            return keys == null ? 0L : keys.size();
+        }, "블랙리스트 키 개수 조회 중 오류 발생");
+    }
 }

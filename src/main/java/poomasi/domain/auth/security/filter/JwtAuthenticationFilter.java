@@ -54,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-
         if (requestHeader == null || !requestHeader.startsWith("Bearer ")) {
             log.info("[JwtAuthenticationFilter] : access token을 header로 갖지 않았으므로 다음 필터로 이동합니다");
             filterChain.doFilter(request, response);
@@ -72,12 +71,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+//        long start = System.currentTimeMillis();
         if(accessTokenBlacklistService.hasAccessToken(accessToken)){
             log.info("블랙리스트에 있는 토큰입니다.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("{\"message\": \"" + "token is in Blacklist");
             return;
         }
+//        long end = System.currentTimeMillis();
 
         // 유효성 검사
         if(!jwtUtil.validateAccessToken(accessToken)) {

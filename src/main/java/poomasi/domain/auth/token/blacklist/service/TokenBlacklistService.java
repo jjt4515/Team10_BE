@@ -11,5 +11,6 @@ public interface TokenBlacklistService {
     Optional<String> getBlackList(String key);
     void deleteBlackList(String key);
     boolean hasKeyBlackList(String key);
+    long countAll();
 
 }

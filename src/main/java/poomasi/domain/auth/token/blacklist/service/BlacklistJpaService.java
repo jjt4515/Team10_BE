@@ -50,4 +50,8 @@ public class BlacklistJpaService implements TokenBlacklistService{
     public void removeExpiredTokens() {
         blacklistRepository.deleteAllByExpireAtBefore(LocalDateTime.now());
     }
+
+    public long countAll() {
+        return blacklistRepository.count();
+    }
 }
