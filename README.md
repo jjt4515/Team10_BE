@@ -463,7 +463,7 @@ naver:
 
 > 로그아웃한 사용자의 `AccessToken`을 사용하여 요청을 보내는 것을 방지하기 위해 로그아웃 시 `AccessToken`을 블랙리스트에 저장합니다.
  
-![그림1](https://github.com/user-attachments/assets/9c6278ef-23ca-4903-abaa-8a7e6ca2bf9c)
+<img width="788" height="281" alt="image" src="https://github.com/user-attachments/assets/3deedf0b-a7c2-4668-9e38-5a4c9cb826c6" />
 
 
 #### 로그아웃 흐름
